@@ -4,9 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import ir.ayantech.ocr_sdk.OCRConfig
 import ir.ayantech.ocr_sdk.Constant
 import ir.ayantech.ocr_sdk.OcrActivity
-import ir.ayantech.ocr_sdk.OcrInitializer
 import ir.ayantech.ocr_sdk.model.GetCardOcrResult
 import ir.ayantech.sdk_ocr.databinding.ActivityMainBinding
 import ir.ayantech.whygoogle.activity.WhyGoogleActivity
@@ -27,14 +27,15 @@ class MainActivity : WhyGoogleActivity<ActivityMainBinding>() {
          Log.d("asdasdkjahdkjahskjd", "cardType: $cardType")
 
     binding.btnOCR.setOnClickListener{
-        OcrInitializer().setConfig(
-            token="6C043F55214F45C3B08609AFBBE7E009",
-            baseUrl = "https://core.pishkhan24.ayantech.ir/webservices/Proxy.svc/",
-            uploadImageEndPoint  ="UploadNewCardOcrImage",
-            getResultEndPoint = "GetCardOcrResult",
-            this
 
-        )
+        OCRConfig.builder()
+            .ocrContext(this)
+            .baseUrl("https://core.pishkhan24.ayantech.ir/webservices/Proxy.svc/")
+            .token("6C043F55214F45C3B08609AFBBE7E009")
+            .uploadImageEndPoint("UploadNewCardOcrImage")
+            .getResultEndPoint("GetCardOcrResult")
+            .build()
+
        startActivity(Intent(this, OcrActivity::class.java).also {
            it.putExtra("cardType", "BankCard")
            it.putExtra("className", "ir.ayantech.sdk_ocr.MainActivity")

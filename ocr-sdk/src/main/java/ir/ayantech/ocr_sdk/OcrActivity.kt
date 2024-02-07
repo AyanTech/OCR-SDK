@@ -27,6 +27,7 @@ open class OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
 
     lateinit var testActivity: AppCompatActivity
     var cardType = ""
+    var extraInfo = ""
     lateinit var ayanAPI: AyanApi
     var dialog: WaitingDialog? = null
     override val binder: (LayoutInflater) -> OcrActivityBinding
@@ -41,6 +42,7 @@ open class OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
     private fun getIntentData() {
         if (intent == null) return
         cardType = intent.getStringExtra("cardType").toString().uppercase()
+        extraInfo = intent.getStringExtra("extraInfo").toString().uppercase()
         val className = intent.getStringExtra("className")
         if (className != null) {
             try {
@@ -68,6 +70,7 @@ open class OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
         startActivity(Intent(this, testActivity::class.java).also {
             it.putParcelableArrayListExtra("GetCardOcrResult", dataList)
             it.putExtra("cardType", cardType)
+            it.putExtra("extraInfo", extraInfo)
         })
         finish()
     }
