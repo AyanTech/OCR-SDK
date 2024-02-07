@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="sub_titles_primary_dark">
+        <item name="fontFamily">@font/light</item>
+        <item name="android:fontFamily">@font/light</item>
+        <item name="android:textSize">@dimen/txt_11px</item>
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+    </style>
+
+    <style name="titles">
+        <item name="fontFamily">@font/light</item>
+        <item name="android:fontFamily">@font/light</item>
+        <item name="android:textSize">@dimen/txt_11px</item>
+    </style>
+
+    <style name="title" parent="titles">
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+
+
+    <style name="description">
+        <item name="fontFamily">@font/regular</item>
+        <item name="android:fontFamily">@font/regular</item>
+        <item name="android:textSize">@dimen/txt_11px</item>
+    </style>
+
+    <style name="description_white" parent="description">
+        <item name="android:textColor">@color/ocr_ic_close_tint</item>
+    </style>
+
+    <style name="txt_medium">
+        <item name="fontFamily">@font/medium</item>
+        <item name="android:fontFamily">@font/medium</item>
+    </style>
+
+    <style name="txt_medium_8px_white" parent="txt_medium">
+        <item name="android:textColor">@color/ocr_ic_close_tint</item>
+        <item name="android:textSize">@dimen/txt_8px</item>
+    </style>
+
+    <style name="txt_medium_12px_black" parent="txt_medium">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/txt_12px</item>
+    </style>
+
+    <style name="txt_medium_12px_gray3" parent="txt_medium">
+        <item name="android:textColor">@color/gray_3</item>
+        <item name="android:textSize">@dimen/txt_12px</item>
+    </style>
+
+    <style name="txt_medium_13px_black" parent="txt_medium">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/txt_13px</item>
+    </style>
+
+    <style name="txt_medium_14px_black" parent="txt_medium">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/txt_14px</item>
+    </style>
+
+    <style name="txt_regular">
+        <item name="fontFamily">@font/regular</item>
+        <item name="android:fontFamily">@font/regular</item>
+        <item name="android:textSize">@dimen/txt_13px</item>
+    </style>
+
+    <style name="ocr_txt_regular_13px_white" parent="txt_regular">
+        <item name="android:textColor">@color/ocr_ic_close_tint</item>
+    </style>
+
+<!--
+    <style name="txt_regular_12px_gray2" parent="txt_regular">
+        <item name="android:textColor">@drawable/selector_gray2</item>
+    </style>
+-->
+
+    <style name="txt_regular_12px_gray3" parent="txt_regular">
+        <item name="android:textColor">@color/gray_3</item>
+    </style>
+
+    <style name="txt_regular_12px_white" parent="txt_regular">
+        <item name="android:textColor">@color/ocr_ic_close_tint</item>
+        <item name="android:textSize">@dimen/txt_12px</item>
+    </style>
+
+    <style name="txt_regular_11px_gray3" parent="txt_regular">
+        <item name="android:textColor">@color/gray_3</item>
+        <item name="android:textSize">@dimen/txt_11px</item>
+    </style>
+
+    <style name="txt_regular_11px_black" parent="txt_regular">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/txt_11px</item>
+    </style>
+
+    <style name="txt_regular_12px_black" parent="txt_regular">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/txt_12px</item>
+    </style>
+
+    <style name="ocr_txt_regular_14px_gray2" parent="txt_regular">
+        <item name="android:textColor">@color/gray_2</item>
+    </style>
+
+    <style name="txt_regular_12px_gray4" parent="txt_regular">
+        <item name="android:textColor">@color/gray_4</item>
+        <item name="android:textSize">@dimen/txt_12px</item>
+    </style>
+
+    <style name="txt_light">
+        <item name="fontFamily">@font/light</item>
+        <item name="android:fontFamily">@font/light</item>
+        <item name="android:textSize">@dimen/txt_13px</item>
+    </style>
+
+    <style name="txt_light_10px_red" parent="txt_light">
+        <item name="android:textColor">@color/red</item>
+        <item name="android:textSize">@dimen/txt_10px</item>
+
+    </style>
+    <style name="txt_light_11px_gray4" parent="txt_light">
+        <item name="android:textColor">@color/gray_4</item>
+        <item name="android:textSize">@dimen/txt_11px</item>
+    </style>
+    <style name="txt_light_12px_gray4" parent="txt_light">
+        <item name="android:textColor">@color/gray_4</item>
+        <item name="android:textSize">@dimen/txt_12px</item>
+    </style>
+
+    <style name="txt_light_13px_gray4" parent="txt_light">
+        <item name="android:textColor">@color/gray_4</item>
+        <item name="android:textSize">@dimen/txt_12px</item>
+    </style>
+
+    <style name="txt_regular_12px_gray5" parent="txt_regular">
+        <item name="android:textColor">@color/gray_5</item>
+        <item name="android:textSize">@dimen/txt_12px</item>
+    </style>
+
+    <style name="edt_text_style" parent="txt_regular">
+        <item name="android:textColor">@color/gray_5</item>
+    </style>
+
+    <style name="txt_regular_13px_black" parent="txt_regular">
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="txt_regular_14px_black" parent="txt_regular">
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+
+    <style name="button">
+        <item name="fontFamily">@font/regular</item>
+        <item name="android:fontFamily">@font/regular</item>
+        <item name="android:textSize">@dimen/txt_13px</item>
+    </style>
+
+    <style name="text_button">
+        <item name="fontFamily">@font/regular</item>
+        <item name="android:fontFamily">@font/regular</item>
+        <item name="android:textSize">@dimen/txt_11px</item>
+        <item name="android:textColor">@color/colorSecondary</item>
+    </style>
+
+    <style name="txt_large">
+        <item name="fontFamily">@font/bold</item>
+        <item name="android:fontFamily">@font/bold</item>
+        <item name="android:textSize">@dimen/txt_16px</item>
+    </style>
+    <style name="txt_bold_12px_black" parent="txt_large">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/txt_12px</item>
+
+    </style>
+    <style name="txt_bold_16px_white" parent="txt_large">
+        <item name="android:textColor">@color/ocr_ic_close_tint</item>
+    </style>
+
+    <style name="txt_bold_13px_white" parent="txt_large">
+        <item name="android:textColor">@color/ocr_ic_close_tint</item>
+        <item name="android:textSize">@dimen/txt_13px</item>
+
+    </style>
+
+    <style name="txt_bold_13px_black" parent="txt_large">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/txt_13px</item>
+
+    </style>
+
+    <style name="txt_bold_16px_black" parent="txt_large">
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="txt_large_secondary" parent="txt_large">
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="txt_large_primary_dark" parent="txt_large">
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+    </style>
+
+    <style name="txt_bold_14px_white" parent="txt_large">
+        <item name="android:textColor">@color/ocr_ic_close_tint</item>
+        <item name="android:textSize">@dimen/txt_14px</item>
+    </style>
+
+    <style name="txt_bold_14px_black" parent="txt_large">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/txt_14px</item>
+    </style>
+
+    <style name="txt_bold_12px_red" parent="txt_large">
+        <item name="android:textColor">@color/red</item>
+        <item name="android:textSize">@dimen/txt_12px</item>
+    </style>
+
+    <style name="txt_bold_12px_green" parent="txt_large">
+        <item name="android:textColor">@color/green</item>
+        <item name="android:textSize">@dimen/txt_12px</item>
+    </style>
+
+    <style name="txt_bold_12px_white" parent="txt_large">
+        <item name="android:textColor">@color/ocr_ic_close_tint</item>
+        <item name="android:textSize">@dimen/txt_12px</item>
+    </style>
+
+    <style name="txt_date_picker_enabled" parent="txt_large">
+        <item name="android:textColor">@color/ocr_ic_close_tint</item>
+        <item name="android:textSize">@dimen/txt_12px</item>
+    </style>
+
+    <style name="txt_date_picker_dis" parent="txt_regular">
+        <item name="android:textColor">@color/gray_4</item>
+        <item name="android:textSize">@dimen/txt_12px</item>
+    </style>
+
+   <!-- <style name="txt_filter_enabled" parent="txt_medium">
+    <item name="android:textColor">@color/white</item>
+    <item name="android:textSize">@dimen/txt_12px</item>
+    <item name="android:background">@drawable/blue_fill_13_rounded</item>
+    <item name="android:padding">6dp</item>
+    </style>-->
+    <style name="txt_filter_dis" parent="txt_medium">
+        <item name="android:textColor">@color/ocr_back_button_blue</item>
+        <item name="android:textSize">@dimen/txt_12px</item>
+         <item name="android:padding">6dp</item>
+
+    </style>
+    <style name="description_gray7" parent="description">
+        <item name="android:textColor">@color/ocr_gray_7</item>
+    </style>
+
+    <style name="description_secondary" parent="description">
+        <item name="android:textColor">@color/colorSecondary</item>
+    </style>
+
+    <style name="text_normal">
+        <item name="fontFamily">@font/regular</item>
+        <item name="android:fontFamily">@font/regular</item>
+        <item name="android:textSize">@dimen/txt_12px</item>
+    </style>
+
+    <style name="text_normal_primary_dark" parent="text_normal">
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+    </style>
+
+    <style name="text_normal_gray7" parent="text_normal">
+        <item name="android:textColor">@color/ocr_gray_7</item>
+    </style>
+
+
+    <style name="text_button_secondary" parent="text_button">
+        <item name="android:textColor">@color/colorSecondary</item>
+    </style>
+
+    <style name="txt_regular_11px_green" parent="txt_regular">
+        <item name="android:textColor">@color/green</item>
+        <item name="android:textSize">@dimen/txt_11px</item>
+    </style>
+
+
+</resources>

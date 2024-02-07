@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">OCR-SDK</string>
+    <string name="ocr_camera_description_front">از قسمت جلوی کارت عکس بگیرید</string>
+    <string name="ocr_camera_description_back">از قسمت پشت کارت عکس بگیرید</string>
+    <string name="ocr_loading_description">لطفا کمی صبر کنید</string>
+    <string name="ocr_confirm_image">تایید تصویر</string>
+    <string name="ocr_retry">تلاش مجدد</string>
+</resources>

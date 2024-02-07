@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:clipToPadding="false"
+    android:paddingBottom="@dimen/margin_24">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/closeIv"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="@dimen/margin_21"
+        android:layout_marginTop="@dimen/margin_21"
+        android:visibility="gone"
+        android:layout_marginEnd="@dimen/margin_21"
+        android:layout_marginBottom="@dimen/margin_21"
+        android:padding="@dimen/padding_item_click"
+        android:src="@drawable/ocr_ic_close" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/loadingIv"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        app:lottie_autoPlay="true"
+        android:layout_marginTop="@dimen/margin_42"
+        android:layout_centerHorizontal="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/ocr_loading" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_title"
+        style="@style/ocr_txt_regular_14px_gray2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/loadingIv"
+        android:layout_marginTop="@dimen/margin_36"
+        android:text="@string/ocr_loading_description" />
+
+
+</RelativeLayout>

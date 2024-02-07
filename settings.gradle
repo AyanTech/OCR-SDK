@@ -1,8 +1,8 @@
 pluginManagement {
     repositories {
-        gradlePluginPortal()
         google()
         mavenCentral()
+        gradlePluginPortal()
     }
 }
 dependencyResolutionManagement {
@@ -10,10 +10,10 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        jcenter()
         maven { url 'https://jitpack.io' }
     }
 }
 
-rootProject.name = "OCR-SDK"
+rootProject.name = "SDK-OCR"
 include ':app'
+include ':ocr-sdk'
