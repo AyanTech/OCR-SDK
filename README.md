@@ -146,6 +146,11 @@ XML Example:
     
     
 ```
+> [!Tip]
+>Json file in raw directory
+```s
+ocr_loading.json
+```
 
 ## Example Usage:
 Refer to the example module in the source code for a complete implementation showcase.
