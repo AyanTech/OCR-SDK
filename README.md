@@ -20,7 +20,7 @@ Easily integrate optical character recognition (OCR) capabilities into your Andr
 - Open-Source: Available on GitHub for contributions and customization.
   Installation:
 
-> [!NOTE]
+> [!Important]
 > Add the Jitpack repository to your project's settings.gradle file:
 
 Gradle
@@ -29,7 +29,7 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 ```
-> [!NOTE]
+> [!Important]
 >Add the dependency to your app's build.gradle file:
 
 Gradle
@@ -89,7 +89,7 @@ Kotlin
 Override desired colors and styles in your app's theme (styles.xml):
 XML Example:
 
-> [!NOTE]
+> [!Tip]
 >Colors in colors.xml
 ```s
     <color name="ocr_ic_close_tint">#FFFFFFFF</color>
@@ -101,7 +101,7 @@ XML Example:
     <color name="ocr_gray_7">#D8D8D8</color>
 ```
 
-> [!NOTE]
+> [!Tip]
 >Styles in textStyles.xml
 ```s
  <style name="ocr_txt_regular_13px_white" parent="txt_regular">
@@ -113,7 +113,7 @@ XML Example:
     </style>
 ```
 
-> [!NOTE]
+> [!Tip]
 >Styles in styles.xml
 ```s
    <style name="OCR_Button" parent="Widget.AppCompat.Button">
