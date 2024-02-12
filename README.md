@@ -68,11 +68,11 @@ startActivity(Intent(this, OcrActivity::class.java).also {
 
 Receive desire result form intent in activity like below Example:
 
-|  Supported Card Types | Explenaition |
-| ------ | ------ | 
-|GetCardOcrResult |  Array list containing results from the OCR API |
-|cardType| String representing the exact card type sent during integration |
-|extraInfo| String containing additional information sent during integration |
+| Keys             | Explenaition |
+|------------------| ------ | 
+| GetCardOcrResult |  Array list containing results from the OCR API |
+| cardType         | String representing the exact card type sent during integration |
+| extraInfo        | String containing additional information sent during integration |
 
 
 Kotlin
