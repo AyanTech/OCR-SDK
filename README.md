@@ -1,4 +1,4 @@
-# Android OCR SDK Library: Extract Data from VehicleCards, BankCards, and NationalIDs
+# Android OCR SDK: Extract Data from VehicleCards, BankCards, and NationalIDs
 
 ## Description:
 
@@ -64,14 +64,89 @@ startActivity(Intent(this, OcrActivity::class.java).also {
 })
 ```
 
+## Get Result
+
+Recive Desire Result form Intent In Activity Like this Example:
+
+|  Supported Card Types | Explenaition |
+| ------ | ------ | 
+|GetCardOcrResult |  Array list containing results from the OCR API |
+|cardType| String representing the exact card type sent during integration |
+|extraInfo| String containing additional information sent during integration |
+
+
+Kotlin
+```s
+  val extras = intent.extras
+        val data = extras?.getParcelableArrayList<GetCardOcrResult.Result>("GetCardOcrResult")
+        val cardType = intent.getStringExtra("cardType")
+        val extraInfo = intent?.getStringExtra("extraInfo")
+         
+```
+
 ## Customization:
 
 Override desired colors and styles in your app's theme (styles.xml):
 XML Example:
 
+> [!NOTE]
+>Colors in colors.xml
 ```s
-<color name="ocr_ic_close_tint">#FFFFFFFF</color>
+    <color name="ocr_ic_close_tint">#FFFFFFFF</color>
+    <color name="ocr_dialog_color_background">#F2F2F2</color>
+    <color name="ocr_back_button_blue">#2B48EC</color>
+    <color name="default_divider">@color/ocr_dialog_color_background</color>
+    <color name="ocr_text_button">#ffffff</color>
+    <color name="ocr_camera_fill_color">#2B48EC</color>
+    <color name="ocr_gray_7">#D8D8D8</color>
 ```
+
+> [!NOTE]
+>Styles in textStyles.xml
+```s
+ <style name="ocr_txt_regular_13px_white" parent="txt_regular">
+        <item name="android:textColor">@color/ocr_ic_close_tint</item>
+    </style>
+    
+    <style name="ocr_txt_regular_14px_gray2" parent="txt_regular">
+        <item name="android:textColor">@color/gray_2</item>
+    </style>
+```
+
+> [!NOTE]
+>Styles in styles.xml
+```s
+   <style name="OCR_Button" parent="Widget.AppCompat.Button">
+        <item name="android:background">@drawable/ocr_background_button_blue</item>
+        <item name="android:textColor">@color/ocr_text_button</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:height">@dimen/ocr_button_height</item>
+        <item name="fontFamily">@font/regular</item>
+        <item name="android:paddingLeft">@dimen/margin_16</item>
+        <item name="android:paddingRight">@dimen/margin_16</item>
+        <item name="android:gravity">center</item>
+        <item name="android:clipToPadding">false</item>
+
+    </style>
+
+    <style name="ocr_stroked_button" parent="@android:style/Widget.Button">
+        <item name="android:gravity">center</item>
+        <item name="android:paddingStart">@dimen/margin_16</item>
+        <item name="android:paddingEnd">@dimen/margin_16</item>
+        <item name="android:clipToPadding">false</item>
+        <item name="android:height">@dimen/ocr_button_height</item>
+        <item name="android:background">@drawable/ocr_back_white_bordered_blue_button</item>
+        <item name="android:foreground">?android:attr/selectableItemBackground</item>
+        <item name="fontFamily">@font/regular</item>
+        <item name="android:fontFamily">@font/regular</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/ocr_back_button_blue</item>
+    </style>
+    
+    
+```
+
 ## Example Usage:
 Refer to the example module in the source code for a complete implementation showcase.
 
