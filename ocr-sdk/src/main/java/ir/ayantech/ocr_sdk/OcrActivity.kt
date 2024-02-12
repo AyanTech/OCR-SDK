@@ -1,12 +1,14 @@
 package ir.ayantech.ocr_sdk
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import com.bumptech.glide.Glide.init
 import ir.ayantech.ayannetworking.api.AyanApi
 import ir.ayantech.ayannetworking.api.AyanCommonCallStatus
 import ir.ayantech.ayannetworking.api.CallingState
@@ -93,10 +95,13 @@ open class OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
     }
 
     private fun gettingPermissions() {
+
         ActivityCompat.requestPermissions(
             this,
-            arrayOf(android.Manifest.permission.CAMERA),
-            1
+            arrayOf(android.Manifest.permission.CAMERA,
+            android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            android.Manifest.permission.READ_EXTERNAL_STORAGE
+            ),  1
         )
     }
 
@@ -140,7 +145,7 @@ open class OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
                 }
                 changeStatus {
                     when (it) {
-                        CallingState.LOADING -> dialog?.showDialog()
+                        CallingState.LOADING -> {}
                         CallingState.FAILED -> dialog?.hideDialog()
                         CallingState.SUCCESSFUL -> dialog?.hideDialog()
                         CallingState.NOT_USED -> dialog?.hideDialog()

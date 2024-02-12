@@ -4,25 +4,41 @@ import android.content.Context
 
 class ConfigBuilder private constructor() {
 
-   var token: String? = null
-   var baseUrl: String? = null
-   var uploadImageEndPoint: String? = null
-   var getResultEndPoint: String? = null
+    var token: String? = null
+    var baseUrl: String? = null
+    var uploadImageEndPoint: String? = null
+    var getResultEndPoint: String? = null
     var ocrContext: Context? = null
 
-    @JvmOverloads
-    fun token(token: String) = apply { this.token = token }
+    fun setContext(ocrContext: Context) = apply {
+        Constant.context = ocrContext
+        this.ocrContext = ocrContext
+    }
 
     @JvmOverloads
-    fun baseUrl(baseUrl: String) = apply { this.baseUrl = baseUrl }
+    fun setToken(token: String) = apply {
+        Constant.Token = token
+        this.token = token
+    }
 
     @JvmOverloads
-    fun uploadImageEndPoint(uploadImageEndPoint: String) = apply { this.uploadImageEndPoint = uploadImageEndPoint }
+    fun setBaseUrl(baseUrl: String) = apply {
+        Constant.Base_URL =  baseUrl
+        this.baseUrl = baseUrl
+    }
 
     @JvmOverloads
-    fun getResultEndPoint(getResultEndPoint: String) = apply { this.getResultEndPoint = getResultEndPoint }
+    fun setUploadImageEndPoint(uploadImageEndPoint: String) = apply {
+        Constant.EndPoint_UploadCardOCR = uploadImageEndPoint
+        this.uploadImageEndPoint = uploadImageEndPoint
+    }
 
-    fun ocrContext(ocrContext: Context) = apply { this.ocrContext = ocrContext }
+    @JvmOverloads
+    fun setGetResultEndPoint(getResultEndPoint: String) = apply {
+        Constant.EndPoint_GetCardOcrResult = getResultEndPoint
+        this.getResultEndPoint = getResultEndPoint
+    }
+
 
     fun build(): OCRConfig {
         val missingValue = "A required value for setting configuration wasn't provided: "

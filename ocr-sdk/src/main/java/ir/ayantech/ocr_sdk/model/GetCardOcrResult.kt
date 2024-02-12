@@ -10,7 +10,7 @@ class GetCardOcrResult {
     )
 
      data class Output(
-         val Result: List<Result>,
+         val Result: List<Result>?,
         val CardID: String,
         val Status: String,
         val NextCallInterval: Long,

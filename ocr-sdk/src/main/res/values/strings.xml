@@ -5,4 +5,7 @@
     <string name="ocr_loading_description">لطفا کمی صبر کنید</string>
     <string name="ocr_confirm_image">تایید تصویر</string>
     <string name="ocr_retry">تلاش مجدد</string>
+    <string name="ocr_retry_again">لطفا مجددا تلاش کنید</string>
+    <string name="ocr_downloading_data">در حال دریافت اطلاعات...</string>
+    <string name="ocr_compressing">در حال فشرده سازی...</string>
 </resources>

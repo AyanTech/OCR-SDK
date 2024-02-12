@@ -148,48 +148,6 @@ class CameraXFragment(
             }
         }
     }
-
-    private fun processImages() {
-        // Provide the path to your dataset directory
-        /*  val datasetDir = File("/assets/dataset")
-          if (datasetDir.exists() && datasetDir.isDirectory) {
-              val imageFiles = datasetDir.listFiles()
-              imageFiles?.forEach { imageFile ->
-                  val bitmap = BitmapFactory.decodeFile(imageFile.absolutePath)
-                  // Perform OpenCV image preprocessing
-                  val mat = Mat(bitmap.height, bitmap.width, CvType.CV_8UC1)
-                  org.opencv.android.Utils.bitmapToMat(bitmap, mat)
-                  // Resize the image
-                  Imgproc.resize(mat, mat, Size(640.0, 480.0))
-                  // Apply additional image processing steps using OpenCV
-                  // Convert the processed image back to Bitmap
-                  val processedBitmap =
-                      Bitmap.createBitmap(mat.cols(), mat.rows(), Bitmap.Config.ARGB_8888)
-                  org.opencv.android.Utils.matToBitmap(mat, processedBitmap)
-                  // Perform text recognition using ML Kit
-                  val inputImage = InputImage.fromBitmap(processedBitmap, 0)
-                  textRecognizer.process(inputImage)
-                      .addOnSuccessListener(OnSuccessListener<Text> { text ->
-                          // Process the recognized text
-                          val recognizedText = text.text
-                          Log.d(TAG, "Recognized text: $recognizedText")
-                          Toast.makeText(context, recognizedText, Toast.LENGTH_LONG).show()
-                      })
-                      .addOnFailureListener { e ->
-                          // Handle any errors that occurred during text recognition
-                          Toast.makeText(
-                              context,
-                              "Text recognition failed: ${e.message}",
-                              Toast.LENGTH_LONG
-                          ).show()
-                          Log.e(TAG, "Text recognition failed: ${e.message}")
-                      }
-              }
-          } else {
-              Toast.makeText(context, "There is no propper data set found", Toast.LENGTH_LONG).show()
-          }*/
-    }
-
     private fun takePhoto() {
         // Get a stable reference of the modifiable image capture use case
         val imageCapture = imageCapture ?: return
@@ -290,13 +248,10 @@ class CameraXFragment(
     }
 
     companion object {
-        private const val TAG = "CameraXApp"
-        private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
         const val REQUEST_CODE_PERMISSIONS = 10
         val REQUIRED_PERMISSIONS =
             mutableListOf(
                 Manifest.permission.CAMERA,
-                Manifest.permission.RECORD_AUDIO
             ).apply {
                 if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
                     add(Manifest.permission.WRITE_EXTERNAL_STORAGE)

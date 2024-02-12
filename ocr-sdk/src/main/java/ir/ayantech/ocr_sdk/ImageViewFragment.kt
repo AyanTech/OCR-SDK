@@ -59,7 +59,7 @@ class ImageViewFragment(
         accessViews {
             dialog = WaitingDialog(
                 requireContext(),
-                "در حال فشرده سازی..."
+                getString(R.string.ocr_compressing)
             )
             capturedPictureIv.setImageURI(
                 if (backImageUri.isNull()) frontImageUri else backImageUri
@@ -120,7 +120,7 @@ class ImageViewFragment(
         val largeSize = maxOf(width, height)
         val scaleFactor: Float = 1920f / largeSize.toFloat()
 
-        if (largeSize > 2000) {
+        if (largeSize > 1000) {
             //large image
             outputStream = ByteArrayOutputStream()
             val newBitmap = Bitmap.createScaledBitmap(
@@ -282,7 +282,7 @@ class ImageViewFragment(
             EndPoint_GetCardOcrResult -> {
                 Log.d(TAG, "uploading -> EndPoint_GetCardOcrResult api call = fileID is= $value")
 
-                dialog.changeText("در حال دریافت اطلاعات...")
+                dialog.changeText(getString(R.string.ocr_downloading_data))
                 ocrActivity.runOnUiThread {
                     Log.d(TAG, "callingApi: ")
                     ayanApi.ayanCall<GetCardOcrResult.Output>(
@@ -300,7 +300,7 @@ class ImageViewFragment(
 
 
                                         val data = ArrayList<GetCardOcrResult.Result>()
-                                        response.Result.forEach {
+                                        response.Result?.forEach {
                                             data.add(it)
                                         }
                                         ocrActivity.sendResult(data)
@@ -323,7 +323,7 @@ class ImageViewFragment(
                                         backImageUri = null
                                         Toast.makeText(
                                             context,
-                                            "لطفا مجددا تلاش کنید",
+                                            getString(R.string.ocr_retry_again),
                                             Toast.LENGTH_SHORT
                                         )
                                             .show()

@@ -29,16 +29,17 @@ class MainActivity : WhyGoogleActivity<ActivityMainBinding>() {
     binding.btnOCR.setOnClickListener{
 
         OCRConfig.builder()
-            .ocrContext(this)
-            .baseUrl("https://core.pishkhan24.ayantech.ir/webservices/Proxy.svc/")
-            .token("6C043F55214F45C3B08609AFBBE7E009")
-            .uploadImageEndPoint("UploadNewCardOcrImage")
-            .getResultEndPoint("GetCardOcrResult")
+            .setContext(this)
+            .setBaseUrl("https://core.pishkhan24.ayantech.ir/webservices/Proxy.svc/")
+            .setToken("6C043F55214F45C3B08609AFBBE7E009")
+            .setUploadImageEndPoint("UploadNewCardOcrImage")
+            .setGetResultEndPoint("GetCardOcrResult")
             .build()
 
        startActivity(Intent(this, OcrActivity::class.java).also {
-           it.putExtra("cardType", "BankCard")
-           it.putExtra("className", "ir.ayantech.sdk_ocr.MainActivity")
+           it.putExtra("cardType", "one of the acceptable cardtypes")
+           it.putExtra("className", "full.package.name.MainActivity")
+           it.putExtra("extraInfo", "anything you need to retrive when return")
        })
         finish()
      }
