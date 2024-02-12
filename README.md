@@ -66,7 +66,7 @@ startActivity(Intent(this, OcrActivity::class.java).also {
 
 ## Get Result
 
-Recive Desire Result form Intent In Activity Like this Example:
+Receive desire result form intent in activity like below Example:
 
 |  Supported Card Types | Explenaition |
 | ------ | ------ | 
