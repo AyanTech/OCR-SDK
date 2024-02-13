@@ -105,7 +105,7 @@ class ImageViewFragment(
     private fun encodeImageToBase64(imageUri: Uri? = null): String {
 
 
-        val bitmap = MediaStore.Images.Media.getBitmap(
+        val bitmap = MediaStore.Images.Media.ggetBitmap(
             ocrActivity.contentResolver,
             imageUri
         )
