@@ -69,9 +69,9 @@ class ImageViewFragment(
 
     private fun checkIfCallingAPI() {
         if (fileID.isNull())
-            EndPoint_UploadCardOCR?.let { it1 -> callingApi(endPointName = it1) }
+            callingApi(endPointName = EndPoint_UploadCardOCR)
         else
-            EndPoint_GetCardOcrResult?.let { it1 -> callingApi(endPointName = it1) }
+            callingApi(endPointName = EndPoint_GetCardOcrResult)
     }
 
     override fun viewListeners() {
@@ -222,54 +222,57 @@ class ImageViewFragment(
                 job.invokeOnCompletion {
                     try {
                         lifecycleScope.launch(Dispatchers.Main) {
-                        if (!uploading) {
-                            Log.d(TAG, "!uploading")
-                            dialog.changeText("در حال ارسال تصاویر...")
-                            ayanApi.ayanCall<UploadNewCardOcrImage.Output>(
-                                endPoint = EndPoint_UploadCardOCR,
-                                input =
-                                UploadNewCardOcrImage.Input(
-                                    ImageArray = listOf(
-                                        OnCard,
-                                        backOfCard
-                                    ).filter { it.isNotEmpty() },
-                                    Type = ocrActivity.cardType
-                                ),
-                                ayanCallStatus = AyanCallStatus {
-                                    success { output ->
-                                        val response = output.response?.Parameters
-                                        uploading = true
-                                        Log.d(TAG, "callingApi File ID: ${response?.FileID}")
-                                        fileID = response?.FileID
-                                        EndPoint_GetCardOcrResult?.let {
-                                            callingApi(
-                                                endPointName = it,
-                                                response?.FileID
+                            if (!uploading) {
+                                Log.d(TAG, "!uploading")
+                                dialog.changeText("در حال ارسال تصاویر...")
+                                ayanApi.ayanCall<UploadNewCardOcrImage.Output>(
+                                    endPoint = EndPoint_UploadCardOCR,
+                                    input =
+                                    UploadNewCardOcrImage.Input(
+                                        ImageArray = listOf(
+                                            OnCard,
+                                            backOfCard
+                                        ).filter { it.isNotEmpty() },
+                                        Type = ocrActivity.cardType
+                                    ),
+                                    ayanCallStatus = AyanCallStatus {
+                                        success { output ->
+                                            val response = output.response?.Parameters
+                                            uploading = true
+                                            Log.d(TAG, "callingApi File ID: ${response?.FileID}")
+                                            fileID = response?.FileID
+                                            EndPoint_GetCardOcrResult?.let {
+                                                callingApi(
+                                                    endPointName = it,
+                                                    response?.FileID
+                                                )
+                                            }
+                                        }
+                                        failure {
+                                            dialog.hideDialog()
+                                            this.ayanCommonCallingStatus?.dispatchFail(it)
+                                            Log.d(
+                                                TAG,
+                                                "calling UploadNewCardOcrImage api failure: $it"
                                             )
+
                                         }
                                     }
-                                    failure {
-                                        dialog.hideDialog()
-                                        this.ayanCommonCallingStatus?.dispatchFail(it)
-                                        Log.d(TAG, "calling UploadNewCardOcrImage api failure: $it")
+                                )
 
-                                    }
+                            } else {
+                                EndPoint_GetCardOcrResult?.let {
+                                    callingApi(
+                                        endPointName = it,
+                                        fileID
+                                    )
+                                    Log.d(
+                                        TAG,
+                                        "uploading -> EndPoint_GetCardOcrResult api call = fileID is= $fileID"
+                                    )
+
                                 }
-                            )
-
-                        } else {
-                            EndPoint_GetCardOcrResult?.let {
-                                callingApi(
-                                    endPointName = it,
-                                    fileID
-                                )
-                                Log.d(
-                                    TAG,
-                                    "uploading -> EndPoint_GetCardOcrResult api call = fileID is= $fileID"
-                                )
-
                             }
-                        }
                         }
                     } catch (e: Exception) {
                         dialog.hideDialog()
@@ -310,25 +313,30 @@ class ImageViewFragment(
 
                                         delayed(response.NextCallInterval) {
                                             callingApi(
-                                                endPointName = EndPoint_GetCardOcrResult!!,
+                                                endPointName = EndPoint_GetCardOcrResult,
                                                 value
                                             )
                                         }
                                     }
 
                                     HookApiCallStatusEnum.Failed.name -> {
-                                        fileID = null
-                                        dialog.hideDialog()
-                                        frontImageUri = null
-                                        backImageUri = null
-                                        Toast.makeText(
-                                            context,
-                                            getString(R.string.ocr_retry_again),
-                                            Toast.LENGTH_SHORT
-                                        )
-                                            .show()
-                                        compressing = false
-                                        uploading = false
+
+                                        if (response.Retryable) {
+                                            dialog.hideDialog()
+                                            checkIfCallingAPI()
+                                        } else {
+                                            fileID = null
+                                            dialog.hideDialog()
+                                            frontImageUri = null
+                                            backImageUri = null
+                                            Toast.makeText(
+                                                context,
+                                                getString(R.string.ocr_retry_again),
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                            compressing = false
+                                            uploading = false
+                                        }
                                     }
                                 }
                             }

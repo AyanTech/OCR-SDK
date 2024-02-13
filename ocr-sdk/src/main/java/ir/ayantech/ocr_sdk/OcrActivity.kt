@@ -1,14 +1,12 @@
 package ir.ayantech.ocr_sdk
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import com.bumptech.glide.Glide.init
 import ir.ayantech.ayannetworking.api.AyanApi
 import ir.ayantech.ayannetworking.api.AyanCommonCallStatus
 import ir.ayantech.ayannetworking.api.CallingState
@@ -27,7 +25,7 @@ import ir.ayantech.whygoogle.helper.isNull
 open class OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
 
 
-    lateinit var testActivity: AppCompatActivity
+    lateinit var originActivity: AppCompatActivity
     var cardType = ""
     var extraInfo = ""
     lateinit var ayanAPI: AyanApi
@@ -49,11 +47,10 @@ open class OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
         if (className != null) {
             try {
                 val clazz = Class.forName(className)
-                testActivity = clazz.newInstance() as AppCompatActivity
+                originActivity = clazz.newInstance() as AppCompatActivity
             } catch (e: Exception) {
                 Log.d("ocrActivity", "getIntentData exception: $e")
             }
-
         }
     }
 
@@ -64,12 +61,12 @@ open class OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
         val className = intent.getStringExtra("className")
         if (className != null) {
             val clazz = Class.forName(className)
-            testActivity = clazz.newInstance() as AppCompatActivity
+            originActivity = clazz.newInstance() as AppCompatActivity
         }
     }
 
     fun sendResult(dataList: ArrayList<GetCardOcrResult.Result>) {
-        startActivity(Intent(this, testActivity::class.java).also {
+        startActivity(Intent(this, originActivity::class.java).also {
             it.putParcelableArrayListExtra("GetCardOcrResult", dataList)
             it.putExtra("cardType", cardType)
             it.putExtra("extraInfo", extraInfo)
@@ -79,7 +76,7 @@ open class OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
 
     fun finishActivity() {
 
-        startActivity(Intent(this, testActivity::class.java))
+        startActivity(Intent(this, originActivity::class.java))
         finish()
     }
 

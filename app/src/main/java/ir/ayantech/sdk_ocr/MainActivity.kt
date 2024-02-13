@@ -37,10 +37,9 @@ class MainActivity : WhyGoogleActivity<ActivityMainBinding>() {
             .build()
 
        startActivity(Intent(this, OcrActivity::class.java).also {
-           it.putExtra("cardType", "one of the acceptable cardtypes")
-           it.putExtra("className", "full.package.name.MainActivity")
-           it.putExtra("extraInfo", "anything you need to retrive when return")
-       })
+           it.putExtra("cardType", "VehicleCard")
+           it.putExtra("className", "ir.ayantech.sdk_ocr.MainActivity")
+        })
         finish()
      }
     }

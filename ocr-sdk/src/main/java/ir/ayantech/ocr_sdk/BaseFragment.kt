@@ -1,5 +1,6 @@
 package ir.ayantech.ocr_sdk
 
+import android.graphics.Camera
 import android.view.KeyEvent
 import android.widget.Toast
 import androidx.viewbinding.ViewBinding
@@ -30,16 +31,11 @@ abstract class BaseFragment<T : ViewBinding> : WhyGoogleFragment<T>() {
     }
 
     override fun onBackPressed(): Boolean {
-
-        return if ((getFragmentCount() ?: 1) > 1) {
             when (getTopFragment()) {
-                else -> ocrActivity.finishActivity()
-
+                is CameraXFragment -> ocrActivity.finishActivity()
+                is ImageViewFragment -> start(CameraXFragment())
             }
-            true
-        } else {
-            super.onBackPressed()
-        }
+        return true
     }
 
     fun showToast(text: String, length: Int = Toast.LENGTH_SHORT) {

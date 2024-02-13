@@ -14,6 +14,7 @@ class GetCardOcrResult {
         val CardID: String,
         val Status: String,
         val NextCallInterval: Long,
+        val Retryable: Boolean,
     )
 
     data class Result(
