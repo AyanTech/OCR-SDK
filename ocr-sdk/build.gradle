@@ -7,13 +7,13 @@ plugins {
 
 android {
     namespace 'ir.ayantech.ocr_sdk'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         minSdk 24
-        targetSdk 33
-        versionCode 5
-        versionName "0.0.5"
+        targetSdk 34
+        versionCode 6
+        versionName "0.0.6"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -109,7 +109,7 @@ afterEvaluate {
                 artifactId = 'ocr-sdk'
 
                 // Version Library Name (Example : "1.0.0")
-                version = '0.0.5'
+                version = '0.0.6'
             }
         }
     }
