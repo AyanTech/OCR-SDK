@@ -225,6 +225,7 @@ class ImageViewFragment(
                             if (!uploading) {
                                 Log.d(TAG, "!uploading")
                                 dialog.changeText("در حال ارسال تصاویر...")
+                                ayanApi.timeout = 90
                                 ayanApi.ayanCall<UploadNewCardOcrImage.Output>(
                                     endPoint = EndPoint_UploadCardOCR,
                                     input =
@@ -288,6 +289,7 @@ class ImageViewFragment(
                 dialog.changeText(getString(R.string.ocr_downloading_data))
                 ocrActivity.runOnUiThread {
                     Log.d(TAG, "callingApi: ")
+                    ayanApi.timeout = 10
                     ayanApi.ayanCall<GetCardOcrResult.Output>(
                         endPoint = EndPoint_GetCardOcrResult!!,
                         input = value?.let { GetCardOcrResult.Input(FileID = it) },

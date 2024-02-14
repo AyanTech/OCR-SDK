@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import ir.ayantech.ocr_sdk.OCRConfig
 import ir.ayantech.ocr_sdk.Constant
 import ir.ayantech.ocr_sdk.OcrActivity
+import ir.ayantech.ocr_sdk.OcrInitializer
 import ir.ayantech.ocr_sdk.model.GetCardOcrResult
 import ir.ayantech.sdk_ocr.databinding.ActivityMainBinding
 import ir.ayantech.whygoogle.activity.WhyGoogleActivity
@@ -47,7 +48,7 @@ class MainActivity : WhyGoogleActivity<ActivityMainBinding>() {
         OCRConfig.builder()
             .setContext(this)
             .setBaseUrl("https://core.pishkhan24.ayantech.ir/webservices/Proxy.svc/")
-            .setToken("6C043F55214F45C3B08609AFBBE7E009")
+            .setToken("sdsd")
             .setUploadImageEndPoint("UploadNewCardOcrImage")
             .setGetResultEndPoint("GetCardOcrResult")
             .build()

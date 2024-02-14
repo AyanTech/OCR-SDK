@@ -39,7 +39,6 @@ class ConfigBuilder private constructor() {
         this.getResultEndPoint = getResultEndPoint
     }
 
-
     fun build(): OCRConfig {
         val missingValue = "A required value for setting configuration wasn't provided: "
         requireNotNull(token) { missingValue + "token" }
@@ -58,7 +57,6 @@ class ConfigBuilder private constructor() {
         fun create() = ConfigBuilder()
     }
 }
-
 data class OCRConfig(private val builder: ConfigBuilder) {
 
     val token: String = builder.token!!

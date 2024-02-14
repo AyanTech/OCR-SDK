@@ -123,7 +123,7 @@ open class OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
             defaultBaseUrl = baseUrl,
             AyanCommonCallStatus {
                 failure {
-                    if (it.failureCode == "G00002") {
+                    if (it.failureCode == "G00002" || it.failureCode == "GR0004" ) {
                         OneOptionDialog(
                             context = this@OcrActivity,
                             title = it.failureMessage,

@@ -7,7 +7,7 @@ import ir.ayantech.ocr_sdk.Constant.EndPoint_UploadCardOCR
 import ir.ayantech.ocr_sdk.Constant.Token
 
 class OcrInitializer {
-
+    @Deprecated("This method deprecated.", ReplaceWith("OCRConfig.builder()"),DeprecationLevel.ERROR)
         fun setConfig(
             token: String,
             baseUrl: String,
