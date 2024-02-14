@@ -23,10 +23,26 @@ class MainActivity : WhyGoogleActivity<ActivityMainBinding>() {
         val extras = intent.extras
         val data = extras?.getParcelableArrayList<GetCardOcrResult.Result>("GetCardOcrResult")
         val cardType = intent.getStringExtra("cardType")
-         Log.d("asdasdkjahdkjahskjd", "GetCardOcrResult: $data")
-         Log.d("asdasdkjahdkjahskjd", "cardType: $cardType")
+        binding.tvResponse.text = "$data"
+        Log.d("asdasdkjahdkjahskjd", "GetCardOcrResult: $data")
+        Log.d("asdasdkjahdkjahskjd", "cardType: $cardType")
 
-    binding.btnOCR.setOnClickListener{
+        binding.btnOcrCar.setOnClickListener {
+            callApi("VehicleCard",false)
+
+        }
+        binding.btnIdCard.setOnClickListener {
+            callApi("NationalCard",true)
+
+        }
+        binding.btnOcrBank.setOnClickListener {
+            callApi("BankCard",true)
+
+        }
+    }
+
+    fun callApi(cardType: String , singlePhoto:Boolean) {
+
 
         OCRConfig.builder()
             .setContext(this)
@@ -36,13 +52,14 @@ class MainActivity : WhyGoogleActivity<ActivityMainBinding>() {
             .setGetResultEndPoint("GetCardOcrResult")
             .build()
 
-       startActivity(Intent(this, OcrActivity::class.java).also {
-           it.putExtra("cardType", "VehicleCard")
-           it.putExtra("className", "ir.ayantech.sdk_ocr.MainActivity")
+        startActivity(Intent(this, OcrActivity::class.java).also {
+            it.putExtra("cardType", cardType)
+            it.putExtra("singlePhoto", singlePhoto)
+            it.putExtra("className", "ir.ayantech.sdk_ocr.MainActivity")
         })
         finish()
-     }
     }
+
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)

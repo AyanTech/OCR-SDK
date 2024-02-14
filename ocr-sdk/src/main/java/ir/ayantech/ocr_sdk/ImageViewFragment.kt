@@ -77,7 +77,7 @@ class ImageViewFragment(
     override fun viewListeners() {
 
         binding.btnTakePhoto.setOnClickListener {
-            if (ocrActivity.cardType.equals("BANKCARD")) {
+            if (ocrActivity.singlePhoto) {
                 checkIfCallingAPI()
                 return@setOnClickListener
             }
@@ -324,9 +324,13 @@ class ImageViewFragment(
                                         if (response.Retryable) {
                                             dialog.hideDialog()
                                             checkIfCallingAPI()
+                                            binding.btnTakePhoto.text =
+                                                getString(R.string.retry_send)
                                         } else {
                                             fileID = null
                                             dialog.hideDialog()
+                                            backImageUri?.let { back -> deleteImage(back) }
+                                            frontImageUri?.let { front -> deleteImage(front) }
                                             frontImageUri = null
                                             backImageUri = null
                                             Toast.makeText(
@@ -336,6 +340,9 @@ class ImageViewFragment(
                                             ).show()
                                             compressing = false
                                             uploading = false
+
+                                            start(CameraXFragment())
+
                                         }
                                     }
                                 }
@@ -360,6 +367,8 @@ class ImageViewFragment(
         dialog.hideDialog()
         compressing = false
         uploading = false
+        backImageUri?.let { back -> deleteImage(back) }
+        frontImageUri?.let { front -> deleteImage(front) }
         super.onDestroy()
     }
 

@@ -13,11 +13,51 @@
 
 
     <Button
-        android:id="@+id/btnOCR"
-        android:layout_width="wrap_content"
+        android:id="@+id/btnOcrBank"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="OCR" />
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:text="OCR Bank" />
+
+    <Button
+        android:id="@+id/btnOcrCar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnOcrBank"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:text="OCR Car" />
+
+    <Button
+        android:id="@+id/btnIdCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnOcrCar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:text="OCR Id" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnIdCard">
+        <TextView
+            android:id="@+id/tvResponse"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:layout_margin="5dp"
+             android:layout_marginTop="10dp" />
+    </ScrollView>
+
+
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="25dp"

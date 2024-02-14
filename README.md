@@ -10,7 +10,7 @@ Easily integrate optical character recognition (OCR) capabilities into your Andr
 | ------ | 
 |VehicleCards |
 |BankCards|
-|NationalIDs|
+|NationalCard|
 
 ### More:
 - Base64 Image Input: Capture images and send them in Base64 format for analysis.
@@ -60,6 +60,7 @@ Kotlin
 startActivity(Intent(this, OcrActivity::class.java).also {
     it.putExtra("cardType", "VehicleCard") // or "BankCard" or "NationalID"
     it.putExtra("className", "your.app.package.MainActivity")
+    it.putExtra("singlePhoto", singlePhoto) // true takes a single image
     it.putExtra("extraInfo", "optional data to retrieve") // optional
 })
 ```

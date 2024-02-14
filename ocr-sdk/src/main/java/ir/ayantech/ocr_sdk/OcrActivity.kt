@@ -28,6 +28,7 @@ open class OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
     lateinit var originActivity: AppCompatActivity
     var cardType = ""
     var extraInfo = ""
+    var singlePhoto = false
     lateinit var ayanAPI: AyanApi
     var dialog: WaitingDialog? = null
     override val binder: (LayoutInflater) -> OcrActivityBinding
@@ -43,6 +44,7 @@ open class OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
         if (intent == null) return
         cardType = intent.getStringExtra("cardType").toString().uppercase()
         extraInfo = intent.getStringExtra("extraInfo").toString().uppercase()
+        singlePhoto = intent.getBooleanExtra("singlePhoto",false)
         val className = intent.getStringExtra("className")
         if (className != null) {
             try {
@@ -95,10 +97,11 @@ open class OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
 
         ActivityCompat.requestPermissions(
             this,
-            arrayOf(android.Manifest.permission.CAMERA,
-            android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            android.Manifest.permission.READ_EXTERNAL_STORAGE
-            ),  1
+            arrayOf(
+                android.Manifest.permission.CAMERA,
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                android.Manifest.permission.READ_EXTERNAL_STORAGE
+            ), 1
         )
     }
 

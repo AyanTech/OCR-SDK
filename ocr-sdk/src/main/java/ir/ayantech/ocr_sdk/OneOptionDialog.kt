@@ -1,6 +1,7 @@
 package ir.ayantech.ocr_sdk
 
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.core.content.ContextCompat

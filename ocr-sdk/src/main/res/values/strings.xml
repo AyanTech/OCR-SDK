@@ -8,4 +8,5 @@
     <string name="ocr_retry_again">لطفا مجددا تلاش کنید</string>
     <string name="ocr_downloading_data">در حال دریافت اطلاعات...</string>
     <string name="ocr_compressing">در حال فشرده سازی...</string>
+    <string name="retry_send">ارسال مجدد</string>
 </resources>
