@@ -9,9 +9,9 @@
         android:id="@+id/backIv"
         android:layout_width="32dp"
         android:layout_height="32dp"
-        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:layout_marginRight="5dp"
+        android:layout_marginStart="5dp"
         android:padding="8dp"
         android:src="@drawable/ocr_ic_arrow_left_header"
         app:tint="@color/ocr_ic_close_tint" />
@@ -23,19 +23,19 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerInParent="true"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
         android:gravity="center"
-        android:layout_toLeftOf="@id/lightIv"
-        android:layout_toRightOf="@+id/backIv" />
+        android:layout_toEndOf="@id/lightIv"
+        android:layout_toStartOf="@+id/backIv" />
 
     <ImageView
         android:id="@+id/lightIv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="5dp"
+        android:layout_marginStart="5dp"
         android:src="@drawable/ocr_ic_flash_off"
         app:tint="@color/ocr_ic_close_tint" />
 

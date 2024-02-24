@@ -5,9 +5,11 @@ import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
@@ -23,10 +25,13 @@ import androidx.core.content.ContextCompat
 import ir.ayantech.ocr_sdk.component.init
 import ir.ayantech.ocr_sdk.databinding.OcrFragmentCameraxBinding
 import ir.ayantech.whygoogle.helper.isNull
+import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.IOException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
+import kotlin.math.roundToInt
 
 typealias LumaListener = (luma: Double) -> Unit
 
@@ -94,8 +99,8 @@ class CameraXFragment(
             }
             // Set up the listeners for take photo and video capture buttons
             captureB.setOnClickListener {
-                takePhoto()
-            }
+               takePhoto()
+              }
         }
         val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
         val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
@@ -127,9 +132,6 @@ class CameraXFragment(
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-    }
 
     private fun requestPermissions() {
         activityResultLauncher.launch(REQUIRED_PERMISSIONS)
@@ -149,16 +151,21 @@ class CameraXFragment(
         }
     }
     private fun takePhoto() {
-        // Get a stable reference of the modifiable image capture use case
+        val name = System.currentTimeMillis().toString()
+
+        // Get the cache directory
+        val cacheDir = context.cacheDir
+         // Get a stable reference of the modifiable image capture use case
         val imageCapture = imageCapture ?: return
         // Create time stamped name and MediaStore entry.
-        val name = System.currentTimeMillis().toString()
         val contentValues = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, name)
             put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
                 put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/CameraX-Image")
             }
+     //    put(MediaStore.MediaColumns.IS_PENDING, 1)
+
         }
         // Create output options object which contains file + metadata
         val outputOptions = ImageCapture.OutputFileOptions
@@ -217,7 +224,6 @@ class CameraXFragment(
                     it.setSurfaceProvider(binding.viewFinder.surfaceProvider)
                 }
             imageCapture = ImageCapture.Builder()
-                .setFlashMode(ImageCapture.FLASH_MODE_AUTO)
                 .setFlashMode(ImageCapture.FLASH_MODE_OFF)
                 .build()
 

@@ -20,6 +20,7 @@ import ir.ayantech.ocr_sdk.databinding.OcrActivityBinding
 import ir.ayantech.ocr_sdk.model.GetCardOcrResult
 import ir.ayantech.whygoogle.activity.WhyGoogleActivity
 import ir.ayantech.whygoogle.helper.isNull
+import java.io.File
 
 
 open class OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
@@ -36,8 +37,19 @@ open class OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
     override val containerId: Int = R.id.fragmentContainerFl
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        getIntentData()
+        val dir = filesDir.absolutePath
+        val f0 = File(dir, "Pictures/CameraX-Image")
+         if (f0.isDirectory) {
+            val children = f0.list()
+            if (children != null) {
+                for (i in children.indices) {
+                    File(dir, children[i]).delete()
+                }
+            }
+        }
+         getIntentData()
         handleStartFragment()
+
     }
 
     private fun getIntentData() {
@@ -159,5 +171,10 @@ open class OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
 
     fun showToast(text: String, length: Int = Toast.LENGTH_SHORT) {
         Toast.makeText(this, text, length).show()
+    }
+
+    override fun onDestroy() {
+
+        super.onDestroy()
     }
 }

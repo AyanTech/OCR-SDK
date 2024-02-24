@@ -2,6 +2,7 @@ package ir.ayantech.ocr_sdk
 
 import android.graphics.Camera
 import android.view.KeyEvent
+import android.view.View
 import android.widget.Toast
 import androidx.viewbinding.ViewBinding
 import ir.ayantech.whygoogle.fragment.WhyGoogleFragment
@@ -26,6 +27,7 @@ abstract class BaseFragment<T : ViewBinding> : WhyGoogleFragment<T>() {
 
     override fun onCreate() {
         super.onCreate()
+       ocrActivity.window.decorView.layoutDirection = View.LAYOUT_DIRECTION_RTL
         init()
         viewListeners()
     }
@@ -33,7 +35,6 @@ abstract class BaseFragment<T : ViewBinding> : WhyGoogleFragment<T>() {
     override fun onBackPressed(): Boolean {
             when (getTopFragment()) {
                 is CameraXFragment -> ocrActivity.finishActivity()
-                is ImageViewFragment -> start(CameraXFragment())
             }
         return true
     }

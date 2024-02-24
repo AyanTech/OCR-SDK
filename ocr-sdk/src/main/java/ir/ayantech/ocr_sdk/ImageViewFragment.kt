@@ -2,6 +2,7 @@ package ir.ayantech.ocr_sdk
 
 import android.database.Cursor
 import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
@@ -11,6 +12,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
+import com.bumptech.glide.Priority
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import ir.ayantech.ayannetworking.api.AyanCallStatus
 import ir.ayantech.ocr_sdk.Constant.EndPoint_GetCardOcrResult
 import ir.ayantech.ocr_sdk.Constant.EndPoint_UploadCardOCR
@@ -57,13 +64,17 @@ class ImageViewFragment(
 
     override fun init() {
         accessViews {
+
             dialog = WaitingDialog(
                 requireContext(),
                 getString(R.string.ocr_compressing)
             )
-            capturedPictureIv.setImageURI(
-                if (backImageUri.isNull()) frontImageUri else backImageUri
-            )
+          Glide.with(ocrActivity)
+                .load(Uri.parse((if (backImageUri.isNull()) frontImageUri else backImageUri).toString()))
+                .dontAnimate()
+                .priority(Priority.IMMEDIATE)
+                .into(capturedPictureIv)
+
         }
     }
 
@@ -137,15 +148,23 @@ class ImageViewFragment(
 
     }
 
-
+    override fun onBackPressed(): Boolean {
+        binding.btnTryAgain.performClick()
+       return true
+    }
     private fun deleteImage(imageUri: Uri) {
-        trying {
+        try {
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
+                Log.d(TAG, "deleteImage: call > P")
+
                 val fDelete = File(getRealPathFromURI(imageUri))
                 if (fDelete.exists()) {
+                    Log.d(TAG, "deleteImage: Done > P")
                     fDelete.delete()
                 }
             } else {
+                Log.d(TAG, "deleteImage: call < P")
+
                 val uri = Uri.parse(imageUri.toString())
                 val projection = arrayOf(MediaStore.Images.Media.DATA)
                 val cursor: Cursor? =
@@ -158,7 +177,7 @@ class ImageViewFragment(
                     val file = File(filePath)
                     if (file.exists()) {
                         if (file.delete()) {
-                            Log.d(TAG, "deleteImage: Done")
+                            Log.d(TAG, "deleteImage: Done < P")
                         } else {
                             Log.d(TAG, "deleteImage: Failed")
 
@@ -170,6 +189,8 @@ class ImageViewFragment(
                     cursor.close()
                 }
             }
+        } catch (e: Exception) {
+            Log.d(TAG, "deleteImage: $e")
         }
         compressing = false
         uploading = false
@@ -374,7 +395,4 @@ class ImageViewFragment(
         super.onDestroy()
     }
 
-    override fun onPause() {
-        super.onPause()
-    }
 }

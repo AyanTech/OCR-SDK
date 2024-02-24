@@ -4,23 +4,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/capturedPictureIv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop" />
+        android:scaleType="centerCrop"
+  />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnTakePhoto"
         style="@style/OCR_Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="@dimen/padding_left_right_medium"
         android:layout_marginEnd="@dimen/padding_left_right_medium"
         android:layout_marginBottom="@dimen/margin_40"
-        android:layout_toStartOf="@id/btnTryAgain"
+        android:layout_toEndOf="@id/btnTryAgain"
         android:text="@string/ocr_confirm_image" />
 
     <androidx.appcompat.widget.AppCompatButton
@@ -28,9 +29,9 @@
         style="@style/ocr_stroked_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginEnd="@dimen/padding_left_right_medium"
+        android:layout_marginStart="@dimen/padding_left_right_medium"
         android:layout_marginBottom="@dimen/margin_40"
         android:text="@string/ocr_retry" />
 
