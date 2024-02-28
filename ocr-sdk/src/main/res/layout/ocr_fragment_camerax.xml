@@ -4,15 +4,6 @@
     android:layout_height="match_parent"
     android:background="@color/gray_4">
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/headerRl"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="30dp"
-        android:layout_marginBottom="30dp"
-        android:background="@drawable/ocr_stroke_line" />
 
     <TextView
         android:id="@+id/tvVin"
@@ -21,16 +12,6 @@
         android:layout_height="20dp"
         android:layout_below="@+id/headerRl"
         android:layout_centerHorizontal="true" />
-
-    <androidx.camera.view.PreviewView
-        android:id="@+id/viewFinder"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/headerRl"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="32dp" />
 
 
     <include
@@ -41,16 +22,62 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="@dimen/padding_bottom_top_medium"
-        android:layout_marginTop="@dimen/margin_21"
+        android:layout_marginTop="21dp"
         android:layout_marginEnd="@dimen/padding_bottom_top_medium" />
 
+    <include
+        android:id="@+id/captureA"
+        layout="@layout/ocr_component_image_view"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_below="@id/headerRl"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp" />
 
-    <ImageView
+
+    <include
         android:id="@+id/captureB"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        layout="@layout/ocr_component_image_view"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_below="@id/headerRl"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_toLeftOf="@id/captureA" />
+
+    <TextView
+        android:id="@+id/tvDescB"
+        style="@style/txt_regular_12px_white"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/captureB"
+        android:layout_alignStart="@id/captureB"
+        android:layout_alignEnd="@id/captureB"
+        android:gravity="center"
+        android:text="پشت کارت" />
+
+    <TextView
+        style="@style/txt_regular_12px_white"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/captureA"
+        android:layout_alignStart="@id/captureA"
+        android:layout_alignEnd="@id/captureA"
+        android:gravity="center"
+        android:text="روی کارت" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnSendImages"
+        style="@style/OCR_Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="40dp"
-        android:background="@drawable/ocr_ic_capture" />
+        android:layout_margin="20dp"
+        android:layout_marginTop="@dimen/margin_16"
+        android:enabled="false"
+        android:text="@string/ocr_send" />
 </RelativeLayout>

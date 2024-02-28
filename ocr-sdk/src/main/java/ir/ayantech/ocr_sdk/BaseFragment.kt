@@ -13,12 +13,11 @@ abstract class BaseFragment<T : ViewBinding> : WhyGoogleFragment<T>() {
     //region Initializing..
     val ocrActivity by lazy { requireActivity() as OcrActivity }
     val ayanApi by lazy { ocrActivity.ayanAPI }
-    open val progressBar by lazy { ocrActivity.binding.progressBar }
-    open val showingHeader = true
+     open val showingHeader = true
     open val showingFooter = true
     open val TAG = "OCRLOGS"
     open val icLeftHeaderImageView: Int?
-        get() = R.drawable.ocr_ic_arrow_left_header
+        get() = R.drawable.ocr_ic_arrow
     open val showingRightHeaderIcon = false
     open val isItHomeHeader = false
     //endregion

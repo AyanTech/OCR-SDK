@@ -11,19 +11,18 @@
         <item name="android:maxLines">1</item>
     </style>
 
-
-    <style name="OCR_Button" parent="Widget.AppCompat.Button">
-        <item name="android:background">@drawable/ocr_background_button_blue</item>
-        <item name="android:textColor">@color/ocr_text_button</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:height">@dimen/ocr_button_height</item>
-        <item name="fontFamily">@font/regular</item>
-        <item name="android:paddingLeft">@dimen/margin_16</item>
-        <item name="android:paddingRight">@dimen/margin_16</item>
+    <style name="OCR_Button" parent="@android:style/Widget.Button">
         <item name="android:gravity">center</item>
+        <item name="android:paddingStart">@dimen/margin_16</item>
+        <item name="android:paddingEnd">@dimen/margin_16</item>
         <item name="android:clipToPadding">false</item>
-
+        <item name="android:height">@dimen/ocr_button_height</item>
+        <item name="android:background">@drawable/ocr_back_blue_button</item>
+        <item name="android:foreground">?android:attr/selectableItemBackground</item>
+        <item name="fontFamily">@font/regular</item>
+        <item name="android:fontFamily">@font/regular</item>
+        <item name="android:textSize">@dimen/txt_regular</item>
+        <item name="android:textColor">@color/ocr_white</item>
     </style>
 
     <style name="ocr_stroked_button" parent="@android:style/Widget.Button">
@@ -95,6 +94,11 @@
         <item name="android:textColorPrimary">@color/colorPrimaryDark</item>
         <item name="android:fontFamily">@font/regular</item>
         <item name="fontFamily">@font/regular</item>
+    </style>
+
+    <style name="ocr_image_view"  parent="">
+            <item name="cornerFamily">rounded</item>
+            <item name="cornerSize">20%</item>
     </style>
 
 

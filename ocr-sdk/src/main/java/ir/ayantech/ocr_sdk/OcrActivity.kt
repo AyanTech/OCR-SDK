@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.net.toUri
 import ir.ayantech.ayannetworking.api.AyanApi
 import ir.ayantech.ayannetworking.api.AyanCommonCallStatus
 import ir.ayantech.ayannetworking.api.CallingState
@@ -37,16 +38,7 @@ open class OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
     override val containerId: Int = R.id.fragmentContainerFl
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val dir = filesDir.absolutePath
-        val f0 = File(dir, "Pictures/CameraX-Image")
-         if (f0.isDirectory) {
-            val children = f0.list()
-            if (children != null) {
-                for (i in children.indices) {
-                    File(dir, children[i]).delete()
-                }
-            }
-        }
+
          getIntentData()
         handleStartFragment()
 
@@ -102,7 +94,11 @@ open class OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
         }
         init()
         gettingPermissions()
-        start(CameraXFragment())
+        if (singlePhoto) {
+            start(CameraXFragment().also { it.backImageUri = "".toUri() })
+        }else{
+            start(CameraXFragment())
+        }
     }
 
     private fun gettingPermissions() {

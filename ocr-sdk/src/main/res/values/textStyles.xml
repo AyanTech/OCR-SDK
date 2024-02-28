@@ -270,7 +270,10 @@
     <style name="text_normal_gray7" parent="text_normal">
         <item name="android:textColor">@color/ocr_gray_7</item>
     </style>
-
+    <style name="text_normal_white" parent="text_normal">
+        <item name="android:textColor">@color/ocr_white</item>
+        <item name="android:textSize">@dimen/txt_12px</item>
+    </style>
 
     <style name="text_button_secondary" parent="text_button">
         <item name="android:textColor">@color/colorSecondary</item>

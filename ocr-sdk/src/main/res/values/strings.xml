@@ -9,4 +9,6 @@
     <string name="ocr_downloading_data">در حال دریافت اطلاعات...</string>
     <string name="ocr_compressing">در حال فشرده سازی...</string>
     <string name="retry_send">ارسال مجدد</string>
+    <string name="ocr_send">ارسال</string>
+    <string name="ocr_camera_desc">از کارت خود عکس بگیرید</string>
 </resources>
