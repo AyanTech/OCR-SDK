@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gray_4">
+    android:background="@color/ocr_fragment_background">
 
 
     <TextView
@@ -21,9 +21,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginStart="@dimen/padding_bottom_top_medium"
-        android:layout_marginTop="21dp"
-        android:layout_marginEnd="@dimen/padding_bottom_top_medium" />
+         android:layout_marginTop="21dp"
+       />
 
     <include
         android:id="@+id/captureA"

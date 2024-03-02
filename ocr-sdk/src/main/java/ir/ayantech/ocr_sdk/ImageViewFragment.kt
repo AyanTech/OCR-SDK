@@ -69,7 +69,7 @@ class ImageViewFragment(
                 requireContext(),
                 getString(R.string.ocr_compressing)
             )
-          Glide.with(ocrActivity)
+            Glide.with(ocrActivity)
                 .load(Uri.parse((if (backImageUri.isNull()) frontImageUri else backImageUri).toString()))
                 .dontAnimate()
                 .priority(Priority.IMMEDIATE)
@@ -150,7 +150,7 @@ class ImageViewFragment(
 
     override fun onBackPressed(): Boolean {
         binding.btnTryAgain.performClick()
-       return true
+        return true
     }
     private fun deleteImage(imageUri: Uri) {
         try {

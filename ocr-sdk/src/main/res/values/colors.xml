@@ -41,6 +41,7 @@
     <color name="ocr_camera_fill_color">#2B48EC</color>
     <color name="ocr_gray_7">#D8D8D8</color>
     <color name="ocr_white">#FFFFFF</color>
+    <color name="ocr_fragment_background">@color/gray_4</color>
 
     <color name="gray_1">#555770</color>
     <color name="gray_2">#424242</color>

@@ -10,6 +10,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.util.Base64
 import android.util.Log
@@ -18,8 +19,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat.startActivityForResult
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
@@ -37,13 +36,13 @@ import ir.ayantech.whygoogle.helper.isNotNull
 import ir.ayantech.whygoogle.helper.isNull
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.NonCancellable.start
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
 import kotlin.math.roundToInt
+
 
 class CameraXFragment(
 
@@ -93,10 +92,8 @@ class CameraXFragment(
             )
 
             headerRl.init(
-                title = when (frontImageUri.isNull()) {
-                    true -> ocrActivity.getString(R.string.ocr_camera_description_front)
-                    else -> ocrActivity.getString(R.string.ocr_camera_description_back)
-                }
+                title = ocrActivity.getString(R.string.ocr_camera_desc)
+
             ) {
                 ocrActivity.finishActivity()
             }
@@ -106,10 +103,18 @@ class CameraXFragment(
                 tvDescB.visibility = View.GONE
             }
             captureA.circularImg.setOnClickListener {
-                captureAndSaveImage(1)
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P)
+                    start(CustomCameraFragment().also { it.imageNumber = 1 })
+                else captureAndSaveImage(1)
             }
             captureB.circularImg.setOnClickListener {
-                captureAndSaveImage(2)
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P)
+                    start(CustomCameraFragment().also {
+                        it.imageNumber = 2
+                        it.frontImageUri = frontImageUri
+
+                    })
+                else captureAndSaveImage(2)
             }
             btnSendImages.setOnClickListener {
                 checkIfCallingAPI()
@@ -362,7 +367,7 @@ class CameraXFragment(
 
             Constant.EndPoint_GetCardOcrResult -> {
                 Log.d(TAG, "uploading -> EndPoint_GetCardOcrResult api call = fileID is= $value")
-
+                dialog.showDialog()
                 dialog.changeText(getString(R.string.ocr_downloading_data))
                 ocrActivity.runOnUiThread {
                     Log.d(TAG, "callingApi: ")
@@ -441,10 +446,56 @@ class CameraXFragment(
         pictureNumber = imageNumber
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
 
+        /*      // Generating file name
+              val imageName = "test.png"
+              val image = File(ocrActivity.cacheDir, imageName)
+
+              val fileUri = Uri.fromFile(image);
+
+            ;*/
         if (takePictureIntent.resolveActivity(requireActivity().packageManager) != null) {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
         }
     }
+
+    /* private fun takingPhoto() {
+         val name = System.currentTimeMillis().toString()
+
+         val file =
+             File(ocrActivity.cacheDir, "/$name.jpg")
+
+         val outputFileOptions = ImageCapture.OutputFileOptions.Builder(file).build()
+         imageCapture!!.takePicture(outputFileOptions,
+             ContextCompat.getMainExecutor(ocrActivity),
+             object : ImageCapture.OnImageSavedCallback {
+                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
+                     try {
+                         //Image is captured and saved
+                         when (frontImageUri.isNull()) {
+                             true ->
+                                 start(ImageViewFragment().also {
+                                     it.frontImageUri = outputFileResults.savedUri
+                                 })
+
+                             else -> start(
+                                 ImageViewFragment().also {
+                                     it.frontImageUri = frontImageUri
+                                     it.backImageUri = outputFileResults.savedUri
+                                 })
+                         }
+                     } catch (e: IOException) {
+                         Log.d(TAG, "catch $e")
+                     }
+                 }
+
+                 override fun onError(error: ImageCaptureException) {
+                     Log.d(TAG, "onError $error")
+
+                 }
+             }
+         )
+     }*/
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -520,7 +571,8 @@ class CameraXFragment(
 
     override fun onDestroy() {
         coroutineScope.cancel()
-        dialog.hideDialog()
+        if (::dialog.isInitialized)
+            dialog.hideDialog()
         compressing = false
         uploading = false
         backImageUri?.let { back -> deleteImage(back) }

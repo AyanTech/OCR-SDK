@@ -12,43 +12,44 @@ class WaitingDialog(
 
     fun showDialog() {
         if (isShowing) return
-                show()
+        else show()
 
-        }
+    }
+
     fun hideDialog() {
-            if (isShowing) dismiss()
+        if (isShowing) dismiss()
     }
 
-init {
-    setCancelable(false)
-    setCanceledOnTouchOutside(false)
-}
+    init {
+        setCancelable(false)
+        setCanceledOnTouchOutside(false)
+    }
 
-override val binder: (LayoutInflater) -> OcrDialogWaitingBinding
-    get() = OcrDialogWaitingBinding::inflate
+    override val binder: (LayoutInflater) -> OcrDialogWaitingBinding
+        get() = OcrDialogWaitingBinding::inflate
 
-override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
-    initViews()
-    setupActions()
-}
+        initViews()
+        setupActions()
+    }
 
-private fun setupActions() {
-    binding.apply {
-        closeIv.setOnClickListener {
-            dismiss()
+    private fun setupActions() {
+        binding.apply {
+            closeIv.setOnClickListener {
+                dismiss()
+            }
         }
     }
-}
 
-private fun initViews() {
-    binding.tvTitle.text = title
+    private fun initViews() {
+        binding.tvTitle.text = title
 
-}
+    }
 
-fun changeText(value: String) {
-    binding.tvTitle.text = value
+    fun changeText(value: String) {
+        binding.tvTitle.text = value
 
-}
+    }
 }

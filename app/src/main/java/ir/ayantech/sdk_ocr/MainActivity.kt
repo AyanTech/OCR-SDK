@@ -1,9 +1,12 @@
 package ir.ayantech.sdk_ocr
 
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.content.pm.ResolveInfo
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import androidx.core.content.ContextCompat.startActivity
 import ir.ayantech.ocr_sdk.OCRConfig
 import ir.ayantech.ocr_sdk.Constant
 import ir.ayantech.ocr_sdk.OcrActivity
@@ -17,7 +20,7 @@ class MainActivity : WhyGoogleActivity<ActivityMainBinding>() {
     override val binder: (LayoutInflater) -> ActivityMainBinding
         get() = ActivityMainBinding::inflate
     override val containerId: Int = R.id.fragmentContainerFl
-
+    var packageNamee: String =""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Constant.context = this
