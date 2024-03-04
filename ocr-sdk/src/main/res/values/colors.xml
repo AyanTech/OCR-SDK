@@ -43,6 +43,7 @@
     <color name="ocr_white">#FFFFFF</color>
     <color name="ocr_fragment_background">@color/gray_4</color>
     <color name="ocr_dash_color">#2BCEFF</color>
+    <color name="ocr_text_hint">#FFFFFF</color>
 
 
     <color name="gray_1">#555770</color>
