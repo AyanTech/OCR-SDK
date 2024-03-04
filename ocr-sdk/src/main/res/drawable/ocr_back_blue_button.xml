@@ -2,7 +2,7 @@
     <item android:state_enabled="true">
         <shape android:shape="rectangle">
             <corners android:radius="@dimen/margin_12" />
-            <solid android:color="@color/ocr_blue"/>
+            <solid android:color="@color/ocr_button_blue"/>
         </shape>
     </item>
     <item android:state_enabled="false">

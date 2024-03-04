@@ -35,7 +35,7 @@
     <color name="ocr_ic_close_tint">#FFFFFFFF</color>
     <color name="ocr_dialog_color_background">#F2F2F2</color>
     <color name="ocr_back_button_blue">#2B48EC</color>
-    <color name="ocr_blue">#2B48EC</color>
+    <color name="ocr_button_blue">#2B48EC</color>
     <color name="default_divider">@color/ocr_dialog_color_background</color>
     <color name="ocr_text_button">#ffffff</color>
     <color name="ocr_camera_fill_color">#2B48EC</color>

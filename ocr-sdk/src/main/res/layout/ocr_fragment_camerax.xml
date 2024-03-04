@@ -21,7 +21,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-         android:layout_marginTop="21dp"
        />
 
     <include
@@ -75,8 +74,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_margin="20dp"
-        android:layout_marginTop="@dimen/margin_16"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
         android:enabled="false"
         android:text="@string/ocr_send" />
 </RelativeLayout>
