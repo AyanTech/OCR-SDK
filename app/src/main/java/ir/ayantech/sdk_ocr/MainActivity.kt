@@ -3,10 +3,13 @@ package ir.ayantech.sdk_ocr
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat.startActivity
+import androidx.core.content.FileProvider
 import ir.ayantech.ocr_sdk.OCRConfig
 import ir.ayantech.ocr_sdk.Constant
 import ir.ayantech.ocr_sdk.OcrActivity
@@ -14,13 +17,17 @@ import ir.ayantech.ocr_sdk.OcrInitializer
 import ir.ayantech.ocr_sdk.model.GetCardOcrResult
 import ir.ayantech.sdk_ocr.databinding.ActivityMainBinding
 import ir.ayantech.whygoogle.activity.WhyGoogleActivity
+import java.io.File
 
 class MainActivity : WhyGoogleActivity<ActivityMainBinding>() {
 
     override val binder: (LayoutInflater) -> ActivityMainBinding
         get() = ActivityMainBinding::inflate
     override val containerId: Int = R.id.fragmentContainerFl
-    var packageNamee: String =""
+    var packageNamee: String = ""
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Constant.context = this
@@ -32,20 +39,22 @@ class MainActivity : WhyGoogleActivity<ActivityMainBinding>() {
         Log.d("asdasdkjahdkjahskjd", "cardType: $cardType")
 
         binding.btnOcrCar.setOnClickListener {
-            callApi("VehicleCard",false)
+
+
+            callApi("VehicleCard", false)
 
         }
         binding.btnIdCard.setOnClickListener {
-            callApi("NationalCard",true)
+            callApi("NationalCard", true)
 
         }
         binding.btnOcrBank.setOnClickListener {
-            callApi("BankCard",true)
+            callApi("BankCard", true)
 
         }
     }
 
-    fun callApi(cardType: String , singlePhoto:Boolean) {
+    fun callApi(cardType: String, singlePhoto: Boolean) {
 
 
         OCRConfig.builder()

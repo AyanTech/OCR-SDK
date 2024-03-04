@@ -20,6 +20,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
@@ -80,6 +81,24 @@ class CameraXFragment(
                     permissionGranted = false
             }
         }
+    private val contract = registerForActivityResult(ActivityResultContracts.TakePicture()) {
+        if (pictureNumber == 1)
+            frontImageUri = imageUri
+        else
+            backImageUri = imageUri
+
+        statusCheck()
+    }
+
+    lateinit var image: File
+    var imageUri: Uri? = null
+    fun createImageUri(): Uri? {
+        return FileProvider.getUriForFile(
+            ocrActivity,
+            "ir.ayantech.ocr_sdk.fileProvider",
+            image
+        )
+    }
 
 
     override fun onCreate() {
@@ -102,10 +121,22 @@ class CameraXFragment(
                 captureB.circularImageViewParent.visibility = View.GONE
                 tvDescB.visibility = View.GONE
             }
-            captureA.circularImg.setOnClickListener {
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P)
-                    start(CustomCameraFragment().also { it.imageNumber = 1 })
-                else captureAndSaveImage(1)
+
+            binding.captureA.circularImg.setOnClickListener {
+//                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P)
+        /*            start(CustomCameraFragment().also {
+                        it.imageNumber = 1
+                        it.frontImageUri = frontImageUri
+
+                    })*/
+//                else {
+                    val name = System.currentTimeMillis().toString()
+                  image=  File(ocrActivity.filesDir, "$name.png")
+                    pictureNumber = 1
+                    imageUri = createImageUri()
+                    contract.launch(imageUri)
+//                }
+
             }
             captureB.circularImg.setOnClickListener {
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P)
@@ -114,19 +145,18 @@ class CameraXFragment(
                         it.frontImageUri = frontImageUri
 
                     })
-                else captureAndSaveImage(2)
+                else {
+                    val name = System.currentTimeMillis().toString()
+                    image=  File(ocrActivity.filesDir, "$name.png")
+                    pictureNumber = 2
+                    imageUri = createImageUri()
+                    contract.launch(imageUri)
+                }
             }
             btnSendImages.setOnClickListener {
                 checkIfCallingAPI()
             }
         }
-
-        // Request camera permissions
-        /*      if (allPermissionsGranted()) {
-                  startCamera()
-              } else {
-                  requestPermissions()
-              }*/
     }
 
     private fun statusCheck() {
