@@ -80,7 +80,7 @@
     </style>
 
     <style name="txt_regular_12px_white" parent="txt_regular">
-        <item name="android:textColor">@color/ocr_ic_close_tint</item>
+        <item name="android:textColor">@color/ocr_text_hint</item>
         <item name="android:textSize">@dimen/txt_12px</item>
     </style>
 
@@ -244,7 +244,7 @@
     <item name="android:padding">6dp</item>
     </style>-->
     <style name="txt_filter_dis" parent="txt_medium">
-        <item name="android:textColor">@color/ocr_back_button_blue</item>
+        <item name="android:textColor">@color/ocr_stroke_button_blue</item>
         <item name="android:textSize">@dimen/txt_12px</item>
          <item name="android:padding">6dp</item>
 
@@ -285,4 +285,5 @@
     </style>
 
 
+    <color name="ocr_text_hint">#FFFFFF</color>
 </resources>

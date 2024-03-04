@@ -11,4 +11,6 @@
     <string name="retry_send">ارسال مجدد</string>
     <string name="ocr_send">ارسال</string>
     <string name="ocr_camera_desc">از کارت خود عکس بگیرید</string>
+    <string name="card_front">روی کارت</string>
+    <string name="back_card">پشت کارت</string>
 </resources>

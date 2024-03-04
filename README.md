@@ -93,13 +93,17 @@ XML Example:
 > [!Tip]
 >Colors in colors.xml
 ```s
-    <color name="ocr_ic_close_tint">#FFFFFFFF</color>
+     <color name="ocr_ic_close_tint">#FFFFFFFF</color>
     <color name="ocr_dialog_color_background">#F2F2F2</color>
-    <color name="ocr_back_button_blue">#2B48EC</color>
+    <color name="ocr_stroke_button_blue">#2B48EC</color>
+    <color name="ocr_button_blue">#2B48EC</color>
     <color name="default_divider">@color/ocr_dialog_color_background</color>
     <color name="ocr_text_button">#ffffff</color>
     <color name="ocr_camera_fill_color">#2B48EC</color>
     <color name="ocr_gray_7">#D8D8D8</color>
+    <color name="ocr_white">#FFFFFF</color>
+    <color name="ocr_fragment_background">@color/gray_4</color>
+    <color name="ocr_dash_color">#2BCEFF</color>
 ```
 
 > [!Tip]
@@ -117,18 +121,18 @@ XML Example:
 > [!Tip]
 >Styles in styles.xml
 ```s
-   <style name="OCR_Button" parent="Widget.AppCompat.Button">
-        <item name="android:background">@drawable/ocr_background_button_blue</item>
-        <item name="android:textColor">@color/ocr_text_button</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:height">@dimen/ocr_button_height</item>
-        <item name="fontFamily">@font/regular</item>
-        <item name="android:paddingLeft">@dimen/margin_16</item>
-        <item name="android:paddingRight">@dimen/margin_16</item>
+       <style name="ocr_button" parent="@android:style/Widget.Button">
         <item name="android:gravity">center</item>
+        <item name="android:paddingStart">@dimen/margin_16</item>
+        <item name="android:paddingEnd">@dimen/margin_16</item>
         <item name="android:clipToPadding">false</item>
-
+        <item name="android:height">@dimen/ocr_button_height</item>
+        <item name="android:background">@drawable/ocr_back_blue_button</item>
+        <item name="android:foreground">?android:attr/selectableItemBackground</item>
+        <item name="fontFamily">@font/regular</item>
+        <item name="android:fontFamily">@font/regular</item>
+        <item name="android:textSize">@dimen/txt_regular</item>
+        <item name="android:textColor">@color/ocr_white</item>
     </style>
 
     <style name="ocr_stroked_button" parent="@android:style/Widget.Button">
@@ -142,9 +146,8 @@ XML Example:
         <item name="fontFamily">@font/regular</item>
         <item name="android:fontFamily">@font/regular</item>
         <item name="android:textSize">14sp</item>
-        <item name="android:textColor">@color/ocr_back_button_blue</item>
+        <item name="android:textColor">@color/ocr_stroke_button_blue</item>
     </style>
-    
     
 ```
 > [!Tip]

@@ -35,7 +35,7 @@
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnConfirm"
-        style="@style/OCR_Button"
+        style="@style/ocr_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/tv_title"

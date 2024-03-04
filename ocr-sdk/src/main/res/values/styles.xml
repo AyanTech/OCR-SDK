@@ -11,7 +11,7 @@
         <item name="android:maxLines">1</item>
     </style>
 
-    <style name="OCR_Button" parent="@android:style/Widget.Button">
+    <style name="ocr_button" parent="@android:style/Widget.Button">
         <item name="android:gravity">center</item>
         <item name="android:paddingStart">@dimen/margin_16</item>
         <item name="android:paddingEnd">@dimen/margin_16</item>
@@ -36,7 +36,7 @@
         <item name="fontFamily">@font/regular</item>
         <item name="android:fontFamily">@font/regular</item>
         <item name="android:textSize">14sp</item>
-        <item name="android:textColor">@color/ocr_back_button_blue</item>
+        <item name="android:textColor">@color/ocr_stroke_button_blue</item>
     </style>
 
 

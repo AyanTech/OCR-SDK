@@ -34,7 +34,7 @@
 
     <color name="ocr_ic_close_tint">#FFFFFFFF</color>
     <color name="ocr_dialog_color_background">#F2F2F2</color>
-    <color name="ocr_back_button_blue">#2B48EC</color>
+    <color name="ocr_stroke_button_blue">#2B48EC</color>
     <color name="ocr_button_blue">#2B48EC</color>
     <color name="default_divider">@color/ocr_dialog_color_background</color>
     <color name="ocr_text_button">#ffffff</color>
@@ -42,6 +42,8 @@
     <color name="ocr_gray_7">#D8D8D8</color>
     <color name="ocr_white">#FFFFFF</color>
     <color name="ocr_fragment_background">@color/gray_4</color>
+    <color name="ocr_dash_color">#2BCEFF</color>
+
 
     <color name="gray_1">#555770</color>
     <color name="gray_2">#424242</color>
@@ -59,7 +61,6 @@
     <color name="card_green">#00AF54</color>
     <color name="card_orange">#F77F00</color>
     <color name="card_purple">#831CA7</color>
-    <color name="ocr_dash_color">#2BCEFF</color>
 
     //OCR Colors
 

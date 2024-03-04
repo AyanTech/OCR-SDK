@@ -124,34 +124,34 @@ class CameraXFragment(
 
             binding.captureA.circularImg.setOnClickListener {
 //                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P)
-        /*            start(CustomCameraFragment().also {
-                        it.imageNumber = 1
-                        it.frontImageUri = frontImageUri
+                /*            start(CustomCameraFragment().also {
+                                it.imageNumber = 1
+                                it.frontImageUri = frontImageUri
 
-                    })*/
+                            })*/
 //                else {
-                    val name = System.currentTimeMillis().toString()
-                  image=  File(ocrActivity.filesDir, "$name.png")
-                    pictureNumber = 1
-                    imageUri = createImageUri()
-                    contract.launch(imageUri)
+                val name = System.currentTimeMillis().toString()
+                image = File(ocrActivity.filesDir, "$name.png")
+                pictureNumber = 1
+                imageUri = createImageUri()
+                contract.launch(imageUri)
 //                }
 
             }
             captureB.circularImg.setOnClickListener {
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P)
-                    start(CustomCameraFragment().also {
-                        it.imageNumber = 2
-                        it.frontImageUri = frontImageUri
+                /*             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P)
+                                 start(CustomCameraFragment().also {
+                                     it.imageNumber = 2
+                                     it.frontImageUri = frontImageUri
 
-                    })
-                else {
-                    val name = System.currentTimeMillis().toString()
-                    image=  File(ocrActivity.filesDir, "$name.png")
-                    pictureNumber = 2
-                    imageUri = createImageUri()
-                    contract.launch(imageUri)
-                }
+                                 })
+                             else {*/
+                val name = System.currentTimeMillis().toString()
+                image = File(ocrActivity.filesDir, "$name.png")
+                pictureNumber = 2
+                imageUri = createImageUri()
+                contract.launch(imageUri)
+                //     }
             }
             btnSendImages.setOnClickListener {
                 checkIfCallingAPI()
