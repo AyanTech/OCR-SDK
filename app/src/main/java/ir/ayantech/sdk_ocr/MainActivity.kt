@@ -60,7 +60,7 @@ class MainActivity : WhyGoogleActivity<ActivityMainBinding>() {
         OCRConfig.builder()
             .setContext(this)
             .setBaseUrl("https://core.pishkhan24.ayantech.ir/webservices/Proxy.svc/")
-            .setToken("016D5D1CAA694DFABECC3880772D74CF")
+            .setToken("2F4EBA87E9814249A05576810389487F")
             .setUploadImageEndPoint("UploadNewCardOcrImage")
             .setGetResultEndPoint("GetCardOcrResult")
             .build()

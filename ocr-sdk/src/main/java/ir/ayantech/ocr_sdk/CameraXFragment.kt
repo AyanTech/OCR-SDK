@@ -82,6 +82,7 @@ class CameraXFragment(
             }
         }
     private val contract = registerForActivityResult(ActivityResultContracts.TakePicture()) {
+        if(!it)return@registerForActivityResult
         if (pictureNumber == 1)
             frontImageUri = imageUri
         else
@@ -104,6 +105,7 @@ class CameraXFragment(
     override fun onCreate() {
         super.onCreate()
         accessViews {
+            statusCheck()
 
             dialog = WaitingDialog(
                 requireContext(),
@@ -403,7 +405,7 @@ class CameraXFragment(
                     Log.d(TAG, "callingApi: ")
                     ayanApi.timeout = 10
                     ayanApi.ayanCall<GetCardOcrResult.Output>(
-                        endPoint = Constant.EndPoint_GetCardOcrResult!!,
+                        endPoint = Constant.EndPoint_GetCardOcrResult,
                         input = value?.let { GetCardOcrResult.Input(FileID = it) },
                         ayanCallStatus = AyanCallStatus {
                             success { output ->
@@ -454,9 +456,6 @@ class CameraXFragment(
                                             ).show()
                                             compressing = false
                                             uploading = false
-
-                                            start(CameraXFragment())
-
                                         }
                                     }
                                 }
