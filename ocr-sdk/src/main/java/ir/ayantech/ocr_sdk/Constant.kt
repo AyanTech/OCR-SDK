@@ -7,6 +7,11 @@ import ir.ayantech.whygoogle.helper.PreferencesManager
 @SuppressLint("StaticFieldLeak")
 object Constant {
         lateinit var context: Context
+
+    var Application_ID: String
+        get() = PreferencesManager.getInstance(context).read("Application_ID")
+        set(value) = PreferencesManager.getInstance(context)
+            .save("Application_ID", value)
          var EndPoint_UploadCardOCR: String
                 get() = PreferencesManager.getInstance(context).read("EndPoint_UploadCardOCR")
                 set(value) = PreferencesManager.getInstance(context)

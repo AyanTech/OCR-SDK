@@ -26,6 +26,7 @@ import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import ir.ayantech.ayannetworking.api.AyanCallStatus
+import ir.ayantech.ocr_sdk.OcrInitializer.Companion.fileProviderAuthority
 import ir.ayantech.ocr_sdk.component.WaitingDialog
 import ir.ayantech.ocr_sdk.component.init
 import ir.ayantech.ocr_sdk.databinding.OcrFragmentCameraxBinding
@@ -96,7 +97,7 @@ class CameraXFragment(
     fun createImageUri(): Uri? {
         return FileProvider.getUriForFile(
             ocrActivity,
-            "ir.ayantech.ocr_sdk.fileProvider",
+            "${Constant.Application_ID}.provider",
             image
         )
     }

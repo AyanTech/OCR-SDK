@@ -34,7 +34,7 @@
             android:name="androidx.core.content.FileProvider"
             android:grantUriPermissions="true"
             android:exported="false"
-            android:authorities="ir.ayantech.ocr_sdk.fileProvider"
+            android:authorities="${applicationId}.library.file.provider"
             >
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"

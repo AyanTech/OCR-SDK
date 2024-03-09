@@ -16,6 +16,7 @@ import ir.ayantech.ocr_sdk.OcrActivity
 import ir.ayantech.ocr_sdk.OcrInitializer
 import ir.ayantech.ocr_sdk.model.GetCardOcrResult
 import ir.ayantech.sdk_ocr.databinding.ActivityMainBinding
+import ir.ayantech.whygoogle.BuildConfig
 import ir.ayantech.whygoogle.activity.WhyGoogleActivity
 import java.io.File
 
@@ -59,6 +60,7 @@ class MainActivity : WhyGoogleActivity<ActivityMainBinding>() {
 
         OCRConfig.builder()
             .setContext(this)
+            .setApplicationID("ir.ayantech.sdk_ocr")
             .setBaseUrl("https://core.pishkhan24.ayantech.ir/webservices/Proxy.svc/")
             .setToken("2F4EBA87E9814249A05576810389487F")
             .setUploadImageEndPoint("UploadNewCardOcrImage")
