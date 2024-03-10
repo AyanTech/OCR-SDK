@@ -12,8 +12,8 @@ android {
     defaultConfig {
         minSdk 21
         targetSdk 34
-        versionCode 9
-        versionName "0.1.2"
+        versionCode 11
+        versionName "1.0.3-beta01"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -113,7 +113,7 @@ afterEvaluate {
                 artifactId = 'ocr-sdk'
 
                 // Version Library Name (Example : "1.0.0")
-                version = '0.1.2'
+                version = '1.0.3-beta01'
             }
         }
     }
