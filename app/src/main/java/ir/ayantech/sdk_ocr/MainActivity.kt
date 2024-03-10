@@ -59,6 +59,7 @@ class MainActivity : WhyGoogleActivity<ActivityMainBinding>() {
 
 
         OCRConfig.builder()
+            .setContext(this)
             .setApplicationID("ir.ayantech.sdk_ocr")
             .setBaseUrl("https://core.pishkhan24.ayantech.ir/webservices/Proxy.svc/")
             .setToken("2F4EBA87E9814249A05576810389487F")
