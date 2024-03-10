@@ -65,28 +65,28 @@ class CameraXFragment(
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
     var frontImageUri: Uri? by nullableFragmentArgument(null)
     var backImageUri: Uri? by nullableFragmentArgument(null)
-    var pictureNumber  : Int by fragmentArgument(1)
+    var pictureNumber: Int by fragmentArgument(1)
     private var fileID: String? by nullableFragmentArgument(null)
     private lateinit var dialog: WaitingDialog
     private var compressing = false
     private var uploading = false
     private var OnCard: String by fragmentArgument("")
     private var backOfCard: String by fragmentArgument("")
-     var cardType: String by fragmentArgument("")
-     var extraInfo: String by fragmentArgument("")
+    var cardType: String by fragmentArgument("")
+    var extraInfo: String by fragmentArgument("")
 
-    private val activityResultLauncher =
-        registerForActivityResult(
-            ActivityResultContracts.RequestMultiplePermissions()
-        )
-        { permissions ->
-            // Handle Permission granted/rejected
-            var permissionGranted = true
-            permissions.entries.forEach {
-                if (it.key in REQUIRED_PERMISSIONS && !it.value)
-                    permissionGranted = false
+        private val activityResultLauncher =
+            registerForActivityResult(
+                ActivityResultContracts.RequestMultiplePermissions()
+            )
+            { permissions ->
+                // Handle Permission granted/rejected
+                var permissionGranted = true
+                permissions.entries.forEach {
+                    if (it.key in REQUIRED_PERMISSIONS && !it.value)
+                        permissionGranted = false
+                }
             }
-        }
 
 
     var image: File? by nullableFragmentArgument(null)
@@ -106,7 +106,7 @@ class CameraXFragment(
         super.onCreate()
         accessViews {
             statusCheck()
-              val contract = registerForActivityResult(ActivityResultContracts.TakePicture()) {
+            val contract = registerForActivityResult(ActivityResultContracts.TakePicture()) {
                 Log.d(TAG, "contract: $it")
                 if (!it) return@registerForActivityResult
                 if (pictureNumber == 1)
@@ -134,7 +134,10 @@ class CameraXFragment(
             }
 
             binding.captureA.circularImg.setOnClickListener {
-
+                if (!allPermissionsGranted()) {
+                    requestPermissions()
+                    return@setOnClickListener
+                }
                 val name = System.currentTimeMillis().toString()
                 image = File(ocrActivity.filesDir, "$name.png")
                 pictureNumber = 1
@@ -143,7 +146,10 @@ class CameraXFragment(
 
             }
             captureB.circularImg.setOnClickListener {
-
+                if (!allPermissionsGranted()) {
+                    requestPermissions()
+                    return@setOnClickListener
+                }
                 val name = System.currentTimeMillis().toString()
                 image = File(ocrActivity.filesDir, "$name.png")
                 pictureNumber = 2
@@ -227,11 +233,7 @@ class CameraXFragment(
         val REQUIRED_PERMISSIONS =
             mutableListOf(
                 Manifest.permission.CAMERA,
-            ).apply {
-                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
-                    add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                }
-            }.toTypedArray()
+            ).toTypedArray()
     }
 
     override fun init() {
