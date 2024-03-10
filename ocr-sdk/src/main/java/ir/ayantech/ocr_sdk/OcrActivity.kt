@@ -1,6 +1,7 @@
 package ir.ayantech.ocr_sdk
 
 import android.content.Intent
+import android.nfc.Tag
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,6 +9,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.net.toUri
+import com.bumptech.glide.Glide.init
 import ir.ayantech.ayannetworking.api.AyanApi
 import ir.ayantech.ayannetworking.api.AyanCommonCallStatus
 import ir.ayantech.ayannetworking.api.CallingState
@@ -16,11 +18,14 @@ import ir.ayantech.ocr_sdk.Constant.Base_URL
 import ir.ayantech.ocr_sdk.Constant.EndPoint_GetCardOcrResult
 import ir.ayantech.ocr_sdk.Constant.EndPoint_UploadCardOCR
 import ir.ayantech.ocr_sdk.Constant.Token
+import ir.ayantech.ocr_sdk.Constant.context
 import ir.ayantech.ocr_sdk.component.WaitingDialog
 import ir.ayantech.ocr_sdk.databinding.OcrActivityBinding
 import ir.ayantech.ocr_sdk.model.GetCardOcrResult
 import ir.ayantech.whygoogle.activity.WhyGoogleActivity
+import ir.ayantech.whygoogle.helper.fragmentArgument
 import ir.ayantech.whygoogle.helper.isNull
+import ir.ayantech.whygoogle.helper.nullableFragmentArgument
 import java.io.File
 
 
@@ -28,6 +33,7 @@ open class OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
 
 
     lateinit var originActivity: AppCompatActivity
+
     var cardType = ""
     var extraInfo = ""
     var singlePhoto = false
@@ -38,26 +44,33 @@ open class OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
     override val containerId: Int = R.id.fragmentContainerFl
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-         getIntentData()
-        handleStartFragment()
-
+        context = applicationContext
+        getIntentData()
+        if (savedInstanceState == null)
+            handleStartFragment()
     }
 
     private fun getIntentData() {
-        if (intent == null) return
-        cardType = intent.getStringExtra("cardType").toString().uppercase()
-        extraInfo = intent.getStringExtra("extraInfo").toString().uppercase()
-        singlePhoto = intent.getBooleanExtra("singlePhoto",false)
-        val className = intent.getStringExtra("className")
-        if (className != null) {
-            try {
-                val clazz = Class.forName(className)
-                originActivity = clazz.newInstance() as AppCompatActivity
-            } catch (e: Exception) {
-                Log.d("ocrActivity", "getIntentData exception: $e")
+        Log.d("OCRLOGS", "intent: $intent")
+        Log.d("OCRLOGS", "cardType: ${intent.getStringExtra("cardType").toString().uppercase()}")
+
+        if (intent == null) {
+            return
+        } else {
+
+            cardType = intent.getStringExtra("cardType").toString().uppercase()
+            extraInfo = intent.getStringExtra("extraInfo").toString().uppercase()
+            singlePhoto = intent.getBooleanExtra("singlePhoto", false)
+            val className = intent.getStringExtra("className")
+            if (className != null) {
+                try {
+                    val clazz = Class.forName(className)
+                    originActivity = clazz.newInstance() as AppCompatActivity
+                } catch (e: Exception) {
+                    Log.d("ocrActivity", "getIntentData exception: $e")
+                }
             }
-        }
+    }
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -95,9 +108,16 @@ open class OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
         init()
         gettingPermissions()
         if (singlePhoto) {
-            start(CameraXFragment().also { it.backImageUri = "".toUri() })
-        }else{
-            start(CameraXFragment())
+            start(CameraXFragment().also {
+                it.backImageUri = "".toUri()
+                it.cardType = cardType
+                it.extraInfo = extraInfo
+            })
+        } else {
+            start(CameraXFragment().also {
+                it.cardType = cardType
+                it.extraInfo = extraInfo
+            })
         }
     }
 
@@ -131,7 +151,7 @@ open class OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
             defaultBaseUrl = baseUrl,
             AyanCommonCallStatus {
                 failure {
-                    if (it.failureCode == "G00002" || it.failureCode == "GR0004" ) {
+                    if (it.failureCode == "G00002" || it.failureCode == "GR0004") {
                         OneOptionDialog(
                             context = this@OcrActivity,
                             title = it.failureMessage,

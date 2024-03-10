@@ -9,12 +9,8 @@ class ConfigBuilder private constructor() {
     var uploadImageEndPoint: String? = null
     var getResultEndPoint: String? = null
     var applicationID: String? = null
-    var ocrContext: Context? = null
 
-    fun setContext(ocrContext: Context) = apply {
-        Constant.context = ocrContext
-        this.ocrContext = ocrContext
-    }
+
     fun setApplicationID(applicationID: String) = apply {
         Constant.Application_ID = applicationID
         this.applicationID = applicationID
@@ -49,7 +45,6 @@ class ConfigBuilder private constructor() {
         requireNotNull(baseUrl) { missingValue + "baseUrl" }
         requireNotNull(uploadImageEndPoint) { missingValue + "uploadImageEndPoint" }
         requireNotNull(getResultEndPoint) { missingValue + "getResultEndPoint" }
-        requireNotNull(ocrContext) { missingValue + "ocrContext" }
 
         // Consider additional validations or logic as needed
 
@@ -67,7 +62,6 @@ data class OCRConfig(private val builder: ConfigBuilder) {
     val baseUrl: String = builder.baseUrl!!
     val uploadImageEndPoint: String = builder.uploadImageEndPoint!!
     val getResultEndPoint: String = builder.getResultEndPoint!!
-    val ocrContext: Context = builder.ocrContext!!
 
     companion object {
         @JvmStatic

@@ -34,8 +34,10 @@ import ir.ayantech.ocr_sdk.model.GetCardOcrResult
 import ir.ayantech.ocr_sdk.model.HookApiCallStatusEnum
 import ir.ayantech.ocr_sdk.model.UploadNewCardOcrImage
 import ir.ayantech.whygoogle.helper.delayed
+import ir.ayantech.whygoogle.helper.fragmentArgument
 import ir.ayantech.whygoogle.helper.isNotNull
 import ir.ayantech.whygoogle.helper.isNull
+import ir.ayantech.whygoogle.helper.nullableFragmentArgument
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -43,6 +45,7 @@ import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
+import java.io.Serializable
 import kotlin.math.roundToInt
 
 
@@ -60,15 +63,17 @@ class CameraXFragment(
     override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> OcrFragmentCameraxBinding
         get() = OcrFragmentCameraxBinding::inflate
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
-    var frontImageUri: Uri? = null
-    var backImageUri: Uri? = null
-    var pictureNumber = 1
-    private var fileID: String? = null
+    var frontImageUri: Uri? by nullableFragmentArgument(null)
+    var backImageUri: Uri? by nullableFragmentArgument(null)
+    var pictureNumber  : Int by fragmentArgument(1)
+    private var fileID: String? by nullableFragmentArgument(null)
     private lateinit var dialog: WaitingDialog
     private var compressing = false
     private var uploading = false
-    private var OnCard = ""
-    private var backOfCard = ""
+    private var OnCard: String by fragmentArgument("")
+    private var backOfCard: String by fragmentArgument("")
+     var cardType: String by fragmentArgument("")
+     var extraInfo: String by fragmentArgument("")
 
     private val activityResultLauncher =
         registerForActivityResult(
@@ -82,24 +87,18 @@ class CameraXFragment(
                     permissionGranted = false
             }
         }
-    private val contract = registerForActivityResult(ActivityResultContracts.TakePicture()) {
-        if(!it)return@registerForActivityResult
-        if (pictureNumber == 1)
-            frontImageUri = imageUri
-        else
-            backImageUri = imageUri
 
-        statusCheck()
-    }
 
-    lateinit var image: File
-    var imageUri: Uri? = null
+    var image: File? by nullableFragmentArgument(null)
+    var imageUri: Uri? by nullableFragmentArgument(null)
     fun createImageUri(): Uri? {
-        return FileProvider.getUriForFile(
-            ocrActivity,
-            "${Constant.Application_ID}.provider",
-            image
-        )
+        return image?.let {
+            FileProvider.getUriForFile(
+                ocrActivity,
+                "${Constant.Application_ID}.provider",
+                it
+            )
+        }
     }
 
 
@@ -107,7 +106,16 @@ class CameraXFragment(
         super.onCreate()
         accessViews {
             statusCheck()
+              val contract = registerForActivityResult(ActivityResultContracts.TakePicture()) {
+                Log.d(TAG, "contract: $it")
+                if (!it) return@registerForActivityResult
+                if (pictureNumber == 1)
+                    frontImageUri = imageUri
+                else
+                    backImageUri = imageUri
 
+                statusCheck()
+            }
             dialog = WaitingDialog(
                 requireContext(),
                 getString(R.string.ocr_compressing)
@@ -126,35 +134,21 @@ class CameraXFragment(
             }
 
             binding.captureA.circularImg.setOnClickListener {
-//                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P)
-                /*            start(CustomCameraFragment().also {
-                                it.imageNumber = 1
-                                it.frontImageUri = frontImageUri
 
-                            })*/
-//                else {
                 val name = System.currentTimeMillis().toString()
                 image = File(ocrActivity.filesDir, "$name.png")
                 pictureNumber = 1
                 imageUri = createImageUri()
                 contract.launch(imageUri)
-//                }
 
             }
             captureB.circularImg.setOnClickListener {
-                /*             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P)
-                                 start(CustomCameraFragment().also {
-                                     it.imageNumber = 2
-                                     it.frontImageUri = frontImageUri
 
-                                 })
-                             else {*/
                 val name = System.currentTimeMillis().toString()
                 image = File(ocrActivity.filesDir, "$name.png")
                 pictureNumber = 2
                 imageUri = createImageUri()
                 contract.launch(imageUri)
-                //     }
             }
             btnSendImages.setOnClickListener {
                 checkIfCallingAPI()
@@ -244,50 +238,6 @@ class CameraXFragment(
     }
 
     override fun viewListeners() {
-    }
-
-    private fun deleteImage(imageUri: Uri) {
-        try {
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
-                Log.d(TAG, "deleteImage: call > P")
-
-                val fDelete = File(getRealPathFromURI(imageUri))
-                if (fDelete.exists()) {
-                    Log.d(TAG, "deleteImage: Done > P")
-                    fDelete.delete()
-                }
-            } else {
-                Log.d(TAG, "deleteImage: call < P")
-
-                val uri = Uri.parse(imageUri.toString())
-                val projection = arrayOf(MediaStore.Images.Media.DATA)
-                val cursor: Cursor? =
-                    requireActivity().contentResolver.query(uri, projection, null, null, null)
-                if (cursor != null && cursor.moveToFirst()) {
-                    val columnIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA)
-                    val filePath = cursor.getString(columnIndex)
-
-                    // Delete the file
-                    val file = File(filePath)
-                    if (file.exists()) {
-                        if (file.delete()) {
-                            Log.d(TAG, "deleteImage: Done < P")
-                        } else {
-                            Log.d(TAG, "deleteImage: Failed")
-
-                        }
-                    } else {
-                        Log.d(TAG, "deleteImage: Not Exist")
-
-                    }
-                    cursor.close()
-                }
-            }
-        } catch (e: Exception) {
-            Log.d(TAG, "deleteImage: $e")
-        }
-        compressing = false
-        uploading = false
     }
 
     private fun getRealPathFromURI(uri: Uri): String {
@@ -415,9 +365,6 @@ class CameraXFragment(
 
                                     HookApiCallStatusEnum.Successful.name -> {
                                         dialog.hideDialog()
-                                        backImageUri?.let { back -> deleteImage(back) }
-                                        frontImageUri?.let { front -> deleteImage(front) }
-
 
                                         val data = ArrayList<GetCardOcrResult.Result>()
                                         response.Result?.forEach {
@@ -446,8 +393,6 @@ class CameraXFragment(
                                         } else {
                                             fileID = null
                                             dialog.hideDialog()
-                                            backImageUri?.let { back -> deleteImage(back) }
-                                            frontImageUri?.let { front -> deleteImage(front) }
                                             frontImageUri = null
                                             backImageUri = null
                                             Toast.makeText(
@@ -605,8 +550,6 @@ class CameraXFragment(
             dialog.hideDialog()
         compressing = false
         uploading = false
-        backImageUri?.let { back -> deleteImage(back) }
-        frontImageUri?.let { front -> deleteImage(front) }
         super.onDestroy()
     }
 }
