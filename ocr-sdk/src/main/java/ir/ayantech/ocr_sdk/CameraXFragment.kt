@@ -139,7 +139,7 @@ class CameraXFragment(
                     return@setOnClickListener
                 }
                 val name = System.currentTimeMillis().toString()
-                image = File(ocrActivity.filesDir, "$name.png")
+                image = File(ocrActivity.filesDir, "$name.jpeg")
                 pictureNumber = 1
                 imageUri = createImageUri()
                 contract.launch(imageUri)
@@ -151,7 +151,7 @@ class CameraXFragment(
                     return@setOnClickListener
                 }
                 val name = System.currentTimeMillis().toString()
-                image = File(ocrActivity.filesDir, "$name.png")
+                image = File(ocrActivity.filesDir, "$name.jpeg")
                 pictureNumber = 2
                 imageUri = createImageUri()
                 contract.launch(imageUri)

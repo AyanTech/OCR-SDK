@@ -37,7 +37,9 @@ open class OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
     var cardType = ""
     var extraInfo = ""
     var singlePhoto = false
-    lateinit var ayanAPI: AyanApi
+    val ayanAPI by lazy {
+        createAyanAPiCall(baseUrl = Base_URL) { Token }
+    }
     var dialog: WaitingDialog? = null
     override val binder: (LayoutInflater) -> OcrActivityBinding
         get() = OcrActivityBinding::inflate
@@ -70,7 +72,7 @@ open class OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
                     Log.d("ocrActivity", "getIntentData exception: $e")
                 }
             }
-    }
+        }
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -140,7 +142,6 @@ open class OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
                 title = context.getString(R.string.ocr_loading_description)
             )
         }
-        ayanAPI = Base_URL?.let { createAyanAPiCall(baseUrl = it) { Token } }!!
 
     }
 
