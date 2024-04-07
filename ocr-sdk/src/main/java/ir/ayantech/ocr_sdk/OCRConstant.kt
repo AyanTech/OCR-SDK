@@ -5,9 +5,9 @@ import android.content.Context
 import ir.ayantech.whygoogle.helper.PreferencesManager
 
 @SuppressLint("StaticFieldLeak")
-object Constant {
+object OCRConstant {
         lateinit var context: Context
-
+    val REQUEST_CODE_OCR_RESULT = 1
     var Application_ID: String
         get() = PreferencesManager.getInstance(context).read("Application_ID")
         set(value) = PreferencesManager.getInstance(context)

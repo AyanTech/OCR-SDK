@@ -1,10 +1,11 @@
 package ir.ayantech.ocr_sdk
 
 import android.content.Context
-import ir.ayantech.ocr_sdk.Constant.Base_URL
-import ir.ayantech.ocr_sdk.Constant.EndPoint_GetCardOcrResult
-import ir.ayantech.ocr_sdk.Constant.EndPoint_UploadCardOCR
-import ir.ayantech.ocr_sdk.Constant.Token
+import ir.ayantech.ocr_sdk.OCRConstant.Base_URL
+import ir.ayantech.ocr_sdk.OCRConstant.EndPoint_GetCardOcrResult
+import ir.ayantech.ocr_sdk.OCRConstant.EndPoint_UploadCardOCR
+import ir.ayantech.ocr_sdk.OCRConstant.Token
+
 
 class OcrInitializer {
     companion object {
@@ -27,7 +28,7 @@ class OcrInitializer {
         getResultEndPoint: String,
         ocrContext: Context
     ) {
-        Constant.context = ocrContext
+        OCRConstant.context = ocrContext
         Token = token
         Base_URL = baseUrl
         EndPoint_UploadCardOCR = uploadImageEndPoint

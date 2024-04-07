@@ -1,7 +1,7 @@
 package ir.ayantech.ocr_sdk
 
+import android.app.Activity
 import android.content.Intent
-import android.nfc.Tag
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,24 +9,20 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.net.toUri
-import com.bumptech.glide.Glide.init
 import ir.ayantech.ayannetworking.api.AyanApi
 import ir.ayantech.ayannetworking.api.AyanCommonCallStatus
 import ir.ayantech.ayannetworking.api.CallingState
 import ir.ayantech.ayannetworking.api.GetUserToken
-import ir.ayantech.ocr_sdk.Constant.Base_URL
-import ir.ayantech.ocr_sdk.Constant.EndPoint_GetCardOcrResult
-import ir.ayantech.ocr_sdk.Constant.EndPoint_UploadCardOCR
-import ir.ayantech.ocr_sdk.Constant.Token
-import ir.ayantech.ocr_sdk.Constant.context
+import ir.ayantech.ocr_sdk.OCRConstant.Base_URL
+import ir.ayantech.ocr_sdk.OCRConstant.EndPoint_GetCardOcrResult
+import ir.ayantech.ocr_sdk.OCRConstant.EndPoint_UploadCardOCR
+import ir.ayantech.ocr_sdk.OCRConstant.Token
+import ir.ayantech.ocr_sdk.OCRConstant.context
 import ir.ayantech.ocr_sdk.component.WaitingDialog
 import ir.ayantech.ocr_sdk.databinding.OcrActivityBinding
 import ir.ayantech.ocr_sdk.model.GetCardOcrResult
 import ir.ayantech.whygoogle.activity.WhyGoogleActivity
-import ir.ayantech.whygoogle.helper.fragmentArgument
 import ir.ayantech.whygoogle.helper.isNull
-import ir.ayantech.whygoogle.helper.nullableFragmentArgument
-import java.io.File
 
 
 open class OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
@@ -87,17 +83,21 @@ open class OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
     }
 
     fun sendResult(dataList: ArrayList<GetCardOcrResult.Result>) {
-        startActivity(Intent(this, originActivity::class.java).also {
-            it.putParcelableArrayListExtra("GetCardOcrResult", dataList)
-            it.putExtra("cardType", cardType)
-            it.putExtra("extraInfo", extraInfo)
-        })
+
+        val intent = Intent(this, originActivity::class.java)
+        intent.putParcelableArrayListExtra("GetCardOcrResult", dataList)
+        intent.putExtra("cardType", cardType)
+        intent.putExtra("extraInfo", extraInfo)
+        setResult(Activity.RESULT_OK, intent)
+        startActivityForResult(intent, OCRConstant.REQUEST_CODE_OCR_RESULT)
         finish()
     }
 
     fun finishActivity() {
-
-        startActivity(Intent(this, originActivity::class.java))
+        startActivityForResult(
+            Intent(this, originActivity::class.java),
+            OCRConstant.REQUEST_CODE_OCR_RESULT
+        )
         finish()
     }
 

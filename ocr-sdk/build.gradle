@@ -13,7 +13,7 @@ android {
         minSdk 21
         targetSdk 34
         versionCode 12
-        versionName "1.0.3-beta04"
+        versionName "1.0.3-beta06"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -113,7 +113,7 @@ afterEvaluate {
                 artifactId = 'ocr-sdk'
 
                 // Version Library Name (Example : "1.0.0")
-                version = '1.0.3-beta04'
+                version = '1.0.3-beta06'
             }
         }
     }

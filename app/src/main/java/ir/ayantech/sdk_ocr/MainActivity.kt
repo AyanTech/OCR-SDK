@@ -1,24 +1,16 @@
 package ir.ayantech.sdk_ocr
 
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.content.pm.ResolveInfo
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat.startActivity
-import androidx.core.content.FileProvider
+import android.widget.Toast
 import ir.ayantech.ocr_sdk.OCRConfig
-import ir.ayantech.ocr_sdk.Constant
+import ir.ayantech.ocr_sdk.OCRConstant
 import ir.ayantech.ocr_sdk.OcrActivity
-import ir.ayantech.ocr_sdk.OcrInitializer
 import ir.ayantech.ocr_sdk.model.GetCardOcrResult
 import ir.ayantech.sdk_ocr.databinding.ActivityMainBinding
-import ir.ayantech.whygoogle.BuildConfig
 import ir.ayantech.whygoogle.activity.WhyGoogleActivity
-import java.io.File
 
 class MainActivity : WhyGoogleActivity<ActivityMainBinding>() {
 
@@ -28,16 +20,9 @@ class MainActivity : WhyGoogleActivity<ActivityMainBinding>() {
     var packageNamee: String = ""
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Constant.context = this
-        val extras = intent.extras
-        val data = extras?.getParcelableArrayList<GetCardOcrResult.Result>("GetCardOcrResult")
-        val cardType = intent.getStringExtra("cardType")
-        binding.tvResponse.text = "$data"
-        Log.d("asdasdkjahdkjahskjd", "GetCardOcrResult: $data")
-        Log.d("asdasdkjahdkjahskjd", "cardType: $cardType")
+        OCRConstant.context = this
 
         binding.btnOcrCar.setOnClickListener {
 
@@ -62,7 +47,7 @@ class MainActivity : WhyGoogleActivity<ActivityMainBinding>() {
             .setContext(this)
             .setApplicationID("ir.ayantech.sdk_ocr")
             .setBaseUrl("https://core.pishkhan24.ayantech.ir/webservices/Proxy.svc/")
-            .setToken("2F4EBA87E9814249A05576810389487F")
+            .setToken("1AEDF1D7398E4C6A92D8FE2DA77789D1")
             .setUploadImageEndPoint("UploadNewCardOcrImage")
             .setGetResultEndPoint("GetCardOcrResult")
             .build()
@@ -75,6 +60,18 @@ class MainActivity : WhyGoogleActivity<ActivityMainBinding>() {
         finish()
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        Log.d("asdasdkjahdkjahskjd", "onActivityResult")
+        Toast.makeText(this, "$requestCode", Toast.LENGTH_SHORT).show()
+        if (data != null) {
+            val dataArray = data.getParcelableArrayExtra("GetCardOcrResult")
+            val cardType = intent.getStringExtra("cardType")
+            binding.tvResponse.text = "$dataArray"
+            Log.d("asdasdkjahdkjahskjd", "GetCardOcrResult: $dataArray")
+            Log.d("asdasdkjahdkjahskjd", "cardType: $cardType")
+        }
+    }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)

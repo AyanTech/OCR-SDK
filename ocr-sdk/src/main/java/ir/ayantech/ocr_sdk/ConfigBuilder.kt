@@ -12,35 +12,35 @@ class ConfigBuilder private constructor() {
     var ocrContext: Context? = null
 
     fun setContext(ocrContext: Context) = apply {
-        Constant.context = ocrContext
+        OCRConstant.context = ocrContext
         this.ocrContext = ocrContext
     }
 
     fun setApplicationID(applicationID: String) = apply {
-        Constant.Application_ID = applicationID
+        OCRConstant.Application_ID = applicationID
         this.applicationID = applicationID
     }
     @JvmOverloads
     fun setToken(token: String) = apply {
-        Constant.Token = token
+        OCRConstant.Token = token
         this.token = token
     }
 
     @JvmOverloads
     fun setBaseUrl(baseUrl: String) = apply {
-        Constant.Base_URL =  baseUrl
+        OCRConstant.Base_URL =  baseUrl
         this.baseUrl = baseUrl
     }
 
     @JvmOverloads
     fun setUploadImageEndPoint(uploadImageEndPoint: String) = apply {
-        Constant.EndPoint_UploadCardOCR = uploadImageEndPoint
+        OCRConstant.EndPoint_UploadCardOCR = uploadImageEndPoint
         this.uploadImageEndPoint = uploadImageEndPoint
     }
 
     @JvmOverloads
     fun setGetResultEndPoint(getResultEndPoint: String) = apply {
-        Constant.EndPoint_GetCardOcrResult = getResultEndPoint
+        OCRConstant.EndPoint_GetCardOcrResult = getResultEndPoint
         this.getResultEndPoint = getResultEndPoint
     }
 

@@ -8,9 +8,7 @@ import android.content.pm.PackageManager
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.provider.MediaStore
 import android.util.Base64
 import android.util.Log
@@ -26,7 +24,6 @@ import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import ir.ayantech.ayannetworking.api.AyanCallStatus
-import ir.ayantech.ocr_sdk.OcrInitializer.Companion.fileProviderAuthority
 import ir.ayantech.ocr_sdk.component.WaitingDialog
 import ir.ayantech.ocr_sdk.component.init
 import ir.ayantech.ocr_sdk.databinding.OcrFragmentCameraxBinding
@@ -45,7 +42,6 @@ import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
-import java.io.Serializable
 import kotlin.math.roundToInt
 
 
@@ -95,7 +91,7 @@ class CameraXFragment(
         return image?.let {
             FileProvider.getUriForFile(
                 ocrActivity,
-                "${Constant.Application_ID}.provider",
+                "${OCRConstant.Application_ID}.provider",
                 it
             )
         }
@@ -158,6 +154,7 @@ class CameraXFragment(
             }
             btnSendImages.setOnClickListener {
                 checkIfCallingAPI()
+
             }
         }
     }
@@ -261,7 +258,7 @@ class CameraXFragment(
 
         when (endPointName) {
 
-            Constant.EndPoint_UploadCardOCR -> {
+            OCRConstant.EndPoint_UploadCardOCR -> {
 
                 Log.d(TAG, "compressing")
 
@@ -294,7 +291,7 @@ class CameraXFragment(
                                 dialog.changeText("در حال ارسال تصاویر...")
                                 ayanApi.timeout = 90
                                 ayanApi.ayanCall<UploadNewCardOcrImage.Output>(
-                                    endPoint = Constant.EndPoint_UploadCardOCR,
+                                    endPoint = OCRConstant.EndPoint_UploadCardOCR,
                                     input =
                                     UploadNewCardOcrImage.Input(
                                         ImageArray = listOf(
@@ -309,7 +306,7 @@ class CameraXFragment(
                                             uploading = true
                                             Log.d(TAG, "callingApi File ID: ${response?.FileID}")
                                             fileID = response?.FileID
-                                            Constant.EndPoint_GetCardOcrResult?.let {
+                                            OCRConstant.EndPoint_GetCardOcrResult?.let {
                                                 callingApi(
                                                     endPointName = it,
                                                     response?.FileID
@@ -329,7 +326,7 @@ class CameraXFragment(
                                 )
 
                             } else {
-                                Constant.EndPoint_GetCardOcrResult?.let {
+                                OCRConstant.EndPoint_GetCardOcrResult?.let {
                                     callingApi(
                                         endPointName = it,
                                         fileID
@@ -350,7 +347,7 @@ class CameraXFragment(
             }
 
 
-            Constant.EndPoint_GetCardOcrResult -> {
+            OCRConstant.EndPoint_GetCardOcrResult -> {
                 Log.d(TAG, "uploading -> EndPoint_GetCardOcrResult api call = fileID is= $value")
                 dialog.showDialog()
                 dialog.changeText(getString(R.string.ocr_downloading_data))
@@ -358,7 +355,7 @@ class CameraXFragment(
                     Log.d(TAG, "callingApi: ")
                     ayanApi.timeout = 10
                     ayanApi.ayanCall<GetCardOcrResult.Output>(
-                        endPoint = Constant.EndPoint_GetCardOcrResult,
+                        endPoint = OCRConstant.EndPoint_GetCardOcrResult,
                         input = value?.let { GetCardOcrResult.Input(FileID = it) },
                         ayanCallStatus = AyanCallStatus {
                             success { output ->
@@ -379,7 +376,7 @@ class CameraXFragment(
 
                                         delayed(response.NextCallInterval) {
                                             callingApi(
-                                                endPointName = Constant.EndPoint_GetCardOcrResult,
+                                                endPointName = OCRConstant.EndPoint_GetCardOcrResult,
                                                 value
                                             )
                                         }
@@ -541,9 +538,9 @@ class CameraXFragment(
 
     private fun checkIfCallingAPI() {
         if (fileID.isNull())
-            callingApi(endPointName = Constant.EndPoint_UploadCardOCR)
+            callingApi(endPointName = OCRConstant.EndPoint_UploadCardOCR)
         else
-            callingApi(endPointName = Constant.EndPoint_GetCardOcrResult)
+            callingApi(endPointName = OCRConstant.EndPoint_GetCardOcrResult)
     }
 
     override fun onDestroy() {
