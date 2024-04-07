@@ -1,10 +1,12 @@
 package ir.ayantech.sdk_ocr
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import ir.ayantech.ocr_sdk.OCRConfig
 import ir.ayantech.ocr_sdk.OCRConstant
 import ir.ayantech.ocr_sdk.OcrActivity
@@ -18,7 +20,14 @@ class MainActivity : WhyGoogleActivity<ActivityMainBinding>() {
         get() = ActivityMainBinding::inflate
     override val containerId: Int = R.id.fragmentContainerFl
     var packageNamee: String = ""
+    var ocrResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
 
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data = result.data?.extras
+
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,25 +61,12 @@ class MainActivity : WhyGoogleActivity<ActivityMainBinding>() {
             .setGetResultEndPoint("GetCardOcrResult")
             .build()
 
-        startActivity(Intent(this, OcrActivity::class.java).also {
-            it.putExtra("cardType", cardType)
-            it.putExtra("singlePhoto", singlePhoto)
-            it.putExtra("className", "ir.ayantech.sdk_ocr.MainActivity")
-        })
-        finish()
-    }
+        val intent = Intent(this, OcrActivity::class.java)
+        intent.putExtra("cardType", cardType)
+        intent.putExtra("singlePhoto", singlePhoto)
+        intent.putExtra("className", "ir.ayantech.sdk_ocr.MainActivity")
+        ocrResult.launch(intent)
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        Log.d("asdasdkjahdkjahskjd", "onActivityResult")
-        Toast.makeText(this, "$requestCode", Toast.LENGTH_SHORT).show()
-        if (data != null) {
-            val dataArray = data.getParcelableArrayExtra("GetCardOcrResult")
-            val cardType = intent.getStringExtra("cardType")
-            binding.tvResponse.text = "$dataArray"
-            Log.d("asdasdkjahdkjahskjd", "GetCardOcrResult: $dataArray")
-            Log.d("asdasdkjahdkjahskjd", "cardType: $cardType")
-        }
     }
 
     override fun onNewIntent(intent: Intent?) {

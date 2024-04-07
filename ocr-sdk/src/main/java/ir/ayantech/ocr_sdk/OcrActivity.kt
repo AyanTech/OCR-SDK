@@ -89,15 +89,11 @@ open class OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
         intent.putExtra("cardType", cardType)
         intent.putExtra("extraInfo", extraInfo)
         setResult(Activity.RESULT_OK, intent)
-        startActivityForResult(intent, OCRConstant.REQUEST_CODE_OCR_RESULT)
         finish()
     }
 
     fun finishActivity() {
-        startActivityForResult(
-            Intent(this, originActivity::class.java),
-            OCRConstant.REQUEST_CODE_OCR_RESULT
-        )
+        setResult(Activity.RESULT_CANCELED, intent)
         finish()
     }
 
