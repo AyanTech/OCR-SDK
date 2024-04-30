@@ -53,16 +53,38 @@ val config = OCRConfig.builder()
 ```
 
 ## Integration:
+Create ocrLuncher:
 
+```s
+var ocrLuncher =
+registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+if (result.resultCode == Activity.RESULT_OK) {
+val data: ArrayList<GetCardOcrResult.Result>? =
+result.data?.extras?.getParcelableArrayList("GetCardOcrResult")
+val extraInfo =  result.data?.getStringExtra("extraInfo")
+
+            
+                        if (data != null) {
+                        
+                           val chassisNumber =
+                                data.find { it.Key == "ChassisNumber" }?.Value.toString()
+                                
+                            //get other data like example above
+                        }
+                    )
+             }
+        }
+ ```
+        
 Start the OcrActivity and pass required parameters:
 Kotlin
 ```s
-startActivity(Intent(this, OcrActivity::class.java).also {
-    it.putExtra("cardType", "VehicleCard") // or "BankCard" or "NationalID"
-    it.putExtra("className", "your.app.package.MainActivity")
-    it.putExtra("singlePhoto", singlePhoto) // true takes a single image
-    it.putExtra("extraInfo", "optional data to retrieve") // optional
-})
+  val intent = Intent(this, OcrActivity::class.java)
+        intent.putExtra("cardType", "VehicleCard") // or "BankCard" or "NationalID"
+        intent.putExtra("className", "com.khodropay.dokan.MainActivity")
+        intent.putExtra("singlePhoto", false) // true takes a single image
+        intent.putExtra("extraInfo", mobileNumber) // optional
+        ocrLuncher.launch(intent)
 ```
 
 ## Get Result
