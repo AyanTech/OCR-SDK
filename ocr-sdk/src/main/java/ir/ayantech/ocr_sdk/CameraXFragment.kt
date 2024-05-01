@@ -407,6 +407,8 @@ class CameraXFragment(
                             }
                             failure {
                                 this.ayanCommonCallingStatus?.dispatchFail(it)
+                                dialog.hideDialog()
+
                             }
                         }
 
