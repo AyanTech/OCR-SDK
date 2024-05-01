@@ -66,8 +66,8 @@ class CameraXFragment(
     private lateinit var dialog: WaitingDialog
     private var compressing = false
     private var uploading = false
-    private var OnCard: String by fragmentArgument("")
-    private var backOfCard: String by fragmentArgument("")
+    private var OnCard= ""
+    private var backOfCard= ""
     var cardType: String by fragmentArgument("")
     var extraInfo: String by fragmentArgument("")
 
