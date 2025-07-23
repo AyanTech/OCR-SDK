@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clipToPadding="false"
+    android:padding="@dimen/margin_16"
+    android:paddingBottom="@dimen/margin_24">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/closeIv"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="@dimen/margin_6"
+        android:padding="@dimen/padding_item_click"
+        android:src="@drawable/ocr_ic_close" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/centerIconIv"
+        android:layout_width="64dp"
+        android:layout_height="54dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/margin_42" />
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_title"
+        style="@style/ocr_txt_regular_14px_gray2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/centerIconIv"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/margin_36"
+        android:gravity="center" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnConfirm"
+        style="@style/ocr_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_title"
+        android:layout_marginTop="@dimen/margin_16" />
+</RelativeLayout>

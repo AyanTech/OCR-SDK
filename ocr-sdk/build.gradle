@@ -1,0 +1,116 @@
+plugins {
+    id "com.android.library"
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'maven-publish'
+}
+
+android {
+    namespace 'ir.ayantech.ocr_sdk'
+    compileSdk 35
+
+    defaultConfig {
+        minSdk 21
+        targetSdk 35
+        versionCode 13
+        versionName "1.0.3-beta07"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    buildFeatures {
+        viewBinding true
+    }
+    buildTypes {
+        debug {
+            debuggable false
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.core:core-ktx:1.16.0'
+    implementation 'androidx.appcompat:appcompat:1.7.1'
+    implementation 'com.google.android.material:material:1.12.0'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    implementation 'com.github.bumptech.glide:glide:4.16.0'
+
+    //........................................Android.............................................................
+    implementation 'androidx.appcompat:appcompat:1.7.1'
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
+    implementation 'androidx.core:core-ktx:1.16.0'
+
+    //........................................cameraX.............................................................
+    def camerax_version = "1.4.2"
+    implementation "androidx.camera:camera-core:${camerax_version}"
+    implementation "androidx.camera:camera-camera2:${camerax_version}"
+    implementation "androidx.camera:camera-lifecycle:${camerax_version}"
+    implementation "androidx.camera:camera-video:${camerax_version}"
+    implementation "androidx.camera:camera-view:${camerax_version}"
+    implementation "androidx.camera:camera-extensions:${camerax_version}"
+
+    //--------------------------------Networking--------------------------------
+    implementation 'com.github.shadowalker77:networking:1.6.7'
+
+    //--------------------------------------------------------------------------
+
+    //........................................Loading Images.............................................................
+    implementation 'com.squareup.picasso:picasso:2.71828'
+
+    //........................................Coroutines.............................................................
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1"
+
+    //........................................CameraX Core Library.............................................................
+    implementation "androidx.camera:camera-camera2:1.4.2"
+
+    //........................................CameraX View Class.............................................................
+    implementation "androidx.camera:camera-view:1.4.2"
+
+    //........................................Circle Image View.............................................................
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+
+    //........................................Why Google.............................................................
+    implementation 'com.github.shadowalker77:whygoogle:0.8.2'
+
+    //........................................Lottie.............................................................
+    implementation 'com.airbnb.android:lottie:6.0.0'
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            // Creates a Maven publication called "release".
+            release(MavenPublication) {
+                // Applies the component for the release build variant.
+                // NOTE : Delete this line code if you publish Native Java / Kotlin Library
+                from components.release
+
+
+                // Library Package Name (Example : "com.frogobox.androidfirstlib")
+                // NOTE : Different GroupId For Each Library / Module, So That Each Library Is Not Overwritten
+                groupId = 'com.github.ayantech'
+
+                // Library Name / Module Name (Example : "androidfirstlib")
+                // NOTE : Different ArtifactId For Each Library / Module, So That Each Library Is Not Overwritten
+                artifactId = 'ocr-sdk'
+
+                // Version Library Name (Example : "1.0.0")
+                version = '1.0.3-beta07'
+            }
+        }
+    }
+}
+

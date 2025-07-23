@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="margin_1">1dp</dimen>
+    <dimen name="margin_2">2dp</dimen>
+    <dimen name="margin_4">4dp</dimen>
+    <dimen name="margin_6">6dp</dimen>
+    <dimen name="margin_8">8dp</dimen>
+    <dimen name="margin_10">10dp</dimen>
+    <dimen name="margin_12">12dp</dimen>
+    <dimen name="margin_16">16dp</dimen>
+    <dimen name="margin_21">21dp</dimen>
+    <dimen name="margin_24">24dp</dimen>
+    <dimen name="margin_32">32dp</dimen>
+    <dimen name="margin_36">36dp</dimen>
+    <dimen name="margin_40">40dp</dimen>
+    <dimen name="margin_42">42dp</dimen>
+    <dimen name="margin_48">48dp</dimen>
+    <dimen name="margin_56">56dp</dimen>
+    <dimen name="margin_64">64dp</dimen>
+    <dimen name="margin_72">72dp</dimen>
+    <dimen name="margin_80">80dp</dimen>
+    <dimen name="margin_96">96dp</dimen>
+    <dimen name="margin_100">100dp</dimen>
+
+
+    <dimen name="txt_bold">24sp</dimen>
+    <dimen name="txt_regular">14sp</dimen>
+
+    <dimen name="right_indicator_width">3dp</dimen>
+    <dimen name="toolbar_height">@dimen/margin_48</dimen>
+    <dimen name="header_height">@dimen/margin_80</dimen>
+    <dimen name="ocr_button_height">@dimen/margin_56</dimen>
+    <dimen name="small_button_height">@dimen/margin_40</dimen>
+    <dimen name="line_spacing">@dimen/margin_2</dimen>
+
+    <dimen name="radius_4">4dp</dimen>
+    <dimen name="radius_6">6dp</dimen>
+    <dimen name="radius_8">8dp</dimen>
+    <dimen name="ocr_button_radius">12dp</dimen>
+    <dimen name="radius_14">14dp</dimen>
+    <dimen name="radius_16">16dp</dimen>
+
+    <dimen name="button_radius">16dp</dimen>
+
+
+    <dimen name="txt_16px">@dimen/_20sp</dimen>
+    <dimen name="txt_14px">@dimen/_18sp</dimen>
+    <dimen name="txt_13px">@dimen/_15sp</dimen>
+    <dimen name="txt_12px">@dimen/_14sp</dimen>
+    <dimen name="txt_11px">@dimen/_13sp</dimen>
+    <dimen name="txt_10px">@dimen/_12sp</dimen>
+    <dimen name="txt_8px">@dimen/_10sp</dimen>
+
+
+    <dimen name="padding_left_right_parent">16dp</dimen>
+
+    <dimen name="padding_left_right_small">10dp</dimen>
+    <dimen name="padding_left_right_medium">24dp</dimen>
+
+    <dimen name="padding_bottom_top_small">10dp</dimen>
+    <dimen name="padding_bottom_top_medium">20dp</dimen>
+
+    <dimen name="padding_item_click">5dp</dimen>
+    <dimen name="imgElevation">5dp</dimen>
+    <dimen name="circle_imageview_strock">1dp</dimen>
+    <dimen name="padding_bottom_top_parent">20dp</dimen>
+    <dimen name="scroll_view_margin_top">20dp</dimen>
+    <dimen name="radius_20">20dp</dimen>
+
+</resources>
