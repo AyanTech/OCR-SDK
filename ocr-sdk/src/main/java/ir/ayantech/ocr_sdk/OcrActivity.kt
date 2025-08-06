@@ -5,10 +5,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.net.toUri
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import ir.ayantech.ayannetworking.api.AyanApi
 import ir.ayantech.ayannetworking.api.AyanCommonCallStatus
 import ir.ayantech.ayannetworking.api.CallingState
@@ -32,7 +36,9 @@ open class OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
 
     var cardType = ""
     var extraInfo = ""
+    var maxSizeInMb = 2
     var singlePhoto = false
+    var gettingUrl = false
     val ayanAPI by lazy {
         createAyanAPiCall(baseUrl = Base_URL) { Token }
     }
@@ -43,6 +49,23 @@ open class OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         context = applicationContext
+        ViewCompat.setOnApplyWindowInsetsListener(binding.fragmentContainerFl) { v, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            // Apply the insets as a margin to the view. This solution sets
+            // only the bottom, left, and right dimensions, but you can apply whichever
+            // insets are appropriate to your layout. You can also update the view padding
+            // if that's more appropriate.
+            v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                leftMargin = insets.left
+                bottomMargin = insets.bottom
+                rightMargin = insets.right
+                topMargin = insets.top
+            }
+
+            // Return CONSUMED if you don't want the window insets to keep passing
+            // down to descendant views.
+            WindowInsetsCompat.CONSUMED
+        }
         getIntentData()
         if (savedInstanceState == null)
             handleStartFragment()
@@ -56,8 +79,10 @@ open class OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
             return
         } else {
 
+            gettingUrl = intent.getBooleanExtra("gettingUri", false)
             cardType = intent.getStringExtra("cardType").toString().uppercase()
             extraInfo = intent.getStringExtra("extraInfo").toString().uppercase()
+            maxSizeInMb = intent.getIntExtra("maxSizeInMb", 2)
             singlePhoto = intent.getBooleanExtra("singlePhoto", false)
             val className = intent.getStringExtra("className")
             if (className != null) {
@@ -82,6 +107,14 @@ open class OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
         }
     }
 
+    fun sendUri(uri: String) {
+
+        val intent = Intent(this, originActivity::class.java)
+        intent.putExtra("uri", uri)
+        setResult(Activity.RESULT_OK, intent)
+        finish()
+    }
+
     fun sendResult(dataList: ArrayList<GetCardOcrResult.Result>) {
 
         val intent = Intent(this, originActivity::class.java)
@@ -98,25 +131,30 @@ open class OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
     }
 
     private fun handleStartFragment() {
-
+        init()
+        gettingPermissions()
+        if (gettingUrl == true) {
+            start(SinglePhotoUri())
+        } else {
+            if (singlePhoto) {
+                start(CameraXFragment().also {
+                    it.backImageUri = "".toUri()
+                    it.cardType = cardType
+                    it.extraInfo = extraInfo
+                })
+            } else {
+                start(CameraXFragment().also {
+                    it.cardType = cardType
+                    it.extraInfo = extraInfo
+                })
+            }
+        }
         if (EndPoint_UploadCardOCR.isNull() || Token.isNull() || EndPoint_GetCardOcrResult.isNull() || Base_URL.isNull()) {
             showToast("Base_Url or Token are not Initialized!")
             return
         }
-        init()
-        gettingPermissions()
-        if (singlePhoto) {
-            start(CameraXFragment().also {
-                it.backImageUri = "".toUri()
-                it.cardType = cardType
-                it.extraInfo = extraInfo
-            })
-        } else {
-            start(CameraXFragment().also {
-                it.cardType = cardType
-                it.extraInfo = extraInfo
-            })
-        }
+
+
     }
 
     private fun gettingPermissions() {

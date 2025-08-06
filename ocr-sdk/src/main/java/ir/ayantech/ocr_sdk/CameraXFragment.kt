@@ -10,13 +10,14 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Base64
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
@@ -24,6 +25,7 @@ import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import ir.ayantech.ayannetworking.api.AyanCallStatus
+import ir.ayantech.ocr_sdk.OcrHelper.encodeImageToBase64
 import ir.ayantech.ocr_sdk.component.WaitingDialog
 import ir.ayantech.ocr_sdk.component.init
 import ir.ayantech.ocr_sdk.databinding.OcrFragmentCameraxBinding
@@ -39,10 +41,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
-import kotlin.math.roundToInt
 
 
 class CameraXFragment(
@@ -66,24 +66,58 @@ class CameraXFragment(
     private lateinit var dialog: WaitingDialog
     private var compressing = false
     private var uploading = false
-    private var OnCard= ""
-    private var backOfCard= ""
+    private var OnCard = ""
+    private var backOfCard = ""
     var cardType: String by fragmentArgument("")
     var extraInfo: String by fragmentArgument("")
 
-        private val activityResultLauncher =
-            registerForActivityResult(
-                ActivityResultContracts.RequestMultiplePermissions()
-            )
-            { permissions ->
-                // Handle Permission granted/rejected
-                var permissionGranted = true
-                permissions.entries.forEach {
-                    if (it.key in REQUIRED_PERMISSIONS && !it.value)
-                        permissionGranted = false
+    private val permissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+
+            if (allPermissionsGranted()) {
+                binding.captureA.circularImg.performClick()
+            } else {
+                val permanentlyDenied = REQUIRED_PERMISSIONS.any { permission ->
+                    !ActivityCompat.shouldShowRequestPermissionRationale(
+                        requireActivity(),
+                        permission
+                    )
+                }
+
+                if (permanentlyDenied) {
+                    // رد دائمی (don't ask again)
+                    showGoToSettingsDialog()
+                } else {
+                    // رد موقت
+                    showPermissionRationaleDialog()
                 }
             }
+        }
 
+    private fun showPermissionRationaleDialog() {
+        OneOptionDialog(
+            title = getString(R.string.ocr_permission_request_msg),
+            buttonText = getString(R.string.ocr_permission_open_setting_msg),
+            context = requireActivity()
+        ) {
+            requestPermissions()
+        }.show()
+
+    }
+
+    private fun showGoToSettingsDialog() {
+        OneOptionDialog(
+            title = getString(R.string.ocr_permission_using_setting_msg),
+            buttonText = getString(R.string.ocr_permission_open_setting_msg),
+            context = requireActivity()
+        ) {
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                data = Uri.fromParts("package", context?.packageName, null)
+            }
+            startActivity(intent)
+        }.show()
+
+    }
 
     var image: File? by nullableFragmentArgument(null)
     var imageUri: Uri? by nullableFragmentArgument(null)
@@ -124,12 +158,9 @@ class CameraXFragment(
                 ocrActivity.finishActivity()
             }
             statusCheck()
-            if (ocrActivity.singlePhoto) {
-                captureB.circularImageViewParent.visibility = View.GONE
-                tvDescB.visibility = View.GONE
-            }
 
-            binding.captureA.circularImg.setOnClickListener {
+
+            captureA.circularImg.setOnClickListener {
                 if (!allPermissionsGranted()) {
                     requestPermissions()
                     return@setOnClickListener
@@ -155,6 +186,14 @@ class CameraXFragment(
             btnSendImages.setOnClickListener {
                 checkIfCallingAPI()
 
+            }
+            if (ocrActivity.singlePhoto) {
+                captureB.circularImageViewParent.visibility = View.GONE
+                tvDescB.visibility = View.GONE
+                if (allPermissionsGranted())
+                    captureA.circularImg.performClick()
+                else
+                    requestPermissions()
             }
         }
     }
@@ -203,7 +242,7 @@ class CameraXFragment(
 
     private fun requestPermissions() {
 
-        activityResultLauncher.launch(REQUIRED_PERMISSIONS)
+        permissionLauncher.launch(REQUIRED_PERMISSIONS)
     }
 
     override fun onRequestPermissionsResult(
@@ -263,7 +302,7 @@ class CameraXFragment(
 
                 Log.d(TAG, "compressing")
 
-                dialog.changeText("در حال فشرده سازی...")
+                dialog.changeText(getString(R.string.ocr_compressing))
                 dialog.showDialog()
 
                 val job = coroutineScope.launch {
@@ -272,9 +311,17 @@ class CameraXFragment(
                         try {
                             Log.d(TAG, "convert to base 64")
 
-                            OnCard = encodeImageToBase64(frontImageUri)
+                            OnCard = encodeImageToBase64(
+                                imageUri = frontImageUri,
+                                maxSizeInMb = ocrActivity.maxSizeInMb,
+                                context = ocrActivity
+                            )
                             if (backImageUri.isNotNull() && backImageUri?.equals("") == false)
-                                backOfCard = encodeImageToBase64(backImageUri)
+                                backOfCard = encodeImageToBase64(
+                                    imageUri = backImageUri,
+                                    maxSizeInMb = ocrActivity.maxSizeInMb,
+                                    context = ocrActivity
+                                )
                             //Update UI
                             compressing = true
                         } catch (e: Exception) {
@@ -289,18 +336,18 @@ class CameraXFragment(
                         lifecycleScope.launch(Dispatchers.Main) {
                             if (!uploading) {
                                 Log.d(TAG, "!uploading")
-                                dialog.changeText("در حال ارسال تصاویر...")
+                                dialog.changeText(getString(R.string.ocr_sending))
                                 ayanApi.timeout = 90
                                 ayanApi.ayanCall<UploadNewCardOcrImage.Output>(
                                     endPoint = OCRConstant.EndPoint_UploadCardOCR,
                                     input =
-                                    UploadNewCardOcrImage.Input(
-                                        ImageArray = listOf(
-                                            OnCard,
-                                            backOfCard
-                                        ).filter { it.isNotEmpty() },
-                                        Type = ocrActivity.cardType
-                                    ),
+                                        UploadNewCardOcrImage.Input(
+                                            ImageArray = listOf(
+                                                OnCard,
+                                                backOfCard
+                                            ).filter { it.isNotEmpty() },
+                                            Type = ocrActivity.cardType
+                                        ),
                                     ayanCallStatus = AyanCallStatus {
                                         success { output ->
                                             val response = output.response?.Parameters
@@ -419,61 +466,6 @@ class CameraXFragment(
         }
     }
 
-    private fun captureAndSaveImage(imageNumber: Int) {
-        pictureNumber = imageNumber
-        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-
-        /*      // Generating file name
-              val imageName = "test.png"
-              val image = File(ocrActivity.cacheDir, imageName)
-
-              val fileUri = Uri.fromFile(image);
-
-            ;*/
-        if (takePictureIntent.resolveActivity(requireActivity().packageManager) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
-        }
-    }
-
-    /* private fun takingPhoto() {
-         val name = System.currentTimeMillis().toString()
-
-         val file =
-             File(ocrActivity.cacheDir, "/$name.jpg")
-
-         val outputFileOptions = ImageCapture.OutputFileOptions.Builder(file).build()
-         imageCapture!!.takePicture(outputFileOptions,
-             ContextCompat.getMainExecutor(ocrActivity),
-             object : ImageCapture.OnImageSavedCallback {
-                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                     try {
-                         //Image is captured and saved
-                         when (frontImageUri.isNull()) {
-                             true ->
-                                 start(ImageViewFragment().also {
-                                     it.frontImageUri = outputFileResults.savedUri
-                                 })
-
-                             else -> start(
-                                 ImageViewFragment().also {
-                                     it.frontImageUri = frontImageUri
-                                     it.backImageUri = outputFileResults.savedUri
-                                 })
-                         }
-                     } catch (e: IOException) {
-                         Log.d(TAG, "catch $e")
-                     }
-                 }
-
-                 override fun onError(error: ImageCaptureException) {
-                     Log.d(TAG, "onError $error")
-
-                 }
-             }
-         )
-     }*/
-
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
@@ -502,41 +494,6 @@ class CameraXFragment(
             e.printStackTrace()
             return null
         }
-    }
-
-    private fun encodeImageToBase64(imageUri: Uri? = null): String {
-
-
-        val bitmap = MediaStore.Images.Media.getBitmap(
-            ocrActivity.contentResolver,
-            imageUri
-        )
-
-        var outputStream = ByteArrayOutputStream()
-
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 95, outputStream)
-        val width = bitmap.width
-        val height = bitmap.height
-
-//        val portraitBitmap = height > width
-        val largeSize = maxOf(width, height)
-        val scaleFactor: Float = 1920f / largeSize.toFloat()
-
-        if (largeSize > 1000) {
-            //large image
-            outputStream = ByteArrayOutputStream()
-            val newBitmap = Bitmap.createScaledBitmap(
-                bitmap,
-                (width * scaleFactor).roundToInt(), (height * scaleFactor).roundToInt(), false
-            )
-            newBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-            Log.d("FinalW", newBitmap.width.toString())
-            Log.d("FinalH", newBitmap.height.toString())
-        }
-
-        val byteArray: ByteArray = outputStream.toByteArray()
-        return Base64.encodeToString(byteArray, Base64.DEFAULT)
-
     }
 
     private fun checkIfCallingAPI() {

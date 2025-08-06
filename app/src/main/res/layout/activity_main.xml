@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_margin="10dp"
+        android:layout_marginTop="100dp"
         android:text="OCR Bank" />
 
     <Button
@@ -44,6 +44,22 @@
         android:layout_marginBottom="10dp"
         android:text="OCR Id" />
 
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnIdCard"
+        android:id="@+id/ed"/>
+    <include
+        android:id="@+id/captureA"
+        layout="@layout/ocr_component_image_view"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_below="@id/ed"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_centerInParent="true"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp" />
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

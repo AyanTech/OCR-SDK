@@ -5,14 +5,19 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.net.toUri
+import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
+import com.bumptech.glide.Priority
 import ir.ayantech.ocr_sdk.OCRConfig
 import ir.ayantech.ocr_sdk.OCRConstant
 import ir.ayantech.ocr_sdk.OcrActivity
-import ir.ayantech.ocr_sdk.model.GetCardOcrResult
+import ir.ayantech.ocr_sdk.OcrHelper
+import ir.ayantech.ocr_sdk.component.WaitingDialog
 import ir.ayantech.sdk_ocr.databinding.ActivityMainBinding
 import ir.ayantech.whygoogle.activity.WhyGoogleActivity
+import kotlinx.coroutines.launch
 
 class MainActivity : WhyGoogleActivity<ActivityMainBinding>() {
 
@@ -25,7 +30,22 @@ class MainActivity : WhyGoogleActivity<ActivityMainBinding>() {
 
             if (result.resultCode == Activity.RESULT_OK) {
                 val data = result.data?.extras
+                val uri = data?.getString("uri")
+                Glide.with(this)
+                    .load(uri)
+                    .dontAnimate()
+                    .priority(Priority.IMMEDIATE)
+                    .into(binding.captureA.circularImg)
 
+                val dialog = WaitingDialog(
+                    context = this,
+                    title = "درحال فشرده سازی..."
+                )
+                dialog.showDialog()
+                lifecycleScope.launch {
+                    val base64 = OcrHelper.encodeImageToBase64(this@MainActivity, uri?.toUri(), 1)
+                    dialog.hideDialog()
+                }
             }
         }
 
@@ -36,22 +56,22 @@ class MainActivity : WhyGoogleActivity<ActivityMainBinding>() {
         binding.btnOcrCar.setOnClickListener {
 
 
-            callApi("VehicleCard", false)
+            callApi("VehicleCard", true, true)
 
         }
         binding.btnIdCard.setOnClickListener {
-            callApi("NationalCard", true)
+            callApi("NationalCard", true, false)
 
         }
         binding.btnOcrBank.setOnClickListener {
-            callApi("BankCard", true)
+            callApi("BankCard", true, false)
 
         }
     }
 
-    fun callApi(cardType: String, singlePhoto: Boolean) {
+    fun callApi(cardType: String, singlePhoto: Boolean, getUri: Boolean) {
 
-
+        val quality = binding.ed.text
         OCRConfig.builder()
             .setContext(this)
             .setApplicationID("ir.ayantech.sdk_ocr")
@@ -62,9 +82,12 @@ class MainActivity : WhyGoogleActivity<ActivityMainBinding>() {
             .build()
 
         val intent = Intent(this, OcrActivity::class.java)
+        intent.putExtra("gettingUri", getUri)
         intent.putExtra("cardType", cardType)
+        intent.putExtra("maxSizeInMb", quality)
         intent.putExtra("singlePhoto", singlePhoto)
         intent.putExtra("className", "ir.ayantech.sdk_ocr.MainActivity")
+
         ocrResult.launch(intent)
 
     }

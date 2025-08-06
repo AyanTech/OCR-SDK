@@ -8,9 +8,14 @@
     <string name="ocr_retry_again">لطفا مجددا تلاش کنید</string>
     <string name="ocr_downloading_data">در حال دریافت اطلاعات...</string>
     <string name="ocr_compressing">در حال فشرده سازی...</string>
+    <string name="ocr_sending">در حال ارسال تصاویر...</string>
     <string name="retry_send">ارسال مجدد</string>
     <string name="ocr_send">ارسال</string>
     <string name="ocr_camera_desc">از کارت خود عکس بگیرید</string>
+    <string name="ocr_taking_image">عکس بگیرید</string>
+    <string name="ocr_permission_using_setting_msg">برای فعال‌سازی دوربین، باید از طریق تنظیمات برنامه دسترسی را فعال کنید.</string>
+    <string name="ocr_permission_request_msg">برای گرفتن عکس یا فیلم، لطفاً دسترسی دوربین را فعال کنید.</string>
+    <string name="ocr_permission_open_setting_msg">باز کردن تنظیمات</string>
     <string name="card_front">روی کارت</string>
     <string name="back_card">پشت کارت</string>
 </resources>

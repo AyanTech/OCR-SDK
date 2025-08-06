@@ -14,8 +14,8 @@ fun OcrComponentHeaderCameraBinding.init(
     val str = SpannableStringBuilder(title)
     str.setSpan(
         StyleSpan(Typeface.BOLD),
-        8,
-        12,
+        0,
+        str.length,
         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
     )
 
