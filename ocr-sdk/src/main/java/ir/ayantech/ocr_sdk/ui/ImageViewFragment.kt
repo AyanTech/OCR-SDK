@@ -82,7 +82,7 @@ class ImageViewFragment(
     override fun viewListeners() {
 
         binding.btnTakePhoto.setOnClickListener {
-            if (ocrActivity.singlePhoto) {
+            if (ocrActivity.ocrConfig.singlePhoto == true) {
                 checkIfCallingAPI()
                 return@setOnClickListener
             }
@@ -249,7 +249,7 @@ class ImageViewFragment(
                                             OnCard,
                                             backOfCard
                                         ).filter { it.isNotEmpty() },
-                                        Type = ocrActivity.cardType
+                                        Type = ocrActivity.ocrConfig.cardType ?: ""
                                     ),
                                     ayanCallStatus = AyanCallStatus {
                                         success { output ->
@@ -323,7 +323,7 @@ class ImageViewFragment(
                                         response.Result?.forEach {
                                             data.add(it)
                                         }
-                                        ocrActivity.sendResult(data)
+                                        ocrActivity.sendData(data)
                                     }
 
                                     HookApiCallStatusEnum.Pending.name -> {

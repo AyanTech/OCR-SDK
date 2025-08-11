@@ -66,8 +66,8 @@ class CameraXFragment(
     private lateinit var dialog: WaitingDialog
     private var compressing = false
     private var uploading = false
-    private var OnCard = ""
-    private var backOfCard = ""
+    private var OnCard: String? = null
+    private var backOfCard: String? = null
     var cardType: String by fragmentArgument("")
     var extraInfo: String by fragmentArgument("")
 
@@ -155,7 +155,7 @@ class CameraXFragment(
                 title = ocrActivity.getString(R.string.ocr_camera_desc)
 
             ) {
-                ocrActivity.finishActivity()
+                ocrActivity.mFinishActivity()
             }
             statusCheck()
 
@@ -187,7 +187,7 @@ class CameraXFragment(
                 checkIfCallingAPI()
 
             }
-            if (ocrActivity.singlePhoto) {
+            if (ocrActivity.ocrConfig.singlePhoto == true) {
                 captureB.circularImageViewParent.visibility = View.GONE
                 tvDescB.visibility = View.GONE
                 if (allPermissionsGranted())
@@ -313,13 +313,13 @@ class CameraXFragment(
 
                             OnCard = encodeImageToBase64(
                                 imageUri = frontImageUri,
-                                maxSizeInMb = ocrActivity.maxSizeInMb,
+                                maxSizeInMb = ocrActivity.ocrConfig.maxSizeMb,
                                 context = ocrActivity
                             )
                             if (backImageUri.isNotNull() && backImageUri?.equals("") == false)
                                 backOfCard = encodeImageToBase64(
                                     imageUri = backImageUri,
-                                    maxSizeInMb = ocrActivity.maxSizeInMb,
+                                    maxSizeInMb = ocrActivity.ocrConfig.maxSizeMb,
                                     context = ocrActivity
                                 )
                             //Update UI
@@ -338,41 +338,47 @@ class CameraXFragment(
                                 Log.d(TAG, "!uploading")
                                 dialog.changeText(getString(R.string.ocr_sending))
                                 ayanApi.timeout = 90
-                                ayanApi.ayanCall<UploadNewCardOcrImage.Output>(
-                                    endPoint = OCRConstant.EndPoint_UploadCardOCR,
-                                    input =
-                                        UploadNewCardOcrImage.Input(
-                                            ImageArray = listOf(
-                                                OnCard,
-                                                backOfCard
-                                            ).filter { it.isNotEmpty() },
-                                            Type = ocrActivity.cardType
-                                        ),
-                                    ayanCallStatus = AyanCallStatus {
-                                        success { output ->
-                                            val response = output.response?.Parameters
-                                            uploading = true
-                                            Log.d(TAG, "callingApi File ID: ${response?.FileID}")
-                                            fileID = response?.FileID
-                                            OCRConstant.EndPoint_GetCardOcrResult?.let {
-                                                callingApi(
-                                                    endPointName = it,
-                                                    response?.FileID
-                                                )
+                                OnCard?.let { OnCard ->
+                                    backOfCard?.let { backofcard ->
+                                        ayanApi.ayanCall<UploadNewCardOcrImage.Output>(
+                                            endPoint = OCRConstant.EndPoint_UploadCardOCR,
+                                            input = UploadNewCardOcrImage.Input(
+                                                ImageArray = listOf(
+                                                    OnCard,
+                                                    backofcard
+                                                ).filter { it.isNotEmpty() },
+                                                Type = ocrActivity.ocrConfig.cardType ?: ""
+                                            ),
+                                            ayanCallStatus = AyanCallStatus {
+                                                success { output ->
+                                                    val response = output.response?.Parameters
+                                                    uploading = true
+                                                    Log.d(
+                                                        TAG,
+                                                        "callingApi File ID: ${response?.FileID}"
+                                                    )
+                                                    fileID = response?.FileID
+                                                    OCRConstant.EndPoint_GetCardOcrResult?.let {
+                                                        callingApi(
+                                                            endPointName = it,
+                                                            response?.FileID
+                                                        )
+                                                    }
+                                                }
+                                                failure {
+                                                    dialog.hideDialog()
+                                                    this.ayanCommonCallingStatus?.dispatchFail(it)
+                                                    Log.d(
+                                                        TAG,
+                                                        "calling UploadNewCardOcrImage api failure: $it"
+                                                    )
+
+
+                                                }
                                             }
-                                        }
-                                        failure {
-                                            dialog.hideDialog()
-                                            this.ayanCommonCallingStatus?.dispatchFail(it)
-                                            Log.d(
-                                                TAG,
-                                                "calling UploadNewCardOcrImage api failure: $it"
-                                            )
-
-                                        }
+                                        )
                                     }
-                                )
-
+                                }
                             } else {
                                 OCRConstant.EndPoint_GetCardOcrResult?.let {
                                     callingApi(
@@ -396,7 +402,10 @@ class CameraXFragment(
 
 
             OCRConstant.EndPoint_GetCardOcrResult -> {
-                Log.d(TAG, "uploading -> EndPoint_GetCardOcrResult api call = fileID is= $value")
+                Log.d(
+                    TAG,
+                    "uploading -> EndPoint_GetCardOcrResult api call = fileID is= $value"
+                )
                 dialog.showDialog()
                 dialog.changeText(getString(R.string.ocr_downloading_data))
                 ocrActivity.runOnUiThread {
@@ -417,7 +426,20 @@ class CameraXFragment(
                                         response.Result?.forEach {
                                             data.add(it)
                                         }
-                                        ocrActivity.sendResult(data)
+
+                                        frontImageUri?.let {
+                                            OcrHelper.deleteCachedFileFromUri(
+                                                requireActivity(),
+                                                it
+                                            )
+                                        }
+                                        backImageUri?.let {
+                                            OcrHelper.deleteCachedFileFromUri(
+                                                requireActivity(),
+                                                it
+                                            )
+                                        }
+                                        ocrActivity.sendData(data)
                                     }
 
                                     HookApiCallStatusEnum.Pending.name -> {
@@ -466,7 +488,9 @@ class CameraXFragment(
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(
+        requestCode: Int, resultCode: Int, data: Intent?
+    ) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
             val extras: Bundle? = data?.extras
@@ -480,7 +504,9 @@ class CameraXFragment(
         statusCheck()
     }
 
-    private fun saveImageToPrivateStorage(bitmap: Bitmap): String? {
+    private fun saveImageToPrivateStorage(bitmap: Bitmap)
+            : String
+    ? {
         val fileName = System.currentTimeMillis().toString()
         try {
 

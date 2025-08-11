@@ -33,7 +33,7 @@ abstract class BaseFragment<T : ViewBinding> : WhyGoogleFragment<T>() {
 
     override fun onBackPressed(): Boolean {
             when (getTopFragment()) {
-                is CameraXFragment -> ocrActivity.finishActivity()
+                is CameraXFragment -> ocrActivity.mFinishActivity()
             }
         return true
     }

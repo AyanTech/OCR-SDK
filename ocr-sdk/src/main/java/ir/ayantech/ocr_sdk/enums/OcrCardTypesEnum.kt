@@ -1,4 +1,5 @@
 package ir.ayantech.ocr_sdk.enums
 
-class CardTypesEnum {
+enum class OcrCardTypesEnum(val value: String) {
+    VehicleCard("VehicleCard"),NationalCard("VehicleCard"),BankCard("VehicleCard")
 }

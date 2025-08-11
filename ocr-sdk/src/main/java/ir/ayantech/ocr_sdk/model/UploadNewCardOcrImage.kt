@@ -9,7 +9,5 @@ class UploadNewCardOcrImage {
 
     data class Output(
         val FileID: String,
-
     )
-
 }

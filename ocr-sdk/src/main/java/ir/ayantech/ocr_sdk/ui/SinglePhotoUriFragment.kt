@@ -1,54 +1,41 @@
-package ir.ayantech.ocr_sdk
+package ir.ayantech.ocr_sdk.ui
 
 import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.database.Cursor
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.provider.Settings
-import android.util.Base64
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
-import androidx.core.app.ActivityCompat.startActivityForResult
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
-import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
-import ir.ayantech.ayannetworking.api.AyanCallStatus
-import ir.ayantech.ocr_sdk.component.WaitingDialog
+import ir.ayantech.ocr_sdk.BaseFragment
+import ir.ayantech.ocr_sdk.CameraXFragment
+import ir.ayantech.ocr_sdk.OCRConstant
+import ir.ayantech.ocr_sdk.OneOptionDialog
+import ir.ayantech.ocr_sdk.R
 import ir.ayantech.ocr_sdk.component.init
 import ir.ayantech.ocr_sdk.databinding.OcrFragmentCameraxBinding
-import ir.ayantech.ocr_sdk.model.GetCardOcrResult
-import ir.ayantech.ocr_sdk.model.HookApiCallStatusEnum
-import ir.ayantech.ocr_sdk.model.UploadNewCardOcrImage
-import ir.ayantech.whygoogle.helper.delayed
 import ir.ayantech.whygoogle.helper.fragmentArgument
 import ir.ayantech.whygoogle.helper.isNotNull
-import ir.ayantech.whygoogle.helper.isNull
 import ir.ayantech.whygoogle.helper.makeGone
 import ir.ayantech.whygoogle.helper.nullableFragmentArgument
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
-import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
-import kotlin.math.roundToInt
 
 
 class SinglePhotoUri(
@@ -67,10 +54,8 @@ class SinglePhotoUri(
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
     var frontImageUri: Uri? by nullableFragmentArgument(null)
     var pictureNumber: Int by fragmentArgument(1)
-    private var fileID: String? by nullableFragmentArgument(null)
-     private var compressing = false
+      private var compressing = false
     private var uploading = false
-    private var OnCard = ""
 
     private val permissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
@@ -113,7 +98,7 @@ class SinglePhotoUri(
             context = requireActivity()
         ) {
             val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                data = Uri.fromParts("package", context?.packageName, null)
+              data = Uri.fromParts("package", context?.packageName, null)
             }
             startActivity(intent)
         }.show()
@@ -144,14 +129,14 @@ class SinglePhotoUri(
                 if (!it) return@registerForActivityResult
                 frontImageUri = imageUri
 
-                statusCheck()
+                ocrActivity.sendUri(frontImageUri)
             }
 
             headerRl.init(
                 title = ocrActivity.getString(R.string.ocr_taking_image)
 
             ) {
-                ocrActivity.finishActivity()
+                ocrActivity.mFinishActivity()
             }
             statusCheck()
 
@@ -169,7 +154,8 @@ class SinglePhotoUri(
 
             }
             btnSendImages.setOnClickListener {
-                ocrActivity.sendUri(frontImageUri.toString())
+                ocrActivity.sendUri(frontImageUri)
+
             }
             captureA.circularImg.performClick()
         }
@@ -182,20 +168,8 @@ class SinglePhotoUri(
                 .dontAnimate()
                 .priority(Priority.IMMEDIATE)
                 .into(binding.captureA.circularImg)
-            binding.captureA.icCheck.visibility = View.VISIBLE
-
-        }
-
-        if (frontImageUri.isNotNull()) {
-
-            Glide.with(ocrActivity)
-                .load(Uri.parse(frontImageUri.toString()))
-                .dontAnimate()
-                .priority(Priority.IMMEDIATE)
-                .into(binding.captureA.circularImg)
             binding.btnSendImages.isEnabled = true
             binding.captureA.icCheck.visibility = View.VISIBLE
-
         }
     }
 

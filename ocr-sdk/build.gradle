@@ -3,6 +3,8 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'maven-publish'
+    id "org.jetbrains.kotlin.plugin.parcelize"
+
 }
 
 android {

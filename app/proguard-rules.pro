@@ -32,6 +32,7 @@
 -keep public class ir.ayantech.ayannetworking.** { *; }
  -keep public class com.alirezabdn.generator.Processor.** { *; }
  -keep public class ir.ayantech.ocr_sdk.model.** { *; }
+ -keep public class ir.ayantech.ocr_sdk.enums.** { *; }
 
 -keep class android.device.** { *; }
 
