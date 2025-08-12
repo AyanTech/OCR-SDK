@@ -48,7 +48,7 @@ import java.io.IOException
 class CameraXFragment(
 
 ) :
-    BaseFragment<OcrFragmentCameraxBinding>() {
+    BaseFragment() {
     val REQUEST_IMAGE_CAPTURE = 1
 
 
@@ -56,8 +56,7 @@ class CameraXFragment(
         get() = false
     override val showingFooter: Boolean
         get() = false
-    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> OcrFragmentCameraxBinding
-        get() = OcrFragmentCameraxBinding::inflate
+
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
     var frontImageUri: Uri? by nullableFragmentArgument(null)
     var backImageUri: Uri? by nullableFragmentArgument(null)
