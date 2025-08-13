@@ -12,9 +12,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -26,12 +24,10 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import ir.ayantech.ayannetworking.api.AyanCallStatus
 import ir.ayantech.ocr_sdk.OcrHelper.encodeImageToBase64
-import ir.ayantech.ocr_sdk.component.WaitingDialog
-import ir.ayantech.ocr_sdk.component.init
-import ir.ayantech.ocr_sdk.databinding.OcrFragmentCameraxBinding
-import ir.ayantech.ocr_sdk.model.GetCardOcrResult
-import ir.ayantech.ocr_sdk.model.HookApiCallStatusEnum
-import ir.ayantech.ocr_sdk.model.UploadNewCardOcrImage
+import ir.ayantech.ocr_sdk.component.OcrSdkWaitingDialog
+import ir.ayantech.ocr_sdk.model.OcrSdkGetCardOcrResult
+import ir.ayantech.ocr_sdk.model.OcrSdkHookApiCallStatusEnum
+import ir.ayantech.ocr_sdk.model.OcrSdkUploadNewCardOcrImage
 import ir.ayantech.whygoogle.helper.delayed
 import ir.ayantech.whygoogle.helper.fragmentArgument
 import ir.ayantech.whygoogle.helper.isNotNull
@@ -45,10 +41,10 @@ import java.io.File
 import java.io.IOException
 
 
-class CameraXFragment(
+class OcrSdkFragmentOcrSdk(
 
 ) :
-    BaseFragment() {
+    OcrSdkBaseFragment() {
     val REQUEST_IMAGE_CAPTURE = 1
 
 
@@ -62,7 +58,7 @@ class CameraXFragment(
     var backImageUri: Uri? by nullableFragmentArgument(null)
     var pictureNumber: Int by fragmentArgument(1)
     private var fileID: String? by nullableFragmentArgument(null)
-    private lateinit var dialog: WaitingDialog
+    private lateinit var dialog: OcrSdkWaitingDialog
     private var compressing = false
     private var uploading = false
     private var OnCard: String? = null
@@ -94,7 +90,7 @@ class CameraXFragment(
         }
 
     private fun showPermissionRationaleDialog() {
-        OneOptionDialog(
+        OcrSdkOneOptionDialog(
             title = getString(R.string.ocr_permission_request_msg),
             buttonText = getString(R.string.ocr_permission_open_setting_msg),
             context = requireActivity()
@@ -105,7 +101,7 @@ class CameraXFragment(
     }
 
     private fun showGoToSettingsDialog() {
-        OneOptionDialog(
+        OcrSdkOneOptionDialog(
             title = getString(R.string.ocr_permission_using_setting_msg),
             buttonText = getString(R.string.ocr_permission_open_setting_msg),
             context = requireActivity()
@@ -121,13 +117,19 @@ class CameraXFragment(
     var image: File? by nullableFragmentArgument(null)
     var imageUri: Uri? by nullableFragmentArgument(null)
     fun createImageUri(): Uri? {
-        return image?.let {
-            FileProvider.getUriForFile(
-                ocrActivity,
-                "${OCRConstant.Application_ID}.library.file.provider",
-                it
-            )
-        }
+         image?.let {
+            try {
+                return   FileProvider.getUriForFile(
+                    ocrActivity,
+                    "${OCRConstant.Application_ID}.library.file.provider",
+                    it
+                )
+            }catch (e:Exception){
+                Log.d(TAG, "FileProviderError: $e ")
+                return null
+            }
+         }
+        return null
     }
 
 
@@ -145,17 +147,10 @@ class CameraXFragment(
 
                 statusCheck()
             }
-            dialog = WaitingDialog(
+            dialog = OcrSdkWaitingDialog(
                 requireContext(),
                 getString(R.string.ocr_compressing)
             )
-
-            headerRl.init(
-                title = ocrActivity.getString(R.string.ocr_camera_desc)
-
-            ) {
-                ocrActivity.mFinishActivity()
-            }
             statusCheck()
 
 
@@ -272,8 +267,7 @@ class CameraXFragment(
             ).toTypedArray()
     }
 
-    override fun init() {
-    }
+
 
     override fun viewListeners() {
     }
@@ -339,9 +333,9 @@ class CameraXFragment(
                                 ayanApi.timeout = 90
                                 OnCard?.let { OnCard ->
                                     backOfCard?.let { backofcard ->
-                                        ayanApi.ayanCall<UploadNewCardOcrImage.Output>(
+                                        ayanApi.ayanCall<OcrSdkUploadNewCardOcrImage.Output>(
                                             endPoint = OCRConstant.EndPoint_UploadCardOCR,
-                                            input = UploadNewCardOcrImage.Input(
+                                            input = OcrSdkUploadNewCardOcrImage.Input(
                                                 ImageArray = listOf(
                                                     OnCard,
                                                     backofcard
@@ -410,18 +404,18 @@ class CameraXFragment(
                 ocrActivity.runOnUiThread {
                     Log.d(TAG, "callingApi: ")
                     ayanApi.timeout = 10
-                    ayanApi.ayanCall<GetCardOcrResult.Output>(
+                    ayanApi.ayanCall<OcrSdkGetCardOcrResult.Output>(
                         endPoint = OCRConstant.EndPoint_GetCardOcrResult,
-                        input = value?.let { GetCardOcrResult.Input(FileID = it) },
+                        input = value?.let { OcrSdkGetCardOcrResult.Input(FileID = it) },
                         ayanCallStatus = AyanCallStatus {
                             success { output ->
                                 val response = output.response?.Parameters
                                 when (response?.Status) {
 
-                                    HookApiCallStatusEnum.Successful.name -> {
+                                    OcrSdkHookApiCallStatusEnum.Successful.name -> {
                                         dialog.hideDialog()
 
-                                        val data = ArrayList<GetCardOcrResult.Result>()
+                                        val data = ArrayList<OcrSdkGetCardOcrResult.Result>()
                                         response.Result?.forEach {
                                             data.add(it)
                                         }
@@ -441,7 +435,7 @@ class CameraXFragment(
                                         ocrActivity.sendData(data)
                                     }
 
-                                    HookApiCallStatusEnum.Pending.name -> {
+                                    OcrSdkHookApiCallStatusEnum.Pending.name -> {
 
                                         delayed(response.NextCallInterval) {
                                             callingApi(
@@ -451,7 +445,7 @@ class CameraXFragment(
                                         }
                                     }
 
-                                    HookApiCallStatusEnum.Failed.name -> {
+                                    OcrSdkHookApiCallStatusEnum.Failed.name -> {
 
                                         if (response.Retryable) {
                                             dialog.hideDialog()

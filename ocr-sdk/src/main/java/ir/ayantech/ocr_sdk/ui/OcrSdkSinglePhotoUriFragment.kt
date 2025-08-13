@@ -10,9 +10,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -20,13 +18,11 @@ import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
-import ir.ayantech.ocr_sdk.BaseFragment
-import ir.ayantech.ocr_sdk.CameraXFragment
+import ir.ayantech.ocr_sdk.OcrBaseFragment
+import ir.ayantech.ocr_sdk.OcrFragmentOcr
 import ir.ayantech.ocr_sdk.OCRConstant
 import ir.ayantech.ocr_sdk.OneOptionDialog
 import ir.ayantech.ocr_sdk.R
-import ir.ayantech.ocr_sdk.component.init
-import ir.ayantech.ocr_sdk.databinding.OcrFragmentCameraxBinding
 import ir.ayantech.whygoogle.helper.fragmentArgument
 import ir.ayantech.whygoogle.helper.isNotNull
 import ir.ayantech.whygoogle.helper.makeGone
@@ -41,7 +37,7 @@ import java.io.IOException
 class SinglePhotoUri(
 
 ) :
-    BaseFragment<OcrFragmentCameraxBinding>() {
+    OcrBaseFragment() {
     val REQUEST_IMAGE_CAPTURE = 1
 
 
@@ -49,12 +45,11 @@ class SinglePhotoUri(
         get() = false
     override val showingFooter: Boolean
         get() = false
-    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> OcrFragmentCameraxBinding
-        get() = OcrFragmentCameraxBinding::inflate
+
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
     var frontImageUri: Uri? by nullableFragmentArgument(null)
     var pictureNumber: Int by fragmentArgument(1)
-      private var compressing = false
+    private var compressing = false
     private var uploading = false
 
     private val permissionLauncher =
@@ -63,12 +58,13 @@ class SinglePhotoUri(
             if (allPermissionsGranted()) {
                 binding.captureA.circularImg.performClick()
             } else {
-                val permanentlyDenied = CameraXFragment.Companion.REQUIRED_PERMISSIONS.any { permission ->
-                    !ActivityCompat.shouldShowRequestPermissionRationale(
-                        requireActivity(),
-                        permission
-                    )
-                }
+                val permanentlyDenied =
+                    OcrFragmentOcr.Companion.REQUIRED_PERMISSIONS.any { permission ->
+                        !ActivityCompat.shouldShowRequestPermissionRationale(
+                            requireActivity(),
+                            permission
+                        )
+                    }
 
                 if (permanentlyDenied) {
                     // رد دائمی (don't ask again)
@@ -98,7 +94,7 @@ class SinglePhotoUri(
             context = requireActivity()
         ) {
             val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-              data = Uri.fromParts("package", context?.packageName, null)
+                data = Uri.fromParts("package", context?.packageName, null)
             }
             startActivity(intent)
         }.show()
@@ -131,32 +127,8 @@ class SinglePhotoUri(
 
                 ocrActivity.sendUri(frontImageUri)
             }
-
-            headerRl.init(
-                title = ocrActivity.getString(R.string.ocr_taking_image)
-
-            ) {
-                ocrActivity.mFinishActivity()
-            }
             statusCheck()
 
-
-            binding.captureA.circularImg.setOnClickListener {
-                if (!allPermissionsGranted()) {
-                    requestPermissions()
-                    return@setOnClickListener
-                }
-                val name = System.currentTimeMillis().toString()
-                image = File(ocrActivity.filesDir, "$name.jpeg")
-                pictureNumber = 1
-                imageUri = createImageUri()
-                contract.launch(imageUri)
-
-            }
-            btnSendImages.setOnClickListener {
-                ocrActivity.sendUri(frontImageUri)
-
-            }
             captureA.circularImg.performClick()
         }
     }
@@ -187,7 +159,7 @@ class SinglePhotoUri(
             if (allPermissionsGranted()) {
 
             } else {
-                showToast("Permissions not granted by the user.")
+                showToast(getString(R.string.ocr_permissions_not_granted_by_the_user))
                 requireActivity().finish()
             }
         }
@@ -207,21 +179,13 @@ class SinglePhotoUri(
             ).toTypedArray()
     }
 
-    override fun init() {
-    }
-
-    override fun viewListeners() {
-    }
-
-    override fun callingApi(endPointName: String, value: String?) {
-    }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
             val extras: Bundle? = data?.extras
             val imageBitmap: Bitmap? = extras?.get("data") as Bitmap?
             // Save the image to private storage
-                frontImageUri = imageBitmap?.let { saveImageToPrivateStorage(it) }?.toUri()
+            frontImageUri = imageBitmap?.let { saveImageToPrivateStorage(it) }?.toUri()
         }
         statusCheck()
     }
@@ -244,7 +208,7 @@ class SinglePhotoUri(
 
     override fun onDestroy() {
         coroutineScope.cancel()
-         compressing = false
+        compressing = false
         uploading = false
         super.onDestroy()
     }
