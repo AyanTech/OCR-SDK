@@ -13,7 +13,7 @@ import ir.ayantech.ocr_sdk.R
 import ir.ayantech.whygoogle.helper.viewBinding
 
 
-abstract class AyanDialog<T : ViewBinding>(context: Context) :
+abstract class OcrSdkAyanDialog<T : ViewBinding>(context: Context) :
     Dialog(context, R.style.AyanDialog) {
 
     val binding: T by viewBinding(binder)

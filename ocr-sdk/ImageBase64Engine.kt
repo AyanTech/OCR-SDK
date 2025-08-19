@@ -1,0 +1,2 @@
+class ImageBase64Engine {
+}

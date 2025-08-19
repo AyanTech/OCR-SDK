@@ -3,7 +3,7 @@ package ir.ayantech.ocr_sdk.tools
 import android.os.SystemClock
 import android.view.View
 
-object Util {
+object ExtensionFunction {
 
 
     private val TAG_LOCK_RUNNABLE = 0x77AACC11

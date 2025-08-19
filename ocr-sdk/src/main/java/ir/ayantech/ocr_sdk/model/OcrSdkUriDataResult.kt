@@ -5,7 +5,7 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class UriDataResult(
+data class OcrSdkUriDataResult(
     val uri: Uri?,
     val extraInfo: String? = null
 ) : Parcelable

@@ -26,8 +26,7 @@
 
 -keep class android.device.** { *; }
 
--keep class ir.ayantech.ocr_sdk.ImageViewFragment
--keep class ir.ayantech.ocr_sdk.Constant
+ -keep class ir.ayantech.ocr_sdk.Constant
 
 
 -dontwarn com.android.billingclient.**

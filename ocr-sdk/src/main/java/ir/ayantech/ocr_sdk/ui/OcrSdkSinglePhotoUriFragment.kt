@@ -18,10 +18,8 @@ import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
-import ir.ayantech.ocr_sdk.OcrBaseFragment
-import ir.ayantech.ocr_sdk.OcrFragmentOcr
-import ir.ayantech.ocr_sdk.OCRConstant
-import ir.ayantech.ocr_sdk.OneOptionDialog
+import ir.ayantech.ocr_sdk.tools.OCRConstant
+import ir.ayantech.ocr_sdk.dialog.OcrSdkOneOptionDialog
 import ir.ayantech.ocr_sdk.R
 import ir.ayantech.whygoogle.helper.fragmentArgument
 import ir.ayantech.whygoogle.helper.isNotNull
@@ -37,7 +35,7 @@ import java.io.IOException
 class SinglePhotoUri(
 
 ) :
-    OcrBaseFragment() {
+    OcrSdkBaseFragment() {
     val REQUEST_IMAGE_CAPTURE = 1
 
 
@@ -51,6 +49,7 @@ class SinglePhotoUri(
     var pictureNumber: Int by fragmentArgument(1)
     private var compressing = false
     private var uploading = false
+    private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
 
     private val permissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
@@ -59,7 +58,7 @@ class SinglePhotoUri(
                 binding.captureA.circularImg.performClick()
             } else {
                 val permanentlyDenied =
-                    OcrFragmentOcr.Companion.REQUIRED_PERMISSIONS.any { permission ->
+                 REQUIRED_PERMISSIONS.any { permission ->
                         !ActivityCompat.shouldShowRequestPermissionRationale(
                             requireActivity(),
                             permission
@@ -77,7 +76,7 @@ class SinglePhotoUri(
         }
 
     private fun showPermissionRationaleDialog() {
-        OneOptionDialog(
+        OcrSdkOneOptionDialog(
             title = getString(R.string.ocr_permission_request_msg),
             buttonText = getString(R.string.ocr_permission_open_setting_msg),
             context = requireActivity()
@@ -88,7 +87,7 @@ class SinglePhotoUri(
     }
 
     private fun showGoToSettingsDialog() {
-        OneOptionDialog(
+        OcrSdkOneOptionDialog(
             title = getString(R.string.ocr_permission_using_setting_msg),
             buttonText = getString(R.string.ocr_permission_open_setting_msg),
             context = requireActivity()
@@ -129,6 +128,22 @@ class SinglePhotoUri(
             }
             statusCheck()
 
+
+            binding.captureA.circularImg.setOnClickListener {
+                if (!allPermissionsGranted()) {
+                    requestPermissions()
+                    return@setOnClickListener
+                }
+                val name = System.currentTimeMillis().toString()
+                image = File(ocrActivity.filesDir, "$name.jpeg")
+                pictureNumber = 1
+                imageUri = createImageUri()
+                contract.launch(imageUri)
+
+            }
+            btnSendImages.setOnClickListener {
+                ocrActivity.sendUri(frontImageUri)
+            }
             captureA.circularImg.performClick()
         }
     }

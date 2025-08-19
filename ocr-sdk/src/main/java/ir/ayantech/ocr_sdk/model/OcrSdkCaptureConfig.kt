@@ -4,8 +4,10 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class CaptureConfig(
-    val maxSizeMb: Int? = null,
+data class OcrSdkCaptureConfig(
+    val maxSizeMb: Double? = null,
+    val minSizeMb: Double? = null,
     val className: String? = null,
     val extraInfo: String? = null,
-    val textBlock: TextBlock? = null) : Parcelable
+    val textBlock: OcrSdkTextBlock? = null
+) : Parcelable

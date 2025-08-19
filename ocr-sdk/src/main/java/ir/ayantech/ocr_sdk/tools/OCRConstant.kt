@@ -1,4 +1,4 @@
-package ir.ayantech.ocr_sdk
+package ir.ayantech.ocr_sdk.tools
 
 import android.annotation.SuppressLint
 import android.content.Context

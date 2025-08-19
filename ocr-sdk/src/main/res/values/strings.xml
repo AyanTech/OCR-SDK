@@ -18,4 +18,5 @@
     <string name="ocr_permission_open_setting_msg">باز کردن تنظیمات</string>
     <string name="card_front">روی کارت</string>
     <string name="back_card">پشت کارت</string>
+    <string name="ocr_permissions_not_granted_by_the_user">Permissions not granted by the user.</string>
 </resources>

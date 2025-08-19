@@ -3,13 +3,13 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'maven-publish'
-    id "org.jetbrains.kotlin.plugin.parcelize"
-
+    id 'kotlin-parcelize'
 }
 
 android {
     namespace 'ir.ayantech.ocr_sdk'
     compileSdk 35
+    publishing { singleVariant("release") { withSourcesJar() } }
 
     defaultConfig {
         minSdk 21
@@ -29,6 +29,8 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
+
         }
     }
     compileOptions {

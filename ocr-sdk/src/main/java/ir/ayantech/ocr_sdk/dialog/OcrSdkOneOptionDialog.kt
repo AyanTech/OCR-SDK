@@ -1,23 +1,23 @@
-package ir.ayantech.ocr_sdk
+package ir.ayantech.ocr_sdk.dialog
 
 import android.content.Context
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.core.content.ContextCompat
 import ir.ayantech.ayannetworking.api.SimpleCallback
-import ir.ayantech.ocr_sdk.component.AyanDialog
+import ir.ayantech.ocr_sdk.R
+import ir.ayantech.ocr_sdk.component.OcrSdkAyanDialog
 import ir.ayantech.ocr_sdk.databinding.OcrDialogOneOptionBinding
 import ir.ayantech.whygoogle.helper.makeGone
 
-class OneOptionDialog(
+class OcrSdkOneOptionDialog(
     context: Context,
     private val title: String,
     private val buttonText: String,
     private val icon: Int = R.drawable.ocr_ic_camera,
     private val isItForce: Boolean = false,
     private val onButtonClicked: SimpleCallback
-) : AyanDialog<OcrDialogOneOptionBinding>(context) {
+) : OcrSdkAyanDialog<OcrDialogOneOptionBinding>(context) {
 
     override val binder: (LayoutInflater) -> OcrDialogOneOptionBinding
         get() = OcrDialogOneOptionBinding::inflate

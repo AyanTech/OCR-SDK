@@ -1,16 +1,17 @@
-package ir.ayantech.ocr_sdk
+package ir.ayantech.ocr_sdk.ui
 
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import ir.ayantech.ocr_sdk.R
 import ir.ayantech.ocr_sdk.component.init
 import ir.ayantech.ocr_sdk.databinding.OcrFragmentCameraxBinding
 import ir.ayantech.whygoogle.fragment.WhyGoogleFragment
 
 
-open class OcrBaseFragment : WhyGoogleFragment<OcrFragmentCameraxBinding>() {
+open class OcrSdkBaseFragment : WhyGoogleFragment<OcrFragmentCameraxBinding>() {
 
 
     override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> OcrFragmentCameraxBinding
@@ -39,7 +40,7 @@ open class OcrBaseFragment : WhyGoogleFragment<OcrFragmentCameraxBinding>() {
 
     override fun onBackPressed(): Boolean {
         when (getTopFragment()) {
-            is OcrFragmentOcr -> ocrActivity.mFinishActivity()
+            is OcrSdkOcrFragment -> ocrActivity.mFinishActivity()
         }
         return true
     }

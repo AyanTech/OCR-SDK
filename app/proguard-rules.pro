@@ -36,10 +36,9 @@
 
 -keep class android.device.** { *; }
 
--keep class ir.ayantech.ocr_sdk.ImageViewFragment
--keep class ir.ayantech.ocr_sdk.Constant
+ -keep class ir.ayantech.ocr_sdk.Constant
 
-
+-dontwarn kotlinx.parcelize.Parcelize
 # Add project specific ProGuard rules here.
 # You can control the set of applied configuration files using the
 # proguardFiles setting in build.gradle.

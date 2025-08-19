@@ -1,10 +1,10 @@
-package ir.ayantech.ocr_sdk
+package ir.ayantech.ocr_sdk.tools
 
 import android.content.Context
-import ir.ayantech.ocr_sdk.OCRConstant.Base_URL
-import ir.ayantech.ocr_sdk.OCRConstant.EndPoint_GetCardOcrResult
-import ir.ayantech.ocr_sdk.OCRConstant.EndPoint_UploadCardOCR
-import ir.ayantech.ocr_sdk.OCRConstant.Token
+import ir.ayantech.ocr_sdk.tools.OCRConstant.Base_URL
+import ir.ayantech.ocr_sdk.tools.OCRConstant.EndPoint_GetCardOcrResult
+import ir.ayantech.ocr_sdk.tools.OCRConstant.EndPoint_UploadCardOCR
+import ir.ayantech.ocr_sdk.tools.OCRConstant.Token
 
 
 class OcrInitializer {

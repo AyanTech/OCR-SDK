@@ -1,5 +1,5 @@
 package ir.ayantech.ocr_sdk.model
 
-enum class HookApiCallStatusEnum(val txt:String) {
+enum class OcrSdkHookApiCallStatusEnum(val txt:String) {
     Successful("Successful") , Failed("Failed") , Pending("Pending")
 }
