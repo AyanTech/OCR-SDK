@@ -8,7 +8,7 @@ class OcrSdkUploadNewCardOcrImage {
 
     @Parcelize
     data class Input(
-        val ImageArray: List<String>,
+        val ImageArray: List<String?>,
         val Type : String
     ): Parcelable
 

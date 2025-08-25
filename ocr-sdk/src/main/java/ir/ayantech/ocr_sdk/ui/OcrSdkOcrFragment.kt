@@ -209,8 +209,8 @@ class OcrSdkOcrFragment : OcrSdkBaseFragment() {
                 encodeImageToBase64(
                     context = ocrActivity,
                     imageUri = picked,
-                    maxBase64Mb = ocrActivity.ocrConfig.maxSizeMb ?: 3.0,
-                    minBase64Mb = ocrActivity.ocrConfig.minSizeMb ?: 2.0,
+                    maxBase64Mb = ocrActivity.ocrConfig.maxBase64Mb ?: 3.0,
+                    minBase64Mb = ocrActivity.ocrConfig.minBase64Mb ?: 2.0,
                     listener = listener
                 )
             }
@@ -309,36 +309,35 @@ class OcrSdkOcrFragment : OcrSdkBaseFragment() {
                         if (!uploading) {
                             progressDialog?.showDialog(getString(R.string.ocr_sending))
                             ayanApi.timeout = 90
-                            onCardBase64?.let { front ->
-                                val images = listOf(front, backCardBase64 ?: "")
-                                    .filter { it.isNotEmpty() }
+                            val images = listOf(onCardBase64, backCardBase64 ?: "")
+                                .filter { it?.isNotEmpty() == true }
 
-                                 val input = OcrSdkUploadNewCardOcrImage.Input(
-                                    ImageArray = images,
-                                    Type = effectiveCardType()
-                                    // , ExtraInfo = extraInfo.takeIf { it.isNotEmpty() }
-                                )
+                            val input = OcrSdkUploadNewCardOcrImage.Input(
+                                ImageArray = images,
+                                Type = effectiveCardType()
+                                // , ExtraInfo = extraInfo.takeIf { it.isNotEmpty() }
+                            )
 
-                                ayanApi.ayanCall<OcrSdkUploadNewCardOcrImage.Output>(
-                                    endPoint = OCRConstant.EndPoint_UploadCardOCR,
-                                    input = input,
-                                    ayanCallStatus = AyanCallStatus {
-                                        success { output ->
-                                            uploading = true
-                                            fileID = output.response?.Parameters?.FileID
-                                            OCRConstant.EndPoint_GetCardOcrResult?.let {
-                                                callingApi(it, fileID)
-                                            }
-                                        }
-                                        failure {
-                                            hideProgress()
-                                            this.ayanCommonCallingStatus?.dispatchFail(it)
+                            ayanApi.ayanCall<OcrSdkUploadNewCardOcrImage.Output>(
+                                endPoint = OCRConstant.EndPoint_UploadCardOCR,
+                                input = input,
+                                ayanCallStatus = AyanCallStatus {
+                                    success { output ->
+                                        uploading = true
+                                        fileID = output.response?.Parameters?.FileID
+                                        OCRConstant.EndPoint_GetCardOcrResult.let {
+                                            callingApi(it, fileID)
                                         }
                                     }
-                                )
-                            }
+                                    failure {
+                                        hideProgress()
+                                        this.ayanCommonCallingStatus?.dispatchFail(it)
+                                    }
+                                }
+                            )
+
                         } else {
-                            OCRConstant.EndPoint_GetCardOcrResult?.let {
+                            OCRConstant.EndPoint_GetCardOcrResult.let {
                                 callingApi(it, fileID)
                             }
                         }
@@ -364,18 +363,14 @@ class OcrSdkOcrFragment : OcrSdkBaseFragment() {
                                         hideProgress()
                                         val data = ArrayList<OcrSdkGetCardOcrResult.Result>()
                                         response.Result?.forEach { data.add(it) }
-                                        frontImageUri?.let {
-                                            OcrHelper.deleteCachedFileFromUri(
-                                                requireActivity(),
-                                                it
-                                            )
-                                        }
-                                        backImageUri?.let {
-                                            OcrHelper.deleteCachedFileFromUri(
-                                                requireActivity(),
-                                                it
-                                            )
-                                        }
+                                        OcrHelper.deleteCachedFileFromUri(
+                                            requireActivity(),
+                                            frontImageUri ?: "".toUri()
+                                        )
+                                        OcrHelper.deleteCachedFileFromUri(
+                                            requireActivity(),
+                                            backImageUri ?: "".toUri()
+                                        )
                                         ocrActivity.sendData(data)
                                     }
 

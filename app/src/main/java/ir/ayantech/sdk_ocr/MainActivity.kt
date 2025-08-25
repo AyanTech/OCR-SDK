@@ -87,8 +87,6 @@ class MainActivity : WhyGoogleActivity<ActivityMainBinding>() {
             initSDK()
             urlContract.launch(
                 OcrSdkCaptureConfig(
-                    maxSizeMb = getMaxCompressionInt(),
-                    minSizeMb = getMinCompressionInt(),
                     className = packageNamee,
                     extraInfo = "capture test"
                 )
@@ -99,8 +97,8 @@ class MainActivity : WhyGoogleActivity<ActivityMainBinding>() {
             initSDK()
             ocrContract.launch(
                 OcrSdkOcrConfig(
-                    maxSizeMb = getMaxCompressionInt(),
-                    minSizeMb = getMinCompressionInt(),
+                    maxBase64Mb = getMaxCompressionInt(),
+                    minBase64Mb = getMinCompressionInt(),
                     className = packageNamee,
                     cardType = OcrSdkOcrCardTypesEnum.VehicleCard.value,
                     singlePhoto = false,
@@ -118,8 +116,8 @@ class MainActivity : WhyGoogleActivity<ActivityMainBinding>() {
             initSDK()
             ocrContract.launch(
                 OcrSdkOcrConfig(
-                    maxSizeMb = getMaxCompressionInt(),
-                    minSizeMb = getMinCompressionInt(),
+                    maxBase64Mb = getMaxCompressionInt(),
+                    minBase64Mb = getMinCompressionInt(),
                     className = packageNamee,
                     cardType = OcrSdkOcrCardTypesEnum.NationalCard.value,
                     singlePhoto = true,

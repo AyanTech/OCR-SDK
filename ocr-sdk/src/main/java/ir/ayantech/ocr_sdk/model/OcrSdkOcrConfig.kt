@@ -6,8 +6,8 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class OcrSdkOcrConfig(
-    val maxSizeMb: Double? = null,
-    val minSizeMb: Double? = null,
+    val maxBase64Mb: Double? = null,
+    val minBase64Mb: Double? = null,
     val className: String? = null,
     val cardType: String? = null,
     val singlePhoto: Boolean? = null,

@@ -5,8 +5,6 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class OcrSdkCaptureConfig(
-    val maxSizeMb: Double? = null,
-    val minSizeMb: Double? = null,
     val className: String? = null,
     val extraInfo: String? = null,
     val textBlock: OcrSdkTextBlock? = null

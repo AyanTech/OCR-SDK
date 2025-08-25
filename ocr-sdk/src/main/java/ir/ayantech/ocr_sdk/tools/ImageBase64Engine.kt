@@ -24,8 +24,8 @@ import kotlin.math.min
 internal object ImageBase64Engine {
 
     // ---------------- Logging ----------------
-    private const val PUB_TAG = "OcrEnginge" // لاگ‌های سطح بالا
-    private const val ENG_TAG = "OcrEnginge" // لاگ متدهای داخلی
+    private const val PUB_TAG = "OcrEnginge"
+    private const val ENG_TAG = "OcrEnginge"
     private val DEBUG_LOG: Boolean = true
     private inline fun logd(msg: () -> String) {
         if (DEBUG_LOG) Log.d(ENG_TAG, msg())
