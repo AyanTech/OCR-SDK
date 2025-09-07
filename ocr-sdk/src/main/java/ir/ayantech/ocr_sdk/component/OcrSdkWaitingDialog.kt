@@ -40,10 +40,9 @@ class OcrSdkWaitingDialog(
         binding.tvTitle.text = title
     }
 
-    /** بازکردن بدون ساخت مجدد/فلیکر */
     fun showDialog(initialMessage: String? = null) {
-        initialMessage?.let { changeText(it) }
         if (!isShowing) show()
+        initialMessage?.let { changeText(it) }
     }
 
     /** بستن امن */
