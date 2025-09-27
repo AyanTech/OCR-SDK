@@ -239,7 +239,6 @@ class MainActivity : WhyGoogleActivity<ActivityMainBinding>() {
                         updateLog(metrics.toString())
                     }
                 })
-
         }
     }
 
