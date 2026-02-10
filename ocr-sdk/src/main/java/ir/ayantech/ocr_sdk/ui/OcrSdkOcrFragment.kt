@@ -300,7 +300,6 @@ class OcrSdkOcrFragment : OcrSdkBaseFragment() {
         else
             callingApi(endPointName = OCRConstant.EndPoint_GetCardOcrResult)
     }
-
     override fun callingApi(endPointName: String, value: String?) {
         when (endPointName) {
             OCRConstant.EndPoint_UploadCardOCR -> {

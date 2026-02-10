@@ -2,142 +2,81 @@ package ir.ayantech.sdk_ocr
 
 import android.Manifest
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.text.Editable
-import android.text.SpannableStringBuilder
-import android.util.Log
+import android.util.Base64
 import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
-import com.bumptech.glide.Priority
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import ir.ayantech.ocr_sdk.component.OcrSdkWaitingDialog
-import ir.ayantech.ocr_sdk.enums.OcrSdkOcrCardTypesEnum
 import ir.ayantech.ocr_sdk.model.EncodeImageListenerWithMetrics
 import ir.ayantech.ocr_sdk.model.EncodeMetrics
 import ir.ayantech.ocr_sdk.model.OcrSdkCaptureConfig
-import ir.ayantech.ocr_sdk.model.OcrSdkOcrConfig
 import ir.ayantech.ocr_sdk.model.OcrSdkTextBlock
 import ir.ayantech.ocr_sdk.tools.CaptureContract
-import ir.ayantech.ocr_sdk.tools.EncodeImageListener
 import ir.ayantech.ocr_sdk.tools.OCRConfig
 import ir.ayantech.ocr_sdk.tools.OCRConstant
-import ir.ayantech.ocr_sdk.tools.OCRContract
 import ir.ayantech.ocr_sdk.tools.OcrHelper
 import ir.ayantech.sdk_ocr.databinding.ActivityMainBinding
 import ir.ayantech.whygoogle.activity.WhyGoogleActivity
-import ir.ayantech.whygoogle.helper.isNull
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import okhttp3.Call
 
 class MainActivity : WhyGoogleActivity<ActivityMainBinding>() {
 
-    override val binder: (LayoutInflater) -> ActivityMainBinding
-        get() = ActivityMainBinding::inflate
+    override val binder: (LayoutInflater) -> ActivityMainBinding get() = ActivityMainBinding::inflate
     override val containerId: Int = R.id.fragmentContainerFl
-    var packageNamee: String = "ir.ayantech.sdk_ocr.MainActivity"
-    val requestReadPermission = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { granted -> /* ادامه‌ی کار */ }
-    val responseLog = arrayListOf<String>()
-    private val urlContract = registerForActivityResult(CaptureContract()) { uriDataResult ->
 
-        val uri = uriDataResult?.uri
-        val extraInfo = uriDataResult?.extraInfo
+    private var cardFrontBase64: String? = null
+    private var cardBackBase64: String? = null
+    private var isProcessingFront: String = "0"
+    private var currentCall: Call? = null
+    private var isRequesting = false
 
-        Log.d("asdasda", ": $uri")
-        Log.d("asdasda", ": $extraInfo")
-
-        compressImage(uri, 4.0)
+    // قراردادهای دوربین و گالری
+    private val urlContract = registerForActivityResult(CaptureContract()) { res ->
+        compressImage(res?.uri, res?.extraInfo.toString())
     }
 
-    private val ocrContract = registerForActivityResult(OCRContract()) { ocrDataResult ->
-
-        val items = ocrDataResult?.items
-        val extraInfo = ocrDataResult?.extraInfo
-        val cardType = ocrDataResult?.cardType
-
-        Log.d("asdasda", "log: $ocrDataResult")
-
-        binding.tvResponse.text = ocrDataResult.toString()
-    }
-
-
-    private val openDocContract = registerForActivityResult(
-        ActivityResultContracts.OpenDocument()
-    ) { uri: Uri? ->
-        if (uri != null) {
-            // برای دسترسی‌های بعدی (پس از ری‌استارت اپ) پرسیست کن:
-            contentResolver.takePersistableUriPermission(
-                uri, Intent.FLAG_GRANT_READ_URI_PERMISSION
-            )
-           compressImage(uri, getMaxCompressionInt())
+    private val mOpenGalleryContract =
+        registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
+            uri?.let {
+                contentResolver.takePersistableUriPermission(
+                    it,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION
+                )
+                compressImage(it, isProcessingFront)
+            }
         }
-    }
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         OCRConstant.context = this
-        binding.edMax.text = 4.toString().toEditable()
 
-
-        binding.btnUri.setOnClickListener {
-            initSDK()
-            urlContract.launch(
-                OcrSdkCaptureConfig(
-                    className = packageNamee,
-                    extraInfo = "capture test"
-                )
-            )
-
-        }
-        binding.btnOcrDouble.setOnClickListener {
-            initSDK()
-            ocrContract.launch(
-                OcrSdkOcrConfig(
-                    maxBase64Mb = getMaxCompressionInt(),
-                    minBase64Mb = getMinCompressionInt(),
-                    className = packageNamee,
-                    cardType = OcrSdkOcrCardTypesEnum.VehicleCard.value,
-                    singlePhoto = false,
-                    extraInfo = "testi",
-                    textBlock = OcrSdkTextBlock(
-                        title = "نوشته بالا",
-                        firstImageHolderText = "عکس اول",
-                        secondImageHolderText = "عکس دوم",
-                        buttonText = "باتن پایین"
-                    )
-                )
-            )
-        }
-        binding.btnOcrSingle.setOnClickListener {
-            initSDK()
-            ocrContract.launch(
-                OcrSdkOcrConfig(
-                    maxBase64Mb = getMaxCompressionInt(),
-                    minBase64Mb = getMinCompressionInt(),
-                    className = packageNamee,
-                    cardType = OcrSdkOcrCardTypesEnum.NationalCard.value,
-                    singlePhoto = true,
-                    extraInfo = "testi",
-                    textBlock = OcrSdkTextBlock(
-                        title = "نوشته بالا",
-                        firstImageHolderText = "عکس اول",
-                        secondImageHolderText = "عکس دوم",
-                        buttonText = "باتن پایین"
-                    )
-                )
-            )
-        }
-        binding.btnFromGallery.setOnClickListener {
-            askReadPermission()
-            openDocContract.launch(arrayOf("image/*"))
-
-        }
+        initOCR()
+        setSpinner()
+        setAdapter()
+        setClickListeners()
+        checkPermissions()
     }
-    private fun initSDK(){
+
+    private fun initOCR() {
         OCRConfig.builder()
             .setContext(this)
             .setApplicationID("ir.ayantech.sdk_ocr")
@@ -147,109 +86,207 @@ class MainActivity : WhyGoogleActivity<ActivityMainBinding>() {
             .setGetResultEndPoint("GetCardOcrResult")
             .build()
     }
-    private fun getMaxCompressionInt(): Double {
-        return binding.edMax.text.toString().toDouble()
-    }
-    private fun getMinCompressionInt(): Double {
-        return binding.edMin.text.toString().toDouble()
-    }
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        val data = intent?.getParcelableArrayExtra("GetCardOcrResult").toString()
-        Log.d("asdasdkjahdkjahskjd", "onNewIntent: $data")
-    }
 
-    fun askReadPermission() {
-        val perm = if (Build.VERSION.SDK_INT >= 33)
-            Manifest.permission.READ_MEDIA_IMAGES
-        else
-            Manifest.permission.READ_EXTERNAL_STORAGE
-        requestReadPermission.launch(perm)
-    }
+    private fun setClickListeners() {
+        binding.layoutFrontPhoto.setOnClickListener {
+            hideKeyboard()
+            openSelectionDialog("0")
+        }
+        binding.layoutBackPhoto.setOnClickListener {
+            hideKeyboard()
+            openSelectionDialog("1")
+        }
 
-    fun compressImage(uri: Uri?, maxSizeInMb: Double) {
-        if (uri.isNull()) return
-
-        val dialog = OcrSdkWaitingDialog(
-            context = this,
-            title = "درحال فشرده سازی..."
-        )
-        dialog.showDialog()
-        lifecycleScope.launch {
-            val base64 = OcrHelper.encodeImageToBase64(
-                this@MainActivity,
-                uri,
-                getMaxCompressionInt(),
-                getMinCompressionInt(),
-                listener = object : EncodeImageListenerWithMetrics {
-                    override fun onSuccess(base64: String) {
-                        dialog.hideDialog()
-                        contentResolver.openInputStream(uri!!)?.use { input ->
-                            Glide.with(this@MainActivity)
-                                .load(uri)
-                                .dontAnimate()
-                                .priority(Priority.IMMEDIATE)
-                                .into(binding.captureA.circularImg)
-                        }
-                        Toast.makeText(
-                            this@MainActivity,
-                            "عملیات با موفتیت انجام شد",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        uri?.let {
-                            OcrHelper.deleteCachedFileFromUri(this@MainActivity, uri)
-                        }
-                        Log.d("asdad", "onSuccess: $uri")
-
-                    }
-
-                    override fun onFailed(reason: String, throwable: Throwable?) {
-                        updateLog(reason)
-                        dialog.hideDialog()
-                        Log.d("asdad", "onFailed: $reason + $throwable")
-                        Toast.makeText(
-                            this@MainActivity,
-                            reason + throwable?.message,
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-
-                    override fun onProgress(percent: Int, message: String) {
-
-
-                    }
-
-                    override fun onSuccess(
-                        base64: String,
-                        metrics: EncodeMetrics
-                    ) {
-                        dialog.hideDialog()
-                        contentResolver.openInputStream(uri!!)?.use { input ->
-                            Glide.with(this@MainActivity)
-                                .load(uri)
-                                .dontAnimate()
-                                .priority(Priority.IMMEDIATE)
-                                .into(binding.captureA.circularImg)
-                        }
-                        Toast.makeText(
-                            this@MainActivity,
-                            "عملیات با موفتیت انجام شد",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        updateLog(metrics.toString())
-                    }
-                })
-
+        binding.btnSend.setOnClickListener {
+            hideKeyboard()
+            if (isRequesting) cancelRequest() else sendRequest()
         }
     }
 
-    fun String.toEditable(): Editable {
-        return SpannableStringBuilder(this)
+    private fun sendRequest() {
+        if (cardFrontBase64 == null) {
+            Toast.makeText(this, "Please select front image", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val manager = OcrNetworkManager(this)
+        toggleLoading(true)
+
+        lifecycleScope.launch(Dispatchers.Default) {
+            currentCall = manager.sendOcrRequest(
+                cardType = binding.spinner.selectedItem.toString(),
+                cardFrontBase64 = cardFrontBase64 ?: "",
+                cardBackBase64 = cardBackBase64 ?: "",
+                traceNumber = "OCR_TEST_${System.currentTimeMillis()}",
+                token = "TEST_TOKEN",
+                callback = object : OcrNetworkManager.OcrCallback {
+                    override fun onSuccess(data: OcrResponseModel) {
+                        runOnUiThread {
+                            toggleLoading(false)
+                            binding.tvStatusCode.text = data.statusCode
+                            binding.tvDescription.text = data.description
+                            binding.tvTimeSpent.text = "${data.timeSpent} ms"
+                            (binding.rvOcrResults.adapter as? OcrResultAdapter)?.updateData(
+                                data.ocrRowModelList ?: mutableListOf()
+                            )
+                        }
+                    }
+
+                    override fun onError(message: String) {
+                        runOnUiThread {
+                            toggleLoading(false)
+                            Toast.makeText(this@MainActivity, message, Toast.LENGTH_LONG).show()
+                        }
+                    }
+                }
+            )
+        }
     }
 
-    fun updateLog(log: String) {
-        responseLog.add(log)
-        responseLog.add("")
-        binding.tvLog.text = responseLog.toString()
+    private fun cancelRequest() {
+        currentCall?.cancel()
+        currentCall = null
+        toggleLoading(false)
+        Toast.makeText(this, "Request Canceled", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun toggleLoading(showLoading: Boolean) {
+        isRequesting = showLoading
+        with(binding) {
+            if (showLoading) {
+                // حالت در حال اجرا: دکمه قرمز و متن لغو
+                btnSend.text = "Cancel Request"
+                btnSend.backgroundTintList =
+                    ColorStateList.valueOf(Color.parseColor("#E57373")) // قرمز ملایم
+                loadingProgress.visibility = View.VISIBLE
+
+                // اگر می‌خواهی پروگرس‌بار با متن تداخل نداشته باشه،
+                // می‌تونی پروگرس‌بار رو در XML به سمت چپ Gravity کنی (مثلاً start|center_vertical)
+            } else {
+                // حالت عادی
+                btnSend.text = "Analyze Card"
+                btnSend.backgroundTintList =
+                    ColorStateList.valueOf(Color.parseColor("#00ACC1")) // فیروزه‌ای
+                loadingProgress.visibility = View.GONE
+            }
+        }
+    }
+
+    private fun getRandomFunnyMessage(): String {
+        return listOf(
+            "Putting the image on a diet... 🥗",
+            "Shrinking pixels, please wait... 🤏",
+            "Making it slim and fit... ✨",
+            "Feeding the hungry OCR engine... 🍕",
+            "Compressing like a pro... 🏋️‍♂️",
+            "Teaching the image to be small... 🎓",
+            "Just a sec, pixel surgery in progress... 🏥"
+        ).random()
+    }
+
+    private fun compressImage(uri: Uri?, isFront: String) {
+        if (uri == null) return
+        val dialog = OcrSdkWaitingDialog(this, getRandomFunnyMessage())
+        dialog.showDialog()
+
+        lifecycleScope.launch {
+            val maxS = binding.edMax.text.toString().toDoubleOrNull() ?: 4.0
+            val minS = binding.edMin.text.toString().toDoubleOrNull() ?: 1.0
+
+            OcrHelper.encodeImageToBase64(
+                this@MainActivity, uri, maxS, minS,
+                listener = object : EncodeImageListenerWithMetrics {
+                    override fun onSuccess(base64Str: String, metrics: EncodeMetrics) {
+                        dialog.hideDialog()
+                        if (isFront == "0") cardFrontBase64 = base64Str else cardBackBase64 =
+                            base64Str
+
+                        val targetImg =
+                            if (isFront == "0") binding.frontImage else binding.backImage
+
+                        // نمایش تصویر
+                        Glide.with(this@MainActivity)
+                            .asBitmap()
+                            .load(Base64.decode(base64Str, Base64.DEFAULT))
+                            .transform(CenterCrop())
+                            .into(targetImg)
+
+                        // اصلاح استایل تصویر انتخاب شده
+                        targetImg.imageTintList = null
+                        targetImg.alpha = 1.0f
+                        targetImg.layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
+                        targetImg.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
+                        targetImg.scaleType = ImageView.ScaleType.CENTER_CROP
+
+                        OcrHelper.deleteCachedFileFromUri(this@MainActivity, uri)
+                    }
+
+                    override fun onFailed(reason: String, t: Throwable?) {
+                        dialog.hideDialog()
+                    }
+
+                    override fun onProgress(p: Int, m: String) {}
+                    override fun onSuccess(base64: String) {}
+                })
+        }
+    }
+
+    private fun openSelectionDialog(isFront: String) {
+        isProcessingFront = isFront
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Select Photo Source")
+            .setItems(arrayOf("Camera", "Gallery")) { _, which ->
+                if (which == 0) {
+                    urlContract.launch(
+                        OcrSdkCaptureConfig(
+                            className = "ir.ayantech.sdk_ocr.MainActivity",
+                            extraInfo = isFront,
+                            textBlock = OcrSdkTextBlock(
+                                title= "OCR",
+                                firstImageHolderText = "Camera Image",
+                                secondImageHolderText = "Camera Image",
+                                buttonText = "Confirm"
+                            )
+                        )
+                    )
+                } else {
+                    mOpenGalleryContract.launch(arrayOf("image/*"))
+                }
+            }.show()
+    }
+
+    private fun setSpinner() {
+        val types = arrayOf("car_card", "bank_card", "national_card", "car_green_sheet","legal_driving_records_inquiry","gas_bill_khorasan_razavi_ocr","car_green_sheet_finder")
+        binding.spinner.adapter =
+            ArrayAdapter(this, android.R.layout.simple_spinner_item, types).apply {
+                setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            }
+    }
+
+    private fun setAdapter() {
+        binding.rvOcrResults.layoutManager = LinearLayoutManager(this)
+        binding.rvOcrResults.adapter = OcrResultAdapter(mutableListOf())
+    }
+
+    private fun checkPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
+
+    private fun hideKeyboard() {
+        val view = this.currentFocus
+        if (view != null) {
+            val imm =
+                getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
+            view.clearFocus() // این خط باعث می‌شود فوکوس از روی EditText هم برداشته شود
+        }
+    }
+    override fun dispatchTouchEvent(ev: android.view.MotionEvent?): Boolean {
+        if (currentFocus != null) {
+            hideKeyboard()
+        }
+        return super.dispatchTouchEvent(ev)
     }
 }

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingVertical="12dp"
+    android:paddingHorizontal="4dp">
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#00ACC1"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:textAllCaps="true"
+        android:text="FIRST NAME" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Raw OCR"
+                android:textSize="10sp"
+                android:textColor="#9E9E9E" />
+            <TextView
+                android:id="@+id/tvOcrValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="---"
+                android:textColor="#555"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cleaned Data"
+                android:textSize="10sp"
+                android:textColor="#9E9E9E" />
+            <TextView
+                android:id="@+id/tvCleanedValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="---"
+                android:textColor="#212121"
+                android:textStyle="bold"
+                android:textSize="14sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="12dp"
+        android:background="#EEEEEE" />
+</LinearLayout>
