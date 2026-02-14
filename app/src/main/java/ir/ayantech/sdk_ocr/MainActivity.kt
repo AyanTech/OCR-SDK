@@ -15,11 +15,12 @@ import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.chuckerteam.chucker.api.ChuckerCollector
 import ir.ayantech.ocr_sdk.component.OcrSdkWaitingDialog
 import ir.ayantech.ocr_sdk.model.EncodeImageListenerWithMetrics
 import ir.ayantech.ocr_sdk.model.EncodeMetrics
@@ -46,34 +47,36 @@ class MainActivity : WhyGoogleActivity<ActivityMainBinding>() {
     private var currentCall: Call? = null
     private var isRequesting = false
 
-    // قراردادهای دوربین و گالری
+    // تعریف منیجر به صورت یکپارچه برای جلوگیری از نشت حافظه
+    private lateinit var ocrManager: OcrNetworkManager
+
     private val urlContract = registerForActivityResult(CaptureContract()) { res ->
         compressImage(res?.uri, res?.extraInfo.toString())
     }
 
-    private val mOpenGalleryContract =
-        registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
-            uri?.let {
-                contentResolver.takePersistableUriPermission(
-                    it,
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION
-                )
-                compressImage(it, isProcessingFront)
-            }
+    private val mOpenGalleryContract = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
+        uri?.let {
+            contentResolver.takePersistableUriPermission(it, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            compressImage(it, isProcessingFront)
         }
+    }
 
-    private val requestPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
+    private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         OCRConstant.context = this
-
         initOCR()
+
+        // مقداردهی اولیه منیجر با لیستنر بج چاکر
+        ocrManager = OcrNetworkManager(this) {
+            runOnUiThread { showChuckerBadge() }
+        }
+
         setSpinner()
         setAdapter()
         setClickListeners()
-        checkPermissions()
+      //  checkPermissions()
     }
 
     private fun initOCR() {
@@ -88,19 +91,32 @@ class MainActivity : WhyGoogleActivity<ActivityMainBinding>() {
     }
 
     private fun setClickListeners() {
-        binding.layoutFrontPhoto.setOnClickListener {
-            hideKeyboard()
-            openSelectionDialog("0")
-        }
-        binding.layoutBackPhoto.setOnClickListener {
-            hideKeyboard()
-            openSelectionDialog("1")
-        }
-
+        binding.layoutFrontPhoto.setOnClickListener { hideKeyboard(); openSelectionDialog("0") }
+        binding.layoutBackPhoto.setOnClickListener { hideKeyboard(); openSelectionDialog("1") }
         binding.btnSend.setOnClickListener {
             hideKeyboard()
             if (isRequesting) cancelRequest() else sendRequest()
         }
+        binding.btnOpenChucker.setOnClickListener {
+            hideChuckerBadge()
+            try {
+                startActivity(com.chuckerteam.chucker.api.Chucker.getLaunchIntent(this))
+            } catch (e: Exception) {
+                Toast.makeText(this, "Chucker is not available", Toast.LENGTH_SHORT).show()
+            }
+        }
+        binding.btnResetData.setOnClickListener {
+            resetData()
+            Toast.makeText(this, "All data and logs cleared 🧹", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun hideChuckerBadge() {
+        binding.chuckerBadge.animate()
+            .scaleX(0f).scaleY(0f)
+            .setDuration(200)
+            .withEndAction { binding.chuckerBadge.visibility = View.GONE }
+            .start()
     }
 
     private fun sendRequest() {
@@ -109,11 +125,15 @@ class MainActivity : WhyGoogleActivity<ActivityMainBinding>() {
             return
         }
 
-        val manager = OcrNetworkManager(this)
+
+        binding.tvStatusCode.text = "---"
+        binding.tvDescription.text = "Processing..."
+        (binding.rvOcrResults.adapter as? OcrResultAdapter)?.updateData(mutableListOf())
+
         toggleLoading(true)
 
         lifecycleScope.launch(Dispatchers.Default) {
-            currentCall = manager.sendOcrRequest(
+            currentCall = ocrManager.sendOcrRequest(
                 cardType = binding.spinner.selectedItem.toString(),
                 cardFrontBase64 = cardFrontBase64 ?: "",
                 cardBackBase64 = cardBackBase64 ?: "",
@@ -126,12 +146,9 @@ class MainActivity : WhyGoogleActivity<ActivityMainBinding>() {
                             binding.tvStatusCode.text = data.statusCode
                             binding.tvDescription.text = data.description
                             binding.tvTimeSpent.text = "${data.timeSpent} ms"
-                            (binding.rvOcrResults.adapter as? OcrResultAdapter)?.updateData(
-                                data.ocrRowModelList ?: mutableListOf()
-                            )
+                            (binding.rvOcrResults.adapter as? OcrResultAdapter)?.updateData(data.ocrRowModelList ?: mutableListOf())
                         }
                     }
-
                     override fun onError(message: String) {
                         runOnUiThread {
                             toggleLoading(false)
@@ -154,34 +171,19 @@ class MainActivity : WhyGoogleActivity<ActivityMainBinding>() {
         isRequesting = showLoading
         with(binding) {
             if (showLoading) {
-                // حالت در حال اجرا: دکمه قرمز و متن لغو
                 btnSend.text = "Cancel Request"
-                btnSend.backgroundTintList =
-                    ColorStateList.valueOf(Color.parseColor("#E57373")) // قرمز ملایم
+                btnSend.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#E57373"))
                 loadingProgress.visibility = View.VISIBLE
-
-                // اگر می‌خواهی پروگرس‌بار با متن تداخل نداشته باشه،
-                // می‌تونی پروگرس‌بار رو در XML به سمت چپ Gravity کنی (مثلاً start|center_vertical)
             } else {
-                // حالت عادی
                 btnSend.text = "Analyze Card"
-                btnSend.backgroundTintList =
-                    ColorStateList.valueOf(Color.parseColor("#00ACC1")) // فیروزه‌ای
+                btnSend.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#00ACC1"))
                 loadingProgress.visibility = View.GONE
             }
         }
     }
 
     private fun getRandomFunnyMessage(): String {
-        return listOf(
-            "Putting the image on a diet... 🥗",
-            "Shrinking pixels, please wait... 🤏",
-            "Making it slim and fit... ✨",
-            "Feeding the hungry OCR engine... 🍕",
-            "Compressing like a pro... 🏋️‍♂️",
-            "Teaching the image to be small... 🎓",
-            "Just a sec, pixel surgery in progress... 🏥"
-        ).random()
+        return listOf("Putting the image on a diet... 🥗", "Shrinking pixels... 🤏", "Making it slim... ✨", "Feeding the engine... 🍕").random()
     }
 
     private fun compressImage(uri: Uri?, isFront: String) {
@@ -190,77 +192,75 @@ class MainActivity : WhyGoogleActivity<ActivityMainBinding>() {
         dialog.showDialog()
 
         lifecycleScope.launch {
-            val maxS = binding.edMax.text.toString().toDoubleOrNull() ?: 4.0
-            val minS = binding.edMin.text.toString().toDoubleOrNull() ?: 1.0
-
-            OcrHelper.encodeImageToBase64(
-                this@MainActivity, uri, maxS, minS,
+            val maxS = binding.edMax.text.toString().toDoubleOrNull() ?: 1.0
+            val minS = binding.edMin.text.toString().toDoubleOrNull() ?: 0.7
+            OcrHelper.encodeImageToBase64(this@MainActivity, uri, maxS, minS,
                 listener = object : EncodeImageListenerWithMetrics {
                     override fun onSuccess(base64Str: String, metrics: EncodeMetrics) {
                         dialog.hideDialog()
-                        if (isFront == "0") cardFrontBase64 = base64Str else cardBackBase64 =
-                            base64Str
-
-                        val targetImg =
-                            if (isFront == "0") binding.frontImage else binding.backImage
-
-                        // نمایش تصویر
-                        Glide.with(this@MainActivity)
-                            .asBitmap()
-                            .load(Base64.decode(base64Str, Base64.DEFAULT))
-                            .transform(CenterCrop())
-                            .into(targetImg)
-
-                        // اصلاح استایل تصویر انتخاب شده
+                        if (isFront == "0") cardFrontBase64 = base64Str else cardBackBase64 = base64Str
+                        val targetImg = if (isFront == "0") binding.frontImage else binding.backImage
+                        Glide.with(this@MainActivity).asBitmap().load(Base64.decode(base64Str, Base64.DEFAULT)).transform(CenterCrop()).into(targetImg)
                         targetImg.imageTintList = null
                         targetImg.alpha = 1.0f
                         targetImg.layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
                         targetImg.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
                         targetImg.scaleType = ImageView.ScaleType.CENTER_CROP
-
                         OcrHelper.deleteCachedFileFromUri(this@MainActivity, uri)
                     }
-
-                    override fun onFailed(reason: String, t: Throwable?) {
-                        dialog.hideDialog()
-                    }
-
+                    override fun onFailed(reason: String, t: Throwable?) { dialog.hideDialog() }
                     override fun onProgress(p: Int, m: String) {}
                     override fun onSuccess(base64: String) {}
                 })
         }
     }
 
+    private fun resetData() {
+        cardFrontBase64 = null
+        cardBackBase64 = null
+        binding.tvStatusCode.text = "---"
+        binding.tvDescription.text = "No request sent yet"
+        binding.tvTimeSpent.text = "0 ms"
+        (binding.rvOcrResults.adapter as? OcrResultAdapter)?.updateData(mutableListOf())
+
+        // پاک کردن لاگ‌های چاکر هنگام ریست
+        ocrManager.clearChuckerLogs()
+        hideChuckerBadge()
+
+        with(binding) {
+            val resetImg = { img: ImageView ->
+                img.setImageResource(ir.ayantech.ocr_sdk.R.drawable.ocr_ic_camera)
+                img.imageTintList = ColorStateList.valueOf(Color.parseColor("#00ACC1"))
+                img.alpha = 0.6f
+                img.scaleType = ImageView.ScaleType.CENTER_CROP
+                val size = (56 * resources.displayMetrics.density).toInt()
+                img.layoutParams.width = size
+                img.layoutParams.height = size
+            }
+            resetImg(frontImage)
+            resetImg(backImage)
+        }
+    }
+
     private fun openSelectionDialog(isFront: String) {
         isProcessingFront = isFront
-        MaterialAlertDialogBuilder(this)
+        com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
             .setTitle("Select Photo Source")
             .setItems(arrayOf("Camera", "Gallery")) { _, which ->
                 if (which == 0) {
-                    urlContract.launch(
-                        OcrSdkCaptureConfig(
-                            className = "ir.ayantech.sdk_ocr.MainActivity",
-                            extraInfo = isFront,
-                            textBlock = OcrSdkTextBlock(
-                                title= "OCR",
-                                firstImageHolderText = "Camera Image",
-                                secondImageHolderText = "Camera Image",
-                                buttonText = "Confirm"
-                            )
-                        )
-                    )
-                } else {
-                    mOpenGalleryContract.launch(arrayOf("image/*"))
-                }
+                    urlContract.launch(OcrSdkCaptureConfig(
+                        className = "ir.ayantech.sdk_ocr.MainActivity",
+                        extraInfo = isFront,
+                        textBlock = OcrSdkTextBlock(title= "OCR", firstImageHolderText = "Camera", secondImageHolderText = "Camera", buttonText = "Confirm")))
+                } else { mOpenGalleryContract.launch(arrayOf("image/*")) }
             }.show()
     }
 
     private fun setSpinner() {
         val types = arrayOf("car_card", "bank_card", "national_card", "car_green_sheet","legal_driving_records_inquiry","gas_bill_khorasan_razavi_ocr","car_green_sheet_finder")
-        binding.spinner.adapter =
-            ArrayAdapter(this, android.R.layout.simple_spinner_item, types).apply {
-                setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            }
+        binding.spinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, types).apply {
+            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        }
     }
 
     private fun setAdapter() {
@@ -277,16 +277,33 @@ class MainActivity : WhyGoogleActivity<ActivityMainBinding>() {
     private fun hideKeyboard() {
         val view = this.currentFocus
         if (view != null) {
-            val imm =
-                getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+            val imm = getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
             imm.hideSoftInputFromWindow(view.windowToken, 0)
-            view.clearFocus() // این خط باعث می‌شود فوکوس از روی EditText هم برداشته شود
+            view.clearFocus()
         }
     }
+
     override fun dispatchTouchEvent(ev: android.view.MotionEvent?): Boolean {
-        if (currentFocus != null) {
-            hideKeyboard()
+        if (currentFocus != null && ev?.action == android.view.MotionEvent.ACTION_DOWN) {
+            val v = currentFocus
+            if (v is android.widget.EditText) {
+                val outRect = android.graphics.Rect()
+                v.getGlobalVisibleRect(outRect)
+                if (!outRect.contains(ev.rawX.toInt(), ev.rawY.toInt())) hideKeyboard()
+            }
         }
         return super.dispatchTouchEvent(ev)
+    }
+
+    private fun showChuckerBadge() {
+        if (binding.chuckerBadge.isVisible) return
+        binding.chuckerBadge.visibility = View.VISIBLE
+        binding.chuckerBadge.scaleX = 0f
+        binding.chuckerBadge.scaleY = 0f
+        binding.chuckerBadge.animate()
+            .scaleX(1f).scaleY(1f)
+            .setDuration(300)
+            .setInterpolator(android.view.animation.OvershootInterpolator())
+            .start()
     }
 }

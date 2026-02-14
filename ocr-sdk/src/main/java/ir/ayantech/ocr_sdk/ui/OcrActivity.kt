@@ -44,7 +44,6 @@ open class  OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
     private var action: String? = null
     var captureConfig: OcrSdkCaptureConfig = OcrSdkCaptureConfig()
     var ocrConfig: OcrSdkOcrConfig = OcrSdkOcrConfig()
-    var textBlock: OcrSdkTextBlock? = null
 
     val ayanAPI by lazy { createAyanAPiCall(baseUrl = Base_URL) { Token } }
     private var dialog: OcrSdkWaitingDialog? = null
@@ -88,7 +87,7 @@ open class  OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
                     OcrSdkCaptureConfig::class.java
                 ) ?: OcrSdkCaptureConfig()
 
-                textBlock = captureConfig.textBlock
+               ocrConfig.textBlock = captureConfig.textBlock
             }
 
             OcrHelper.Actions.OCR_RETURN_DATA -> {
@@ -98,7 +97,7 @@ open class  OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
                     OcrSdkOcrConfig::class.java
                 ) ?: OcrSdkOcrConfig()
 
-                textBlock = ocrConfig.textBlock
+                ocrConfig.textBlock = ocrConfig.textBlock
             }
         }
     }

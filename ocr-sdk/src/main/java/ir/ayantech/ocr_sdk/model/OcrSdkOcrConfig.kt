@@ -12,6 +12,6 @@ data class OcrSdkOcrConfig(
     val cardType: String? = null,
     val singlePhoto: Boolean? = null,
     val extraInfo: String? = null,
-    val textBlock: OcrSdkTextBlock? = null, // Must also be Parcelable
+    var textBlock: OcrSdkTextBlock? = null, // Must also be Parcelable
     val testApp:Boolean? = null
 ) : Parcelable
