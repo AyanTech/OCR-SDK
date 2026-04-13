@@ -49,6 +49,7 @@ open class  OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
     private var dialog: OcrSdkWaitingDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        readInputIntent(intent)
         ocrConfig.nightMode?.let { AppCompatDelegate.setDefaultNightMode(it) }
         super.onCreate(savedInstanceState)
         ViewCompat.setOnApplyWindowInsetsListener(binding.fragmentContainerFl) { v, windowInsets ->
@@ -61,8 +62,6 @@ open class  OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
             }
             WindowInsetsCompat.CONSUMED
         }
-
-        readInputIntent(intent)
 
         if (savedInstanceState == null) {
             init()
