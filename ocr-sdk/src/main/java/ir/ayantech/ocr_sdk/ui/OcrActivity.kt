@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.IntentCompat
 import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
@@ -16,21 +17,20 @@ import ir.ayantech.ayannetworking.api.AyanApi
 import ir.ayantech.ayannetworking.api.AyanCommonCallStatus
 import ir.ayantech.ayannetworking.api.CallingState
 import ir.ayantech.ayannetworking.api.GetUserToken
+import ir.ayantech.ocr_sdk.R
+import ir.ayantech.ocr_sdk.component.OcrSdkWaitingDialog
+import ir.ayantech.ocr_sdk.databinding.OcrActivityBinding
+import ir.ayantech.ocr_sdk.dialog.OcrSdkOneOptionDialog
+import ir.ayantech.ocr_sdk.model.OcrSdkCaptureConfig
+import ir.ayantech.ocr_sdk.model.OcrSdkGetCardOcrResult
+import ir.ayantech.ocr_sdk.model.OcrSdkOcrConfig
+import ir.ayantech.ocr_sdk.model.OcrSdkOcrDataResult
+import ir.ayantech.ocr_sdk.model.OcrSdkUriDataResult
 import ir.ayantech.ocr_sdk.tools.OCRConstant.Base_URL
 import ir.ayantech.ocr_sdk.tools.OCRConstant.EndPoint_GetCardOcrResult
 import ir.ayantech.ocr_sdk.tools.OCRConstant.EndPoint_UploadCardOCR
 import ir.ayantech.ocr_sdk.tools.OCRConstant.Token
 import ir.ayantech.ocr_sdk.tools.OcrHelper
-import ir.ayantech.ocr_sdk.dialog.OcrSdkOneOptionDialog
-import ir.ayantech.ocr_sdk.R
-import ir.ayantech.ocr_sdk.component.OcrSdkWaitingDialog
-import ir.ayantech.ocr_sdk.databinding.OcrActivityBinding
-import ir.ayantech.ocr_sdk.model.OcrSdkCaptureConfig
-import ir.ayantech.ocr_sdk.model.OcrSdkGetCardOcrResult
-import ir.ayantech.ocr_sdk.model.OcrSdkOcrConfig
-import ir.ayantech.ocr_sdk.model.OcrSdkOcrDataResult
-import ir.ayantech.ocr_sdk.model.OcrSdkTextBlock
-import ir.ayantech.ocr_sdk.model.OcrSdkUriDataResult
 import ir.ayantech.whygoogle.activity.WhyGoogleActivity
 import ir.ayantech.whygoogle.helper.isNull
 
@@ -49,6 +49,7 @@ open class  OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
     private var dialog: OcrSdkWaitingDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        ocrConfig.nightMode?.let { AppCompatDelegate.setDefaultNightMode(it) }
         super.onCreate(savedInstanceState)
         ViewCompat.setOnApplyWindowInsetsListener(binding.fragmentContainerFl) { v, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())

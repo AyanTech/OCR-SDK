@@ -71,6 +71,10 @@ open class OcrSdkBaseFragment : WhyGoogleFragment<OcrFragmentCameraxBinding>() {
                 tBlock.buttonText?.let { btnText ->
                     btnSendImages.text = btnText
                 }
+                tBlock.secondTitle?.let {
+                    tvVin.visibility = View.VISIBLE
+                    tvVin.text = it
+                }
             }
         }
 

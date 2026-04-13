@@ -1,7 +1,7 @@
 package ir.ayantech.ocr_sdk.model
 
-import android.os.Parcel
 import android.os.Parcelable
+import androidx.appcompat.app.AppCompatDelegate
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -13,5 +13,7 @@ data class OcrSdkOcrConfig(
     val singlePhoto: Boolean? = null,
     val extraInfo: String? = null,
     var textBlock: OcrSdkTextBlock? = null, // Must also be Parcelable
-    val testApp:Boolean? = null
+    val testApp:Boolean? = null,
+    @param:AppCompatDelegate.NightMode
+    val nightMode: Int? = null
 ) : Parcelable
