@@ -1,24 +1,24 @@
 pluginManagement {
     repositories {
-//        maven { url 'https://maven.myket.ir' }
         google()
         mavenCentral()
         gradlePluginPortal()
-
     }
 }
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+}
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-//        maven { url 'https://maven.myket.ir' }
         google()
         mavenCentral()
-        maven { url 'https://jitpack.io' }
-
-
+        maven("https://jitpack.io")
     }
 }
 
 rootProject.name = "SDK-OCR"
-include ':app'
-include ':ocr-sdk'
+include(":app")
+include(":ocr-sdk")
+
