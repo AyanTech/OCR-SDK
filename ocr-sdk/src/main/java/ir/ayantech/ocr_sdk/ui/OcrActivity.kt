@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.IntentCompat
 import androidx.core.net.toUri
@@ -35,7 +36,18 @@ import ir.ayantech.whygoogle.activity.WhyGoogleActivity
 import ir.ayantech.whygoogle.helper.isNull
 
 
-open class  OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
+open class OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
+
+    private val backCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            val handled = (getTopFragment() as? OcrSdkBaseFragment)?.onBackPressed() == true
+            if (handled.not()) {
+                isEnabled = false
+                onBackPressedDispatcher.onBackPressed()
+                isEnabled = true
+            }
+        }
+    }
 
     override val binder: (LayoutInflater) -> OcrActivityBinding
         get() = OcrActivityBinding::inflate
@@ -52,6 +64,7 @@ open class  OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
         readInputIntent(intent)
         ocrConfig.nightMode?.let { AppCompatDelegate.setDefaultNightMode(it) }
         super.onCreate(savedInstanceState)
+        onBackPressedDispatcher.addCallback(this, backCallback)
         ViewCompat.setOnApplyWindowInsetsListener(binding.fragmentContainerFl) { v, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
@@ -87,7 +100,7 @@ open class  OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
                     OcrSdkCaptureConfig::class.java
                 ) ?: OcrSdkCaptureConfig()
 
-               ocrConfig.textBlock = captureConfig.textBlock
+                ocrConfig.textBlock = captureConfig.textBlock
             }
 
             OcrHelper.Actions.OCR_RETURN_DATA -> {
