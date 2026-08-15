@@ -14,10 +14,8 @@ okhttp = "4.12.0"
 chucker = "4.0.0"
 camerax = "1.4.2"
 networking = "1.6.7"
-picasso = "2.71828"
 coroutines = "1.7.1"
 circleimageview = "3.1.0"
-whygoogle = "0.8.2"
 lottie = "6.0.0"
 
 [libraries]
@@ -42,10 +40,8 @@ androidx-camera-video = { group = "androidx.camera", name = "camera-video", vers
 androidx-camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "camerax" }
 androidx-camera-extensions = { group = "androidx.camera", name = "camera-extensions", version.ref = "camerax" }
 ayantech-networking = { group = "com.github.shadowalker77", name = "networking", version.ref = "networking" }
-picasso = { group = "com.squareup.picasso", name = "picasso", version.ref = "picasso" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
 circleimageview = { group = "de.hdodenhof", name = "circleimageview", version.ref = "circleimageview" }
-whygoogle = { group = "com.github.shadowalker77", name = "whygoogle", version.ref = "whygoogle" }
 lottie = { group = "com.airbnb.android", name = "lottie", version.ref = "lottie" }
 
 [plugins]

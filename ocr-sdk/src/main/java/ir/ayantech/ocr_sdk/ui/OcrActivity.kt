@@ -31,15 +31,17 @@ import ir.ayantech.ocr_sdk.tools.OCRConstant.EndPoint_GetCardOcrResult
 import ir.ayantech.ocr_sdk.tools.OCRConstant.EndPoint_UploadCardOCR
 import ir.ayantech.ocr_sdk.tools.OCRConstant.Token
 import ir.ayantech.ocr_sdk.tools.OcrHelper
-import ir.ayantech.whygoogle.activity.WhyGoogleActivity
-import ir.ayantech.whygoogle.helper.isNull
+import ir.ayantech.ocr_sdk.tools.isNull
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 
 
-open class  OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
+open class  OcrActivity : AppCompatActivity() {
 
-    override val binder: (LayoutInflater) -> OcrActivityBinding
-        get() = OcrActivityBinding::inflate
-    override val containerId: Int = R.id.fragmentContainerFl
+    private lateinit var _binding: OcrActivityBinding
+    val binding get() = _binding
+
+    private val containerId: Int = R.id.fragmentContainerFl
 
     private var action: String? = null
     var captureConfig: OcrSdkCaptureConfig = OcrSdkCaptureConfig()
@@ -51,6 +53,8 @@ open class  OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         readInputIntent(intent)
         ocrConfig.nightMode?.let { AppCompatDelegate.setDefaultNightMode(it) }
+        _binding = OcrActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         super.onCreate(savedInstanceState)
         ViewCompat.setOnApplyWindowInsetsListener(binding.fragmentContainerFl) { v, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -68,6 +72,22 @@ open class  OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
             handleStartFragment()
             validateSdkInitialization()
         }
+    }
+
+    fun start(fragment: Fragment, addToBackStack: Boolean = true) {
+        supportFragmentManager.beginTransaction()
+            .setReorderingAllowed(true)
+            .replace(containerId, fragment, fragment.javaClass.simpleName)
+            .apply {
+                if (addToBackStack) {
+                    addToBackStack(fragment.javaClass.simpleName)
+                }
+            }
+            .commit()
+    }
+
+    fun getTopFragment(): Fragment? {
+        return supportFragmentManager.findFragmentById(containerId)
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -105,22 +125,18 @@ open class  OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
     private fun handleStartFragment() {
         when (action) {
             OcrHelper.Actions.CAPTURE_URI -> {
-                start(SinglePhotoUri())
+                start(OcrSdkSinglePhotoUriFragment.newInstance())
             }
 
             OcrHelper.Actions.OCR_RETURN_DATA, null -> {
-                if (ocrConfig.singlePhoto == true) {
-                    start(OcrSdkOcrFragment().also {
-                        it.backImageUri = "".toUri()
-                        it.cardType = ocrConfig.cardType?.uppercase().toString()
-                        it.extraInfo = ocrConfig.extraInfo.toString()
-                    })
-                } else {
-                    start(OcrSdkOcrFragment().also {
-                        it.cardType = ocrConfig.cardType?.uppercase().toString()
-                        it.extraInfo = ocrConfig.extraInfo.toString()
-                    })
-                }
+                val backUri = if (ocrConfig.singlePhoto == true) "".toUri() else null
+                start(
+                    OcrSdkOcrFragment.newInstance(
+                        cardType = ocrConfig.cardType?.uppercase().toString(),
+                        extraInfo = ocrConfig.extraInfo.toString(),
+                        backImageUri = backUri
+                    )
+                )
             }
         }
     }

@@ -21,10 +21,9 @@ import com.bumptech.glide.Priority
 import ir.ayantech.ocr_sdk.tools.OCRConstant
 import ir.ayantech.ocr_sdk.dialog.OcrSdkOneOptionDialog
 import ir.ayantech.ocr_sdk.R
-import ir.ayantech.whygoogle.helper.fragmentArgument
-import ir.ayantech.whygoogle.helper.isNotNull
-import ir.ayantech.whygoogle.helper.makeGone
-import ir.ayantech.whygoogle.helper.nullableFragmentArgument
+import ir.ayantech.ocr_sdk.tools.fragmentArgument
+import ir.ayantech.ocr_sdk.tools.isNotNull
+import ir.ayantech.ocr_sdk.tools.nullableFragmentArgument
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -32,10 +31,7 @@ import java.io.File
 import java.io.IOException
 
 
-class SinglePhotoUri(
-
-) :
-    OcrSdkBaseFragment() {
+class OcrSdkSinglePhotoUriFragment : OcrSdkBaseFragment() {
     val REQUEST_IMAGE_CAPTURE = 1
 
 
@@ -113,12 +109,12 @@ class SinglePhotoUri(
         }
     }
 
-    override fun onCreate() {
-        super.onCreate()
+    override fun onFragmentCreated() {
+        super.onFragmentCreated()
         accessViews {
             statusCheck()
-            binding.captureB.root.makeGone()
-            binding.tvDescB.makeGone()
+            binding.captureB.root.visibility = View.GONE
+            binding.tvDescB.visibility = View.GONE
             val contract = registerForActivityResult(ActivityResultContracts.TakePicture()) {
                 Log.d(TAG, "contract: $it")
                 if (!it) return@registerForActivityResult
@@ -192,6 +188,10 @@ class SinglePhotoUri(
             mutableListOf(
                 Manifest.permission.CAMERA,
             ).toTypedArray()
+
+        fun newInstance(): OcrSdkSinglePhotoUriFragment {
+            return OcrSdkSinglePhotoUriFragment()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

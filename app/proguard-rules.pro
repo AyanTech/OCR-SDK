@@ -107,10 +107,9 @@
 #-keep public class ir.ayantech.ghabzino.GhabzinoApplication
 #-keep public class ir.ayantech.ghabzino.storage.** {*;}
 #-------------------------------Needed-----------------------------
--keep public class * extends ir.ayantech.whygoogle.** { *; }
+-keep public class ir.ayantech.ocr_sdk.ui.** { *; }
 -keepclassmembernames class androidx.recyclerview.widget.RecyclerView { *; }
 -keepclassmembers class androidx.recyclerview.widget.RecyclerView { *; }
-#-keep public class ir.ayantech.whygoogle.activity.SwipableWhyGoogleActivity
 -keep public class * extends ir.ayantech.ghabzino.ui.base.BaseBottomSheet
 #-keep public class * extends ir.ayantech.ghabzino.ui.base.AyanDialog
 

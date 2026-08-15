@@ -3,12 +3,12 @@ package ir.ayantech.ocr_sdk.dialog
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import androidx.core.content.ContextCompat
 import ir.ayantech.ayannetworking.api.SimpleCallback
 import ir.ayantech.ocr_sdk.R
 import ir.ayantech.ocr_sdk.component.OcrSdkAyanDialog
 import ir.ayantech.ocr_sdk.databinding.OcrDialogOneOptionBinding
-import ir.ayantech.whygoogle.helper.makeGone
 
 class OcrSdkOneOptionDialog(
     context: Context,
@@ -45,7 +45,7 @@ class OcrSdkOneOptionDialog(
 
     private fun initViews() {
         if (isItForce) {
-            binding.closeIv.makeGone()
+            binding.closeIv.visibility = View.GONE
             setCancelable(false)
         }
         binding.tvTitle.text = title

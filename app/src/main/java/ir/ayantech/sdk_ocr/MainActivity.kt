@@ -31,15 +31,14 @@ import ir.ayantech.ocr_sdk.tools.OCRConfig
 import ir.ayantech.ocr_sdk.tools.OCRConstant
 import ir.ayantech.ocr_sdk.tools.OcrHelper
 import ir.ayantech.sdk_ocr.databinding.ActivityMainBinding
-import ir.ayantech.whygoogle.activity.WhyGoogleActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.Call
+import androidx.appcompat.app.AppCompatActivity
 
-class MainActivity : WhyGoogleActivity<ActivityMainBinding>() {
+class MainActivity : AppCompatActivity() {
 
-    override val binder: (LayoutInflater) -> ActivityMainBinding get() = ActivityMainBinding::inflate
-    override val containerId: Int = R.id.fragmentContainerFl
+    private lateinit var binding: ActivityMainBinding
 
     private var cardFrontBase64: String? = null
     private var cardBackBase64: String? = null
@@ -64,6 +63,8 @@ class MainActivity : WhyGoogleActivity<ActivityMainBinding>() {
     private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         super.onCreate(savedInstanceState)
         OCRConstant.context = this
         initOCR()
