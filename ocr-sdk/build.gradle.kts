@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.legacy.kapt)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.serialization)
     id("kotlin-parcelize")
     id("maven-publish")
 }
@@ -20,7 +21,7 @@ android {
     }
 
     defaultConfig {
-        minSdk = 21
+        minSdk = 23
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("proguard-rules.pro")
@@ -45,8 +46,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     // kotlinOptions removed as it defaults to targetCompatibility in AGP 9.3
@@ -59,6 +60,10 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
 
     testImplementation(libs.junit)
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.turbine)
+    testImplementation(libs.koin.test)
     androidTestImplementation(libs.androidx.junit)
 
     implementation(libs.glide)
@@ -72,9 +77,16 @@ dependencies {
     implementation(libs.androidx.camera.extensions)
 
     implementation(libs.ayantech.networking)
+    implementation(libs.ayantech.generator)
+    ksp(libs.ayantech.generator)
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.circleimageview)
     implementation(libs.lottie)
+
+    // Koin
+    implementation(libs.koin.android)
+    implementation(libs.koin.core)
 }
 
 afterEvaluate {

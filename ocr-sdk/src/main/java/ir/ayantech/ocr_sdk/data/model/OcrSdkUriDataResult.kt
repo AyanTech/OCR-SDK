@@ -1,4 +1,4 @@
-package ir.ayantech.ocr_sdk.model
+package ir.ayantech.ocr_sdk.data.model
 
 import android.net.Uri
 import android.os.Parcelable

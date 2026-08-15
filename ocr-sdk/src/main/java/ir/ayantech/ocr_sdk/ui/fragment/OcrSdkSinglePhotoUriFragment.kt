@@ -1,4 +1,4 @@
-package ir.ayantech.ocr_sdk.ui
+package ir.ayantech.ocr_sdk.ui.fragment
 
 import android.Manifest
 import android.app.Activity
@@ -18,22 +18,17 @@ import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
-import ir.ayantech.ocr_sdk.tools.OCRConstant
-import ir.ayantech.ocr_sdk.dialog.OcrSdkOneOptionDialog
 import ir.ayantech.ocr_sdk.R
-import ir.ayantech.ocr_sdk.tools.fragmentArgument
-import ir.ayantech.ocr_sdk.tools.isNotNull
-import ir.ayantech.ocr_sdk.tools.nullableFragmentArgument
+import ir.ayantech.ocr_sdk.dialog.OcrSdkOneOptionDialog
+import ir.ayantech.ocr_sdk.tools.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import java.io.File
 import java.io.IOException
 
-
 class OcrSdkSinglePhotoUriFragment : OcrSdkBaseFragment() {
     val REQUEST_IMAGE_CAPTURE = 1
-
 
     override val showingHeader: Boolean
         get() = false
@@ -49,12 +44,11 @@ class OcrSdkSinglePhotoUriFragment : OcrSdkBaseFragment() {
 
     private val permissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-
             if (allPermissionsGranted()) {
                 binding.captureA.circularImg.performClick()
             } else {
                 val permanentlyDenied =
-                 REQUIRED_PERMISSIONS.any { permission ->
+                    REQUIRED_PERMISSIONS.any { permission ->
                         !ActivityCompat.shouldShowRequestPermissionRationale(
                             requireActivity(),
                             permission
@@ -62,10 +56,8 @@ class OcrSdkSinglePhotoUriFragment : OcrSdkBaseFragment() {
                     }
 
                 if (permanentlyDenied) {
-                    // رد دائمی (don't ask again)
                     showGoToSettingsDialog()
                 } else {
-                    // رد موقت
                     showPermissionRationaleDialog()
                 }
             }
@@ -79,7 +71,6 @@ class OcrSdkSinglePhotoUriFragment : OcrSdkBaseFragment() {
         ) {
             requestPermissions()
         }.show()
-
     }
 
     private fun showGoToSettingsDialog() {
@@ -93,9 +84,7 @@ class OcrSdkSinglePhotoUriFragment : OcrSdkBaseFragment() {
             }
             startActivity(intent)
         }.show()
-
     }
-
 
     var image: File? by nullableFragmentArgument(null)
     var imageUri: Uri? by nullableFragmentArgument(null)
@@ -119,11 +108,9 @@ class OcrSdkSinglePhotoUriFragment : OcrSdkBaseFragment() {
                 Log.d(TAG, "contract: $it")
                 if (!it) return@registerForActivityResult
                 frontImageUri = imageUri
-
                 ocrActivity.sendUri(frontImageUri)
             }
             statusCheck()
-
 
             binding.captureA.circularImg.setOnClickListener {
                 if (!allPermissionsGranted()) {
@@ -135,7 +122,6 @@ class OcrSdkSinglePhotoUriFragment : OcrSdkBaseFragment() {
                 pictureNumber = 1
                 imageUri = createImageUri()
                 contract.launch(imageUri)
-
             }
             btnSendImages.setOnClickListener {
                 ocrActivity.sendUri(frontImageUri)
@@ -156,9 +142,7 @@ class OcrSdkSinglePhotoUriFragment : OcrSdkBaseFragment() {
         }
     }
 
-
     private fun requestPermissions() {
-
         permissionLauncher.launch(REQUIRED_PERMISSIONS)
     }
 
@@ -168,7 +152,6 @@ class OcrSdkSinglePhotoUriFragment : OcrSdkBaseFragment() {
     ) {
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
-
             } else {
                 showToast(getString(R.string.ocr_permissions_not_granted_by_the_user))
                 requireActivity().finish()
@@ -199,7 +182,6 @@ class OcrSdkSinglePhotoUriFragment : OcrSdkBaseFragment() {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
             val extras: Bundle? = data?.extras
             val imageBitmap: Bitmap? = extras?.get("data") as Bitmap?
-            // Save the image to private storage
             frontImageUri = imageBitmap?.let { saveImageToPrivateStorage(it) }?.toUri()
         }
         statusCheck()
@@ -208,12 +190,9 @@ class OcrSdkSinglePhotoUriFragment : OcrSdkBaseFragment() {
     private fun saveImageToPrivateStorage(bitmap: Bitmap): String? {
         val fileName = System.currentTimeMillis().toString()
         try {
-
             requireContext().openFileOutput(fileName, Context.MODE_PRIVATE).use { fos ->
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)
-                "${requireContext().filesDir}/$fileName"
                 return Uri.fromFile(ocrActivity.getFileStreamPath(fileName)).toString()
-
             }
         } catch (e: IOException) {
             e.printStackTrace()
@@ -228,4 +207,3 @@ class OcrSdkSinglePhotoUriFragment : OcrSdkBaseFragment() {
         super.onDestroy()
     }
 }
-

@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "ir.ayantech.sdk_ocr"
-        minSdk = 21
+        minSdk = 23
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -43,8 +43,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     // kotlinOptions removed as it defaults to targetCompatibility in AGP 9.3

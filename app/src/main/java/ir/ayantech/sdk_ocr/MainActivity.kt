@@ -8,7 +8,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Base64
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
@@ -20,12 +19,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
-import com.chuckerteam.chucker.api.ChuckerCollector
 import ir.ayantech.ocr_sdk.component.OcrSdkWaitingDialog
-import ir.ayantech.ocr_sdk.model.EncodeImageListenerWithMetrics
-import ir.ayantech.ocr_sdk.model.EncodeMetrics
-import ir.ayantech.ocr_sdk.model.OcrSdkCaptureConfig
-import ir.ayantech.ocr_sdk.model.OcrSdkTextBlock
+import ir.ayantech.ocr_sdk.data.model.EncodeImageListenerWithMetrics
+import ir.ayantech.ocr_sdk.data.model.EncodeMetrics
+import ir.ayantech.ocr_sdk.data.model.OcrSdkCaptureConfig
+import ir.ayantech.ocr_sdk.data.model.OcrSdkTextBlock
 import ir.ayantech.ocr_sdk.tools.CaptureContract
 import ir.ayantech.ocr_sdk.tools.OCRConfig
 import ir.ayantech.ocr_sdk.tools.OCRConstant

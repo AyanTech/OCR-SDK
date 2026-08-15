@@ -1,4 +1,4 @@
-package ir.ayantech.ocr_sdk.ui
+package ir.ayantech.ocr_sdk.ui.fragment
 
 import android.os.Bundle
 import android.view.KeyEvent
@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import ir.ayantech.ocr_sdk.R
 import ir.ayantech.ocr_sdk.component.init
 import ir.ayantech.ocr_sdk.databinding.OcrFragmentCameraxBinding
+import ir.ayantech.ocr_sdk.ui.activity.OcrActivity
 
 
 open class OcrSdkBaseFragment : Fragment() {

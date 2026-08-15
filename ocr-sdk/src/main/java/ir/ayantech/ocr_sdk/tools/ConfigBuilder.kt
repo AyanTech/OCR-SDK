@@ -54,6 +54,7 @@ class ConfigBuilder private constructor() {
 
         // Consider additional validations or logic as needed
 
+        OcrSdk.init(ocrContext!!)
         return OCRConfig(this)
     }
 
