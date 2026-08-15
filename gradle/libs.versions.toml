@@ -1,0 +1,55 @@
+[versions]
+agp = "9.3.0"
+kotlin = "2.4.0"
+coreKtx = "1.16.0"
+junit = "4.13.2"
+junitVersion = "1.2.1"
+espressoCore = "3.6.1"
+appcompat = "1.7.1"
+material = "1.12.0"
+constraintlayout = "2.2.1"
+glide = "4.16.0"
+versioncontrol = "0.6.4"
+okhttp = "4.12.0"
+chucker = "4.0.0"
+camerax = "1.4.2"
+networking = "1.6.7"
+picasso = "2.71828"
+coroutines = "1.7.1"
+circleimageview = "3.1.0"
+whygoogle = "0.8.2"
+lottie = "6.0.0"
+
+[libraries]
+kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+google-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
+ayantech-versioncontrol = { group = "com.github.ayantech", name = "versioncontrol", version.ref = "versioncontrol" }
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+chucker-library = { group = "com.github.chuckerteam.chucker", name = "library", version.ref = "chucker" }
+chucker-library-no-op = { group = "com.github.chuckerteam.chucker", name = "library-no-op", version.ref = "chucker" }
+okhttp-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
+androidx-camera-core = { group = "androidx.camera", name = "camera-core", version.ref = "camerax" }
+androidx-camera-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "camerax" }
+androidx-camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "camerax" }
+androidx-camera-video = { group = "androidx.camera", name = "camera-video", version.ref = "camerax" }
+androidx-camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "camerax" }
+androidx-camera-extensions = { group = "androidx.camera", name = "camera-extensions", version.ref = "camerax" }
+ayantech-networking = { group = "com.github.shadowalker77", name = "networking", version.ref = "networking" }
+picasso = { group = "com.squareup.picasso", name = "picasso", version.ref = "picasso" }
+kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
+circleimageview = { group = "de.hdodenhof", name = "circleimageview", version.ref = "circleimageview" }
+whygoogle = { group = "com.github.shadowalker77", name = "whygoogle", version.ref = "whygoogle" }
+lottie = { group = "com.airbnb.android", name = "lottie", version.ref = "lottie" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+legacy-kapt = { id = "com.android.legacy-kapt", version.ref = "agp" }
+kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }

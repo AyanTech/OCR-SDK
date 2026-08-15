@@ -1,24 +1,19 @@
 pluginManagement {
     repositories {
-//        maven { url 'https://maven.myket.ir' }
         google()
         mavenCentral()
         gradlePluginPortal()
-
     }
 }
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-//        maven { url 'https://maven.myket.ir' }
         google()
         mavenCentral()
-        maven { url 'https://jitpack.io' }
-
-
+        maven { url = uri("https://jitpack.io") }
     }
 }
 
 rootProject.name = "SDK-OCR"
-include ':app'
-include ':ocr-sdk'
+include(":app")
+include(":ocr-sdk")
