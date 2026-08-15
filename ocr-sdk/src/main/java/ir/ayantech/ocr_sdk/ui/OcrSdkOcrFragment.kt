@@ -31,11 +31,11 @@ import ir.ayantech.ocr_sdk.tools.EncodeImageListener
 import ir.ayantech.ocr_sdk.tools.OCRConstant
 import ir.ayantech.ocr_sdk.tools.OcrHelper
 import ir.ayantech.ocr_sdk.tools.OcrHelper.encodeImageToBase64
-import ir.ayantech.whygoogle.helper.delayed
-import ir.ayantech.whygoogle.helper.fragmentArgument
-import ir.ayantech.whygoogle.helper.isNotNull
-import ir.ayantech.whygoogle.helper.isNull
-import ir.ayantech.whygoogle.helper.nullableFragmentArgument
+import ir.ayantech.ocr_sdk.tools.delayed
+import ir.ayantech.ocr_sdk.tools.fragmentArgument
+import ir.ayantech.ocr_sdk.tools.isNotNull
+import ir.ayantech.ocr_sdk.tools.isNull
+import ir.ayantech.ocr_sdk.tools.nullableFragmentArgument
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -49,6 +49,18 @@ class OcrSdkOcrFragment : OcrSdkBaseFragment() {
         private const val TAG = "OcrSdkOcrFragment"
         private const val REQUEST_CODE_PERMISSIONS = 10
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
+
+        fun newInstance(
+            cardType: String,
+            extraInfo: String,
+            backImageUri: Uri? = null
+        ): OcrSdkOcrFragment {
+            return OcrSdkOcrFragment().apply {
+                this.cardType = cardType
+                this.extraInfo = extraInfo
+                this.backImageUri = backImageUri
+            }
+        }
     }
 
     //region Data's...
@@ -217,8 +229,8 @@ class OcrSdkOcrFragment : OcrSdkBaseFragment() {
         }
 
     // ---------- Lifecycle ----------
-    override fun onCreate() {
-        super.onCreate()
+    override fun onFragmentCreated() {
+        super.onFragmentCreated()
         accessViews {
             statusCheck()
 

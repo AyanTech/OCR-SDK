@@ -34,3 +34,4 @@ google-services.json
 /.artifacts/
 /.kotlin/
 /.artifacts/
+/app/release/

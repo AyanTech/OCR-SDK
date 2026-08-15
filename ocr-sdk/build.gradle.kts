@@ -7,7 +7,11 @@ plugins {
 
 android {
     namespace = "ir.ayantech.ocr_sdk"
-    compileSdk = 35
+    compileSdk {
+        version = release(36) {
+            minorApiLevel = 1
+        }
+    }
 
     publishing {
         singleVariant("release") {
@@ -19,6 +23,7 @@ android {
         minSdk = 21
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("proguard-rules.pro")
     }
 
     buildFeatures {
@@ -67,10 +72,8 @@ dependencies {
     implementation(libs.androidx.camera.extensions)
 
     implementation(libs.ayantech.networking)
-    implementation(libs.picasso)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.circleimageview)
-    implementation(libs.whygoogle)
     implementation(libs.lottie)
 }
 

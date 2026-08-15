@@ -10,7 +10,7 @@ import android.view.WindowManager
 import androidx.core.content.ContextCompat
 import androidx.viewbinding.ViewBinding
 import ir.ayantech.ocr_sdk.R
-import ir.ayantech.whygoogle.helper.viewBinding
+import ir.ayantech.ocr_sdk.tools.viewBinding
 
 
 abstract class OcrSdkAyanDialog<T : ViewBinding>(context: Context) :
