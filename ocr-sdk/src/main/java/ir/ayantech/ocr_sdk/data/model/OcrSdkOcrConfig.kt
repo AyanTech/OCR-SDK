@@ -1,4 +1,4 @@
-package ir.ayantech.ocr_sdk.model
+package ir.ayantech.ocr_sdk.data.model
 
 import android.os.Parcelable
 import androidx.appcompat.app.AppCompatDelegate
@@ -12,7 +12,7 @@ data class OcrSdkOcrConfig(
     val cardType: String? = null,
     val singlePhoto: Boolean? = null,
     val extraInfo: String? = null,
-    var textBlock: OcrSdkTextBlock? = null, // Must also be Parcelable
+    var textBlock: OcrSdkTextBlock? = null,
     val testApp:Boolean? = null,
     @param:AppCompatDelegate.NightMode
     val nightMode: Int? = null

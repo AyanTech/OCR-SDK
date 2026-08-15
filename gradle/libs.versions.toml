@@ -1,6 +1,6 @@
 [versions]
 agp = "9.3.0"
-kotlin = "2.4.0"
+kotlin = "2.4.10"
 coreKtx = "1.16.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -13,10 +13,16 @@ versioncontrol = "0.6.4"
 okhttp = "4.12.0"
 chucker = "4.0.0"
 camerax = "1.4.2"
-networking = "1.6.7"
+networking = "2.0.5"
+generator = "2.0.4"
+ksp = "2.3.4"
+kotlinxSerialization = "1.7.3"
 coroutines = "1.7.1"
+koin = "4.2.2"
 circleimageview = "3.1.0"
 lottie = "6.0.0"
+mockk = "1.13.12"
+turbine = "1.0.0"
 
 [libraries]
 kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
@@ -39,13 +45,22 @@ androidx-camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycl
 androidx-camera-video = { group = "androidx.camera", name = "camera-video", version.ref = "camerax" }
 androidx-camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "camerax" }
 androidx-camera-extensions = { group = "androidx.camera", name = "camera-extensions", version.ref = "camerax" }
-ayantech-networking = { group = "com.github.shadowalker77", name = "networking", version.ref = "networking" }
+ayantech-networking = { group = "com.github.AyanTech", name = "Networking", version.ref = "networking" }
+ayantech-generator = { group = "com.github.AyanTech", name = "Generator", version.ref = "generator" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
 circleimageview = { group = "de.hdodenhof", name = "circleimageview", version.ref = "circleimageview" }
 lottie = { group = "com.airbnb.android", name = "lottie", version.ref = "lottie" }
+koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }
+koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }
+koin-test = { group = "io.insert-koin", name = "koin-test", version.ref = "koin" }
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
+turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
-legacy-kapt = { id = "com.android.legacy-kapt", version.ref = "agp" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

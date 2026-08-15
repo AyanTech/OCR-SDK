@@ -1,4 +1,4 @@
-package ir.ayantech.ocr_sdk.ui
+package ir.ayantech.ocr_sdk.ui.activity
 
 import android.content.Intent
 import android.net.Uri
@@ -7,36 +7,36 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.IntentCompat
 import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
-import ir.ayantech.ayannetworking.api.AyanApi
-import ir.ayantech.ayannetworking.api.AyanCommonCallStatus
-import ir.ayantech.ayannetworking.api.CallingState
-import ir.ayantech.ayannetworking.api.GetUserToken
+import androidx.fragment.app.Fragment
+import ir.ayantech.networking.ayanModel.Language
+import ir.ayantech.networking.ayanModel.LogLevel
+import ir.ayantech.networking.v2.AyanApi
 import ir.ayantech.ocr_sdk.R
 import ir.ayantech.ocr_sdk.component.OcrSdkWaitingDialog
+import ir.ayantech.ocr_sdk.data.GetCardOcrResult
 import ir.ayantech.ocr_sdk.databinding.OcrActivityBinding
-import ir.ayantech.ocr_sdk.dialog.OcrSdkOneOptionDialog
-import ir.ayantech.ocr_sdk.model.OcrSdkCaptureConfig
-import ir.ayantech.ocr_sdk.model.OcrSdkGetCardOcrResult
-import ir.ayantech.ocr_sdk.model.OcrSdkOcrConfig
-import ir.ayantech.ocr_sdk.model.OcrSdkOcrDataResult
-import ir.ayantech.ocr_sdk.model.OcrSdkUriDataResult
+import ir.ayantech.ocr_sdk.data.model.OcrSdkCaptureConfig
+import ir.ayantech.ocr_sdk.data.model.OcrSdkOcrConfig
+import ir.ayantech.ocr_sdk.data.model.OcrSdkOcrDataResult
+import ir.ayantech.ocr_sdk.data.model.OcrSdkUriDataResult
 import ir.ayantech.ocr_sdk.tools.OCRConstant.Base_URL
-import ir.ayantech.ocr_sdk.tools.OCRConstant.EndPoint_GetCardOcrResult
-import ir.ayantech.ocr_sdk.tools.OCRConstant.EndPoint_UploadCardOCR
 import ir.ayantech.ocr_sdk.tools.OCRConstant.Token
 import ir.ayantech.ocr_sdk.tools.OcrHelper
 import ir.ayantech.ocr_sdk.tools.isNull
-import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
+import ir.ayantech.ocr_sdk.ui.fragment.OcrSdkOcrFragment
+import ir.ayantech.ocr_sdk.ui.fragment.OcrSdkSinglePhotoUriFragment
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import kotlin.time.Duration.Companion.seconds
 
-
-open class  OcrActivity : AppCompatActivity() {
+open class OcrActivity : AppCompatActivity() {
 
     private lateinit var _binding: OcrActivityBinding
     val binding get() = _binding
@@ -90,9 +90,8 @@ open class  OcrActivity : AppCompatActivity() {
         return supportFragmentManager.findFragmentById(containerId)
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        if (intent == null) return
         readInputIntent(intent)
     }
 
@@ -103,7 +102,7 @@ open class  OcrActivity : AppCompatActivity() {
             OcrHelper.Actions.CAPTURE_URI -> {
                 captureConfig = IntentCompat.getParcelableExtra(
                     src,
-                    OcrHelper.Extras.CONFIG,            // change if you use a different key
+                    OcrHelper.Extras.CONFIG,
                     OcrSdkCaptureConfig::class.java
                 ) ?: OcrSdkCaptureConfig()
 
@@ -113,7 +112,7 @@ open class  OcrActivity : AppCompatActivity() {
             OcrHelper.Actions.OCR_RETURN_DATA -> {
                 ocrConfig = IntentCompat.getParcelableExtra(
                     src,
-                    OcrHelper.Extras.CONFIG,            // use your actual key for OCR config if different
+                    OcrHelper.Extras.CONFIG,
                     OcrSdkOcrConfig::class.java
                 ) ?: OcrSdkOcrConfig()
 
@@ -147,30 +146,20 @@ open class  OcrActivity : AppCompatActivity() {
             extraInfo = captureConfig.extraInfo
         )
         val result = Intent().apply {
-            if (Build.VERSION.SDK_INT >= 33) {
-                putExtra(OcrHelper.Extras.RESULT, resultPayload)
-            } else {
-                @Suppress("DEPRECATION")
-                putExtra(OcrHelper.Extras.RESULT, resultPayload)
-            }
+            putExtra(OcrHelper.Extras.RESULT, resultPayload)
         }
         setResult(RESULT_OK, result)
         finish()
     }
 
-    fun sendData(dataList: ArrayList<OcrSdkGetCardOcrResult.Result>) {
+    fun sendData(dataList: List<GetCardOcrResult.OcrResult>) {
         val resultPayload = OcrSdkOcrDataResult(
             cardType = ocrConfig.cardType?.uppercase(),
             items = dataList,
             extraInfo = ocrConfig.extraInfo
         )
         val result = Intent().apply {
-            if (Build.VERSION.SDK_INT >= 33) {
-                putExtra(OcrHelper.Extras.RESULT, resultPayload)
-            } else {
-                @Suppress("DEPRECATION")
-                putExtra(OcrHelper.Extras.RESULT, resultPayload)
-            }
+            putExtra(OcrHelper.Extras.RESULT, Json.encodeToString(resultPayload))
         }
         setResult(RESULT_OK, result)
         finish()
@@ -188,44 +177,30 @@ open class  OcrActivity : AppCompatActivity() {
         )
     }
 
-    private fun createAyanAPiCall(baseUrl: String, getToken: GetUserToken? = null): AyanApi {
-        return AyanApi(
-            context = this,
-            getUserToken = getToken,
-            defaultBaseUrl = baseUrl,
-            AyanCommonCallStatus {
-                failure {
-                    if (it.failureCode == "G00002" || it.failureCode == "GR0004") {
-                        OcrSdkOneOptionDialog(
-                            context = this@OcrActivity,
-                            title = it.failureMessage,
-                            icon = R.drawable.ocr_ic_wrong,
-                            buttonText = "بازگشت",
-                        ) { mFinishActivity() }.show()
-                        return@failure
-                    }
-                    OcrSdkOneOptionDialog(
-                        context = this@OcrActivity,
-                        title = it.failureMessage,
-                        icon = R.drawable.ocr_ic_wrong,
-                        buttonText = "تلاش مجدد",
-                    ) { it.reCallApi() }.show()
-                }
-                changeStatus {
-                    when (it) {
-                        CallingState.LOADING -> {}
-                        CallingState.FAILED,
-                        CallingState.SUCCESSFUL,
-                        CallingState.NOT_USED -> dialog?.hideDialog()
-                    }
-                }
-            },
-            timeout = 120L
-        )
+    fun showProgress(message: String) {
+        dialog?.changeText(message)
+        dialog?.showDialog()
+    }
+
+    fun updateProgress(percent: Int, message: String) {
+        dialog?.update(message, percent)
+    }
+
+    fun hideProgress() {
+        dialog?.hideDialog()
+    }
+
+    private fun createAyanAPiCall(baseUrl: String, getToken: () -> String?): AyanApi {
+        return AyanApi.Builder(context = this, baseUrl = baseUrl)
+            .setInvokeUserToken { getToken() ?: "" }
+            .setTimeOutDuration(120.seconds)
+            .setLogLevel(LogLevel.LOG_ALL)
+            .setAcceptLanguage(Language.PERSIAN)
+            .build()
     }
 
     private fun validateSdkInitialization() {
-        if (EndPoint_UploadCardOCR.isNull() || Token.isNull() || EndPoint_GetCardOcrResult.isNull() || Base_URL.isNull()) {
+        if (Token.isNull() || Base_URL.isNull()) {
             showToast("Base_Url or Token are not Initialized!")
         }
     }
@@ -233,6 +208,4 @@ open class  OcrActivity : AppCompatActivity() {
     fun showToast(text: String, length: Int = Toast.LENGTH_SHORT) {
         Toast.makeText(this, text, length).show()
     }
-
 }
-
