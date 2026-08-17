@@ -43,6 +43,15 @@ dependencies {
 
 ---
 
+## ⚙️ Configuration
+
+To use the SDK, you need to define the API endpoints in your `gradle.properties` file:
+
+```properties
+OCR_UPLOAD_PATH="CardOcrUploadImage"
+OCR_GET_RESULT_PATH="CardOcrGetResult"
+```
+
 ## ⚙️ Initialization
 
 Configure the SDK in your `Application` class or `MainActivity`:
@@ -53,8 +62,6 @@ val config = OCRConfig.builder()
     .setApplicationID("ir.ayantech.sdk_ocr")
     .setBaseUrl("YOUR_BASE_URL")
     .setToken("YOUR_TOKEN")
-    .setUploadImageEndPoint("UPLOAD_ENDPOINT")
-    .setGetResultEndPoint("RESULT_ENDPOINT")
     .build()
 ```
 

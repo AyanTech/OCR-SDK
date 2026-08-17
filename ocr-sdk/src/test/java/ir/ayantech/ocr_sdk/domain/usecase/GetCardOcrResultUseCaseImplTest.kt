@@ -163,4 +163,46 @@ class GetCardOcrResultUseCaseImplTest {
         assertEquals(1, results.size)
         assertEquals(true, results[0].isError)
     }
+
+    @Test
+    fun `invoke should retry 5 times when status is Pending and then return success`() = runTest {
+        // Arrange
+        val requestBody = GetCardOcrResult.GetCardOcrResultRequestBody(fileId = "file123")
+
+        val pendingResponse = GetCardOcrResult.GetCardOcrResultResponseModel(
+            result = null,
+            cardId = "card123",
+            status = "Pending",
+            nextCallInterval = 100,
+            retryable = false
+        )
+        val successResponse = GetCardOcrResult.GetCardOcrResultResponseModel(
+            result = listOf(GetCardOcrResult.OcrResult(key = "Name", value = "John Doe")),
+            cardId = "card123",
+            status = "Successful",
+            nextCallInterval = 0,
+            retryable = false
+        )
+
+        val pendingResult = AyanAPIResult.success(pendingResponse)
+        val successResult = AyanAPIResult.success(successResponse)
+
+        coEvery { ocrRepository.getCardOcrResult(requestBody) } returnsMany listOf(
+            flowOf(pendingResult),
+            flowOf(pendingResult),
+            flowOf(pendingResult),
+            flowOf(pendingResult),
+            flowOf(pendingResult),
+            flowOf(successResult)
+        )
+
+        // Act
+        val results = mutableListOf<AyanAPIResult<GetCardOcrResult.GetCardOcrResultResponseModel, ApiCallStatus, Exception>>()
+        getCardOcrResultUseCase(requestBody).collect { results.add(it) }
+
+        // Assert
+        assertEquals(1, results.size)
+        assertEquals(successResult, results[0])
+        coVerify(exactly = 6) { ocrRepository.getCardOcrResult(requestBody) }
+    }
 }

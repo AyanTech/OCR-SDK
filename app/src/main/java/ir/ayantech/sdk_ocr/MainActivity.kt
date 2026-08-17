@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
             maxBase64Mb = 1.0,
             minBase64Mb = 0.2,
             className = MainActivity::class.java.name,
-            cardType = OcrSdkOcrCardTypesEnum.BankCard.value,
+            cardType = OcrSdkOcrCardTypesEnum.VehicleCard.value,
             singlePhoto = false,
             extraInfo = "Product name",
             textBlock = OcrSdkTextBlock(
@@ -55,8 +55,6 @@ class MainActivity : AppCompatActivity() {
             .setApplicationID("ir.ayantech.sdk_ocr")
             .setBaseUrl("https://application.billingsystem.ayantech.ir/WebServices/Core.svc/")
             .setToken("03544A9F0DFA4F9DACFEDAF8B9EBC398")
-            .setUploadImageEndPoint("CardOcrUploadImage")
-            .setGetResultEndPoint("CardOcrGetResult")
             .build()
     }
 }

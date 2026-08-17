@@ -15,14 +15,6 @@ object OCRConstant {
         get() = prefs.getString("Application_ID", "") ?: ""
         set(value) = prefs.edit { putString("Application_ID", value) }
 
-    var EndPoint_UploadCardOCR: String
-        get() = prefs.getString("EndPoint_UploadCardOCR", "") ?: ""
-        set(value) = prefs.edit { putString("EndPoint_UploadCardOCR", value) }
-
-    var EndPoint_GetCardOcrResult: String
-        get() = prefs.getString("EndPoint_GetCardOcrResult", "") ?: ""
-        set(value) = prefs.edit { putString("EndPoint_GetCardOcrResult", value) }
-
     var Token: String
         get() = prefs.getString("Token", "") ?: ""
         set(value) = prefs.edit { putString("Token", value) }
