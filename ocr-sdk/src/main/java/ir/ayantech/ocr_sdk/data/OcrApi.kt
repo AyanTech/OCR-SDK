@@ -1,11 +1,12 @@
 package ir.ayantech.ocr_sdk.data
 
 import com.alirezabdn.generator.AyanAPI
+import ir.ayantech.ocr_sdk.BuildConfig
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @AyanAPI(
-    endpoint = "UploadCardOCR",
+    endpoint = BuildConfig.UPLOAD_PATH,
     methodImplName = "uploadCardOcr",
     separationCategory = "Ocr"
 )
@@ -23,7 +24,7 @@ class UploadCardOcr {
 }
 
 @AyanAPI(
-    endpoint = "GetCardOcrResult",
+    endpoint = BuildConfig.GET_RESULT_PATH,
     methodImplName = "getCardOcrResult",
     separationCategory = "Ocr"
 )
@@ -35,11 +36,12 @@ class GetCardOcrResult {
 
     @Serializable
     data class GetCardOcrResultResponseModel(
-        @SerialName("Result") val result: List<OcrResult>?,
-        @SerialName("CardID") val cardId: String,
+        @SerialName("Result") val result: List<OcrResult>? = null,
+        @SerialName("CardID") val cardId: String? = null,
         @SerialName("Status") val status: String,
-        @SerialName("NextCallInterval") val nextCallInterval: Long,
-        @SerialName("Retryable") val retryable: Boolean
+        @SerialName("Description") val description: String? = null,
+        @SerialName("NextCallInterval") val nextCallInterval: Long = 0,
+        @SerialName("Retryable") val retryable: Boolean = false
     )
 
     @Serializable

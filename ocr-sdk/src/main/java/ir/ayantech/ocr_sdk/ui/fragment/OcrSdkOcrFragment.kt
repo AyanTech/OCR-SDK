@@ -36,7 +36,6 @@ class OcrSdkOcrFragment : OcrSdkBaseFragment() {
     private val viewModel: OcrViewModel by viewModel()
 
     companion object {
-        private const val TAG = "OcrSdkOcrFragment"
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
 
         fun newInstance(
@@ -245,11 +244,13 @@ class OcrSdkOcrFragment : OcrSdkBaseFragment() {
                             uploading = true
                             viewModel.getCardOcrResult(state.fileId)
                         }
+
                         is OcrUiState.ResultSuccess -> handleApiResult(state.response)
                         is OcrUiState.Error -> {
                             hideProgress()
                             showToast(state.message)
                         }
+
                         is OcrUiState.Idle -> hideProgress()
                     }
                 }
@@ -267,11 +268,13 @@ class OcrSdkOcrFragment : OcrSdkBaseFragment() {
                 OcrHelper.deleteCachedFileFromUri(requireActivity(), backImageUri ?: "".toUri())
                 ocrActivity.sendData(data)
             }
+
             OcrSdkHookApiCallStatusEnum.Pending.name -> {
                 delayed(response.nextCallInterval) {
                     viewModel.getCardOcrResult(fileID ?: "")
                 }
             }
+
             OcrSdkHookApiCallStatusEnum.Failed.name -> {
                 hideProgress()
                 if (response.retryable) {
@@ -289,11 +292,13 @@ class OcrSdkOcrFragment : OcrSdkBaseFragment() {
 
     private fun statusCheck() {
         if (frontImageUri.isNotNull()) {
-            Glide.with(ocrActivity).load(frontImageUri).dontAnimate().priority(Priority.IMMEDIATE).into(binding.captureA.circularImg)
+            Glide.with(ocrActivity).load(frontImageUri).dontAnimate().priority(Priority.IMMEDIATE)
+                .into(binding.captureA.circularImg)
             binding.captureA.icCheck.visibility = View.VISIBLE
         }
         if (backImageUri.isNotNull()) {
-            Glide.with(ocrActivity).load(backImageUri).dontAnimate().priority(Priority.IMMEDIATE).into(binding.captureB.circularImg)
+            Glide.with(ocrActivity).load(backImageUri).dontAnimate().priority(Priority.IMMEDIATE)
+                .into(binding.captureB.circularImg)
             binding.captureB.icCheck.visibility = View.VISIBLE
         }
         updateButtonStatus()
@@ -316,7 +321,8 @@ class OcrSdkOcrFragment : OcrSdkBaseFragment() {
 
     private fun checkIfCallingAPI() {
         if (fileID.isNull()) {
-            val images = listOf(onCardBase64, backCardBase64 ?: "").filter { it?.isNotEmpty() == true }
+            val images =
+                listOf(onCardBase64, backCardBase64 ?: "").filter { it?.isNotEmpty() == true }
             viewModel.uploadCardOcr(images, effectiveCardType())
         } else {
             viewModel.getCardOcrResult(fileID ?: "")

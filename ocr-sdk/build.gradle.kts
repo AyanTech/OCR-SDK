@@ -20,15 +20,21 @@ android {
         }
     }
 
+    buildFeatures {
+        viewBinding = true
+        buildConfig = true
+    }
+
     defaultConfig {
         minSdk = 23
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("proguard-rules.pro")
-    }
 
-    buildFeatures {
-        viewBinding = true
+        val uploadPath = project.findProperty("OCR_UPLOAD_PATH")
+        val getResultPath = project.findProperty("OCR_GET_RESULT_PATH")
+        buildConfigField("String", "UPLOAD_PATH", "\"$uploadPath\"")
+        buildConfigField("String", "GET_RESULT_PATH", "\"$getResultPath\"")
     }
 
     buildTypes {
