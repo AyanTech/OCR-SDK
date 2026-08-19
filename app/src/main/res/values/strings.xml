@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Ocr Service Test App</string>
+    <string name="open_ocr">Open OCR</string>
 </resources>

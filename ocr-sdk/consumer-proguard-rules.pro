@@ -45,9 +45,9 @@
 -dontwarn com.batch.android.BatchPushService
 -dontwarn retrofit2.**
 -keep class retrofit2.** { *; }
--dontwarn okhttp3.
--dontwarn okio.
--dontwarn javax.annotation.
+-dontwarn okhttp3.*
+-dontwarn okio.*
+-dontwarn javax.annotation.*
 
 -keep class retrofit2.** { *; }
 -keepattributes Signature

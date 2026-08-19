@@ -2,8 +2,6 @@ package ir.ayantech.ocr_sdk.tools
 
 import android.content.Context
 import ir.ayantech.ocr_sdk.tools.OCRConstant.Base_URL
-import ir.ayantech.ocr_sdk.tools.OCRConstant.EndPoint_GetCardOcrResult
-import ir.ayantech.ocr_sdk.tools.OCRConstant.EndPoint_UploadCardOCR
 import ir.ayantech.ocr_sdk.tools.OCRConstant.Token
 
 
@@ -24,15 +22,11 @@ class OcrInitializer {
     fun setConfig(
         token: String,
         baseUrl: String,
-        uploadImageEndPoint: String,
-        getResultEndPoint: String,
         ocrContext: Context
     ) {
         OCRConstant.context = ocrContext
         Token = token
         Base_URL = baseUrl
-        EndPoint_UploadCardOCR = uploadImageEndPoint
-        EndPoint_GetCardOcrResult = getResultEndPoint
 
     }
 }

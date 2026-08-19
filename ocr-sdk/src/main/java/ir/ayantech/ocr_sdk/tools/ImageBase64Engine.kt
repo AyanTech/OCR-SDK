@@ -12,8 +12,8 @@ import android.provider.OpenableColumns
 import android.util.Log
 import androidx.documentfile.provider.DocumentFile
 import androidx.exifinterface.media.ExifInterface
-import ir.ayantech.ocr_sdk.model.EncodeImageListenerWithMetrics
-import ir.ayantech.ocr_sdk.model.EncodeMetrics
+import ir.ayantech.ocr_sdk.data.model.EncodeImageListenerWithMetrics
+import ir.ayantech.ocr_sdk.data.model.EncodeMetrics
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream

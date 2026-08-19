@@ -2,33 +2,24 @@ package ir.ayantech.ocr_sdk.tools
 
 import android.annotation.SuppressLint
 import android.content.Context
-import ir.ayantech.whygoogle.helper.PreferencesManager
+import androidx.core.content.edit
 
 @SuppressLint("StaticFieldLeak")
 object OCRConstant {
-        lateinit var context: Context
-    val REQUEST_CODE_OCR_RESULT = 1
+    lateinit var context: Context
+    private val prefs by lazy { context.getSharedPreferences("ocr_sdk_prefs", Context.MODE_PRIVATE) }
+
+    const val REQUEST_CODE_OCR_RESULT = 1
+
     var Application_ID: String
-        get() = PreferencesManager.getInstance(context).read("Application_ID")
-        set(value) = PreferencesManager.getInstance(context)
-            .save("Application_ID", value)
-         var EndPoint_UploadCardOCR: String
-                get() = PreferencesManager.getInstance(context).read("EndPoint_UploadCardOCR")
-                set(value) = PreferencesManager.getInstance(context)
-                        .save("EndPoint_UploadCardOCR", value)
+        get() = prefs.getString("Application_ID", "") ?: ""
+        set(value) = prefs.edit { putString("Application_ID", value) }
 
-        var EndPoint_GetCardOcrResult: String
-                get() = PreferencesManager.getInstance(context).read("EndPoint_GetCardOcrResult")
-                set(value) = PreferencesManager.getInstance(context)
-                        .save("EndPoint_GetCardOcrResult", value)
+    var Token: String
+        get() = prefs.getString("Token", "") ?: ""
+        set(value) = prefs.edit { putString("Token", value) }
 
-        var Token: String
-                get() = PreferencesManager.getInstance(context).read("Token")
-                set(value) = PreferencesManager.getInstance(context).save("Token", value)
-
-        var Base_URL: String
-                get() = PreferencesManager.getInstance(context).read("Base_URL")
-                set(value) = PreferencesManager.getInstance(context).save("Base_URL", value)
-
-
+    var Base_URL: String
+        get() = prefs.getString("Base_URL", "") ?: ""
+        set(value) = prefs.edit { putString("Base_URL", value) }
 }
