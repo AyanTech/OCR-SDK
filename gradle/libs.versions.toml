@@ -64,3 +64,21 @@ android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
+
+
+[bundles]
+android-ui = [
+    "androidx-core-ktx",
+    "androidx-appcompat",
+    "material",
+    "androidx-constraintlayout",
+]
+camerax = [
+    "androidx-camera-core",
+    "androidx-camera-camera2",
+    "androidx-camera-lifecycle",
+    "androidx-camera-video",
+    "androidx-camera-view",
+    "androidx-camera-extensions",
+]

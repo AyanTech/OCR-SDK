@@ -1,3 +1,5 @@
+import org.gradle.api.publish.maven.MavenPublication
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.ksp)
@@ -8,26 +10,10 @@ plugins {
 
 android {
     namespace = "ir.ayantech.ocr_sdk"
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
-
-    publishing {
-        singleVariant("release") {
-            withSourcesJar()
-        }
-    }
-
-    buildFeatures {
-        viewBinding = true
-        buildConfig = true
-    }
+    compileSdk = 36
 
     defaultConfig {
-        minSdk = 23
-
+        minSdk = 21
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("proguard-rules.pro")
 
@@ -35,6 +21,11 @@ android {
         val getResultPath = project.findProperty("OCR_GET_RESULT_PATH")
         buildConfigField("String", "UPLOAD_PATH", "\"$uploadPath\"")
         buildConfigField("String", "GET_RESULT_PATH", "\"$getResultPath\"")
+    }
+
+    buildFeatures {
+        viewBinding = true
+        buildConfig = true
     }
 
     buildTypes {
@@ -47,7 +38,6 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("debug")
         }
     }
 
@@ -56,7 +46,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    // kotlinOptions removed as it defaults to targetCompatibility in AGP 9.3
 }
 
 dependencies {
@@ -64,6 +53,22 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.google.material)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.documentfile)
+    implementation(libs.bundles.android.ui)
+    implementation(libs.glide)
+
+    implementation(libs.ayantech.networking)
+    implementation(libs.ayantech.generator)
+    ksp(libs.ayantech.generator)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.bundles.camerax)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.circleimageview)
+    implementation(libs.lottie)
+
+    // Koin
+    implementation(libs.koin.android)
+    implementation(libs.koin.core)
 
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
@@ -72,27 +77,6 @@ dependencies {
     testImplementation(libs.koin.test)
     androidTestImplementation(libs.androidx.junit)
 
-    implementation(libs.glide)
-
-    // cameraX
-    implementation(libs.androidx.camera.core)
-    implementation(libs.androidx.camera.camera2)
-    implementation(libs.androidx.camera.lifecycle)
-    implementation(libs.androidx.camera.video)
-    implementation(libs.androidx.camera.view)
-    implementation(libs.androidx.camera.extensions)
-
-    implementation(libs.ayantech.networking)
-    implementation(libs.ayantech.generator)
-    ksp(libs.ayantech.generator)
-    implementation(libs.kotlinx.serialization.json)
-    implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.circleimageview)
-    implementation(libs.lottie)
-
-    // Koin
-    implementation(libs.koin.android)
-    implementation(libs.koin.core)
 }
 
 afterEvaluate {
@@ -103,7 +87,7 @@ afterEvaluate {
 
                 groupId = "com.github.ayantech"
                 artifactId = "ocr-sdk"
-                version = "1.0.3-beta07"
+                version = "1.1.9"
             }
         }
     }

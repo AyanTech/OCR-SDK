@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream
 import java.io.OutputStream
 import kotlin.math.max
 import kotlin.math.min
+import androidx.core.graphics.scale
 
 internal object ImageBase64Engine {
 
@@ -207,7 +208,7 @@ internal object ImageBase64Engine {
                 val factor = 0.85f
                 val nw = (bmp.width * factor).toInt().coerceAtLeast(640)
                 val nh = (bmp.height * factor).toInt().coerceAtLeast(480)
-                val scaled = Bitmap.createScaledBitmap(bmp, nw, nh, true)
+                val scaled = bmp.scale(nw, nh)
                 if (scaled !== bmp) {
                     bmp.recycle(); bmp = scaled
                 }
@@ -366,7 +367,7 @@ internal object ImageBase64Engine {
         timed("readImageSize(uri=$uri)", { it?.let { (w, h) -> "${w}x$h" } ?: "null" }) {
             val o = BitmapFactory.Options().apply { inJustDecodeBounds = true }
             cr.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, o) }
-            var w = o.outWidth;
+            var w = o.outWidth
             var h = o.outHeight
             if (w <= 0 || h <= 0) {
                 try {
