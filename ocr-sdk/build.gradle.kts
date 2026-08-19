@@ -67,7 +67,7 @@ afterEvaluate {
                 from(components["release"])
                 groupId = "com.github.ayantech"
                 artifactId = "ocr-sdk"
-                version = "1.0.4-alpha01"
+                version = "1.1.9"
             }
         }
     }
