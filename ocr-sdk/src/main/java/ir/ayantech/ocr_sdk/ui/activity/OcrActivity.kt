@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.IntentCompat
@@ -30,6 +31,7 @@ import ir.ayantech.ocr_sdk.tools.OCRConstant.Base_URL
 import ir.ayantech.ocr_sdk.tools.OCRConstant.Token
 import ir.ayantech.ocr_sdk.tools.OcrHelper
 import ir.ayantech.ocr_sdk.tools.isNull
+import ir.ayantech.ocr_sdk.ui.fragment.OcrSdkBaseFragment
 import ir.ayantech.ocr_sdk.ui.fragment.OcrSdkOcrFragment
 import ir.ayantech.ocr_sdk.ui.fragment.OcrSdkSinglePhotoUriFragment
 import kotlinx.serialization.encodeToString
@@ -50,12 +52,24 @@ open class OcrActivity : AppCompatActivity() {
     val ayanAPI by lazy { createAyanAPiCall(baseUrl = Base_URL) { Token } }
     private var dialog: OcrSdkWaitingDialog? = null
 
+    private val backCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            val handled = (getTopFragment() as? OcrSdkBaseFragment)?.onBackPressed() == true
+            if (handled.not()) {
+                isEnabled = false
+                onBackPressedDispatcher.onBackPressed()
+                isEnabled = true
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         readInputIntent(intent)
         ocrConfig.nightMode?.let { AppCompatDelegate.setDefaultNightMode(it) }
         _binding = OcrActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
         super.onCreate(savedInstanceState)
+        onBackPressedDispatcher.addCallback(this, backCallback)
         ViewCompat.setOnApplyWindowInsetsListener(binding.fragmentContainerFl) { v, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updateLayoutParams<ViewGroup.MarginLayoutParams> {

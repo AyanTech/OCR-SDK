@@ -4,12 +4,12 @@ plugins {
 
 android {
     namespace = "ir.ayantech.sdk_ocr"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "ir.ayantech.sdk_ocr"
-        minSdk = 21
-        targetSdk = 36
+        minSdk = 23
+        targetSdk = 37
         versionCode = 1
         versionName = "1.0"
 
@@ -53,7 +53,7 @@ kotlin {
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(libs.google.material)
+    implementation(libs.material)
     implementation(libs.androidx.constraintlayout)
     implementation(project(":ocr-sdk"))
 
