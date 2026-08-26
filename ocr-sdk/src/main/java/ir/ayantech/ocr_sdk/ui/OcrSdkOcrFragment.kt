@@ -124,9 +124,7 @@ class OcrSdkOcrFragment : OcrSdkBaseFragment() {
     // ---------- Permissions ----------
     private val permissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { _ ->
-            if (allPermissionsGranted()) {
-                binding.captureA.circularImg.performClick()
-            } else {
+            if (allPermissionsGranted().not()){
                 val permanentlyDenied = REQUIRED_PERMISSIONS.any { permission ->
                     !ActivityCompat.shouldShowRequestPermissionRationale(
                         requireActivity(),
@@ -251,7 +249,7 @@ class OcrSdkOcrFragment : OcrSdkBaseFragment() {
             if (ocrActivity.ocrConfig.singlePhoto == true) {
                 captureB.circularImageViewParent.visibility = View.GONE
                 tvDescB.visibility = View.GONE
-                if (allPermissionsGranted()) captureA.circularImg.performClick() else requestPermissions()
+                if (allPermissionsGranted().not()) requestPermissions()
             }
         }
     }
