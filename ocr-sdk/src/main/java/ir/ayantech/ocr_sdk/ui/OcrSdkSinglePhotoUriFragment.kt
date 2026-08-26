@@ -54,9 +54,7 @@ class SinglePhotoUri(
     private val permissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
 
-            if (allPermissionsGranted()) {
-                binding.captureA.circularImg.performClick()
-            } else {
+            if (allPermissionsGranted().not()){
                 val permanentlyDenied =
                  REQUIRED_PERMISSIONS.any { permission ->
                         !ActivityCompat.shouldShowRequestPermissionRationale(
@@ -144,7 +142,6 @@ class SinglePhotoUri(
             btnSendImages.setOnClickListener {
                 ocrActivity.sendUri(frontImageUri)
             }
-            captureA.circularImg.performClick()
         }
     }
 
