@@ -39,9 +39,7 @@ open class OcrSdkBaseFragment : WhyGoogleFragment<OcrFragmentCameraxBinding>() {
     }
 
     override fun onBackPressed(): Boolean {
-        when (getTopFragment()) {
-            is OcrSdkOcrFragment -> ocrActivity.mFinishActivity()
-        }
+        ocrActivity.mFinishActivity()
         return true
     }
 
