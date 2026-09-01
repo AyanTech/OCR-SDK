@@ -5,15 +5,11 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.IntentCompat
 import androidx.core.net.toUri
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updateLayoutParams
 import ir.ayantech.ayannetworking.api.AyanApi
 import ir.ayantech.ayannetworking.api.AyanCommonCallStatus
 import ir.ayantech.ayannetworking.api.CallingState
@@ -31,6 +27,7 @@ import ir.ayantech.ocr_sdk.tools.OCRConstant.Base_URL
 import ir.ayantech.ocr_sdk.tools.OCRConstant.EndPoint_GetCardOcrResult
 import ir.ayantech.ocr_sdk.tools.OCRConstant.EndPoint_UploadCardOCR
 import ir.ayantech.ocr_sdk.tools.OCRConstant.Token
+import ir.ayantech.ocr_sdk.tools.OcrEdgeToEdgeHelper
 import ir.ayantech.ocr_sdk.tools.OcrHelper
 import ir.ayantech.whygoogle.activity.WhyGoogleActivity
 import ir.ayantech.whygoogle.helper.isNull
@@ -63,18 +60,11 @@ open class OcrActivity : WhyGoogleActivity<OcrActivityBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         readInputIntent(intent)
         ocrConfig.nightMode?.let { AppCompatDelegate.setDefaultNightMode(it) }
+
+        val edgeToEdgeHelper = OcrEdgeToEdgeHelper(this).also { it.enable() }
         super.onCreate(savedInstanceState)
         onBackPressedDispatcher.addCallback(this, backCallback)
-        ViewCompat.setOnApplyWindowInsetsListener(binding.fragmentContainerFl) { v, windowInsets ->
-            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                leftMargin = insets.left
-                rightMargin = insets.right
-                topMargin = insets.top
-                bottomMargin = insets.bottom
-            }
-            WindowInsetsCompat.CONSUMED
-        }
+        edgeToEdgeHelper.applyInsets(binding)
 
         if (savedInstanceState == null) {
             init()
