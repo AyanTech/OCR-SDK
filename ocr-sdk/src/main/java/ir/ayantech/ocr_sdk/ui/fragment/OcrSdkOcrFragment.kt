@@ -47,19 +47,16 @@ class OcrSdkOcrFragment : OcrSdkBaseFragment() {
 
         fun newInstance(
             cardType: String,
-            extraInfo: String,
             backImageUri: Uri? = null
         ): OcrSdkOcrFragment {
             return OcrSdkOcrFragment().apply {
                 this.cardType = cardType
-                this.extraInfo = extraInfo
                 this.backImageUri = backImageUri
             }
         }
     }
 
     var cardType: String by fragmentArgument("")
-    var extraInfo: String by fragmentArgument("")
 
     private var progressShowing = false
     private var finalizingResult = false
@@ -92,7 +89,6 @@ class OcrSdkOcrFragment : OcrSdkBaseFragment() {
 
     private var fileID: String? by nullableFragmentArgument(null)
     private var compressing = false
-    private var uploading = false
 
     private var onCardBase64: String? = null
     private var backCardBase64: String? = null
@@ -256,7 +252,6 @@ class OcrSdkOcrFragment : OcrSdkBaseFragment() {
 
                         is OcrUiState.UploadSuccess -> {
                             fileID = state.fileId
-                            uploading = true
                             viewModel.getCardOcrResult(state.fileId)
                         }
 
@@ -318,7 +313,6 @@ class OcrSdkOcrFragment : OcrSdkBaseFragment() {
                     frontImageUri = null
                     backImageUri = null
                     showToast(getString(R.string.ocr_retry_again))
-                    uploading = false
                 }
                 updateButtonStatus()
             }

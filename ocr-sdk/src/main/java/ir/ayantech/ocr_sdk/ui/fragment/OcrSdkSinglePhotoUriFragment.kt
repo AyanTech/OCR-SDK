@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.provider.Settings
-import android.util.Log
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -17,33 +16,20 @@ import com.bumptech.glide.Priority
 import ir.ayantech.ocr_sdk.R
 import ir.ayantech.ocr_sdk.dialog.OcrSdkOneOptionDialog
 import ir.ayantech.ocr_sdk.tools.OCRConstant
-import ir.ayantech.ocr_sdk.tools.fragmentArgument
 import ir.ayantech.ocr_sdk.tools.isNotNull
 import ir.ayantech.ocr_sdk.tools.nullableFragmentArgument
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import java.io.File
 
 class OcrSdkSinglePhotoUriFragment : OcrSdkBaseFragment() {
 
-    override val showingHeader: Boolean
-        get() = false
-    override val showingFooter: Boolean
-        get() = false
-
-    private val coroutineScope = CoroutineScope(Dispatchers.IO)
     var frontImageUri: Uri? by nullableFragmentArgument(null)
-    var pictureNumber: Int by fragmentArgument(1)
-    private var compressing = false
-    private var uploading = false
-    private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
+    private val requiredPermissions = arrayOf(Manifest.permission.CAMERA)
 
     private val permissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
             if (allPermissionsGranted().not()) {
                 val permanentlyDenied =
-                    REQUIRED_PERMISSIONS.any { permission ->
+                    requiredPermissions.any { permission ->
                         !ActivityCompat.shouldShowRequestPermissionRationale(
                             requireActivity(),
                             permission
@@ -96,11 +82,9 @@ class OcrSdkSinglePhotoUriFragment : OcrSdkBaseFragment() {
     override fun onFragmentCreated() {
         super.onFragmentCreated()
         accessViews {
-            statusCheck()
             binding.captureB.root.visibility = View.GONE
             binding.tvDescB.visibility = View.GONE
             val contract = registerForActivityResult(ActivityResultContracts.TakePicture()) {
-                Log.d(TAG, "contract: $it")
                 if (!it) return@registerForActivityResult
                 frontImageUri = imageUri
                 ocrActivity.sendUri(frontImageUri)
@@ -114,7 +98,6 @@ class OcrSdkSinglePhotoUriFragment : OcrSdkBaseFragment() {
                 }
                 val name = System.currentTimeMillis().toString()
                 image = File(ocrActivity.filesDir, "$name.jpeg")
-                pictureNumber = 1
                 imageUri = createImageUri()
                 contract.launch(imageUri)
             }
@@ -137,31 +120,19 @@ class OcrSdkSinglePhotoUriFragment : OcrSdkBaseFragment() {
     }
 
     private fun requestPermissions() {
-        permissionLauncher.launch(REQUIRED_PERMISSIONS)
+        permissionLauncher.launch(requiredPermissions)
     }
 
-    private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
+    private fun allPermissionsGranted() = requiredPermissions.all {
         ContextCompat.checkSelfPermission(
             requireContext(), it
         ) == PackageManager.PERMISSION_GRANTED
     }
 
     companion object {
-        const val REQUEST_CODE_PERMISSIONS = 10
-        val REQUIRED_PERMISSIONS =
-            mutableListOf(
-                Manifest.permission.CAMERA,
-            ).toTypedArray()
-
         fun newInstance(): OcrSdkSinglePhotoUriFragment {
             return OcrSdkSinglePhotoUriFragment()
         }
     }
 
-    override fun onDestroy() {
-        coroutineScope.cancel()
-        compressing = false
-        uploading = false
-        super.onDestroy()
-    }
 }

@@ -156,7 +156,6 @@ open class OcrActivity : AppCompatActivity() {
                 start(
                     OcrSdkOcrFragment.newInstance(
                         cardType = ocrConfig.cardType?.uppercase().toString(),
-                        extraInfo = ocrConfig.extraInfo.toString(),
                         backImageUri = backUri
                     )
                 )

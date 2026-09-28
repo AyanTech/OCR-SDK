@@ -107,6 +107,30 @@ class OcrLanguageInstrumentedTest {
         }
     }
 
+    @Test
+    fun captureSystemBackClosesSdkActivity() {
+        val instrumentation = InstrumentationRegistry.getInstrumentation()
+        val context = instrumentation.targetContext
+        OCRConstant.context = context
+        OCRConstant.Base_URL = "https://example.invalid/"
+        OCRConstant.Token = "test-token"
+        OcrSdk.init(context)
+        val intent = Intent(context, OcrActivity::class.java)
+            .setAction(OcrHelper.Actions.CAPTURE_URI)
+            .putExtra(OcrHelper.Extras.CONFIG, OcrSdkCaptureConfig())
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        val activity = instrumentation.startActivitySync(intent) as OcrActivity
+        try {
+            instrumentation.runOnMainSync {
+                activity.supportFragmentManager.executePendingTransactions()
+                activity.onBackPressedDispatcher.onBackPressed()
+                assertTrue(activity.isFinishing)
+            }
+        } finally {
+            instrumentation.runOnMainSync { if (!activity.isFinishing) activity.finish() }
+        }
+    }
+
     private fun arrowInkCenterX(image: ImageView): Float {
         val drawable = image.drawable.constantState!!.newDrawable().mutate()
         drawable.layoutDirection = image.layoutDirection
