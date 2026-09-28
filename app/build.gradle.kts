@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId = "ir.ayantech.sdk_ocr"
-        minSdk = 23
+        minSdk = 21
         targetSdk = 37
         versionCode = 1
         versionName = "1.0"
@@ -70,7 +70,4 @@ dependencies {
     implementation(libs.glide)
     implementation(libs.okhttp)
     implementation(libs.okhttp.logging.interceptor)
-
-    debugImplementation(libs.chucker.library)
-    releaseImplementation(libs.chucker.library.no.op)
 }

@@ -11,7 +11,7 @@ android {
     compileSdk = 37
 
     defaultConfig {
-        minSdk = 23
+        minSdk = 21
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         val uploadPath = project.findProperty("OCR_UPLOAD_PATH")
@@ -49,6 +49,7 @@ android {
 
 dependencies {
     implementation(libs.androidx.documentfile)
+    implementation(libs.androidx.lifecycle.runtime)
     implementation(libs.bundles.android.ui)
     implementation(libs.glide)
 
