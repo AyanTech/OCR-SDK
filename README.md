@@ -222,7 +222,7 @@ ocr_loading.json
 ---
 
 ## 📚 Example
-A full working example is provided in the **example module** inside the repository.
+The `app` module demonstrates OCR for vehicle, bank, and national cards with one or two photos, capture-only URI output, application-selected English or Persian, custom text and color resources, night mode, and result handling. Enter a backend URL and token on the sample screen to run OCR. Capture-only mode does not require backend credentials. The sample does not save the token.
 
 ---
 

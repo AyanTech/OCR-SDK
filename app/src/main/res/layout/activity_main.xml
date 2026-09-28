@@ -1,25 +1,175 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8F9FA"
-    android:fillViewport="true"
-    android:gravity="center"
-    android:orientation="vertical">
+    android:fillViewport="true">
 
-    <TextView
-        android:id="@+id/txt_result"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        tools:text="Result :)" />
+        android:orientation="vertical"
+        android:padding="20dp">
 
-    <Button
-        android:id="@+id/btn_open_ocr"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="@string/open_ocr" />
-</LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/ocr_sample_heading"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/ocr_sample_language"
+            android:textSize="14sp"
+            android:textStyle="normal" />
+
+        <RadioGroup
+            android:id="@+id/language_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/language_persian"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ocr_sample_persian" />
+
+            <RadioButton
+                android:id="@+id/language_english"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ocr_sample_english" />
+        </RadioGroup>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/ocr_sample_backend"
+            android:textSize="14sp"
+            android:textStyle="normal" />
+
+        <EditText
+            android:id="@+id/input_base_url"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/ocr_sample_base_url_hint"
+            android:importantForAutofill="no"
+            android:inputType="textUri"
+            android:singleLine="true"
+            android:text="https://application.billingsystem.ayantech.ir/WebServices/Core.svc/" />
+
+        <EditText
+            android:id="@+id/input_token"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/ocr_sample_token_hint"
+            android:importantForAutofill="no"
+            android:inputType="textPassword"
+            android:saveEnabled="false"
+            android:singleLine="true"
+            android:text="03544A9F0DFA4F9DACFEDAF8B9EBC398" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/ocr_sample_card_type"
+            android:textSize="14sp"
+            android:textStyle="normal" />
+
+        <RadioGroup
+            android:id="@+id/card_type_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:id="@+id/card_vehicle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/ocr_sample_vehicle" />
+
+            <RadioButton
+                android:id="@+id/card_bank"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/ocr_sample_bank" />
+
+            <RadioButton
+                android:id="@+id/card_national"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/ocr_sample_national" />
+        </RadioGroup>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switch_two_photos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/ocr_sample_two_photos" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switch_dark_mode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/ocr_sample_dark_mode" />
+
+        <EditText
+            android:id="@+id/input_extra_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="@string/ocr_sample_extra_info_hint"
+            android:importantForAutofill="no"
+            android:inputType="text"
+            android:singleLine="true" />
+
+        <Button
+            android:id="@+id/btn_open_ocr"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="@color/ocr_button_blue"
+            android:text="@string/open_ocr" />
+
+        <Button
+            android:id="@+id/btn_capture"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/ocr_button_blue"
+            android:text="@string/ocr_sample_capture" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/ocr_sample_result_heading"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            android:textColor="@color/ocr_dash_color" />
+
+        <TextView
+            android:id="@+id/txt_result"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/ocr_sample_no_result"
+            android:textIsSelectable="true"
+            android:textSize="12sp"
+            android:textStyle="normal" />
+
+        <ImageView
+            android:id="@+id/image_preview"
+            android:layout_width="match_parent"
+            android:layout_height="240dp"
+            android:layout_marginTop="12dp"
+            android:contentDescription="@string/ocr_sample_preview_description"
+            android:scaleType="fitCenter"
+            android:visibility="gone" />
+    </LinearLayout>
+</ScrollView>
