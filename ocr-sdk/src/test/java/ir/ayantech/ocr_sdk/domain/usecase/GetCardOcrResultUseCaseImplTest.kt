@@ -8,7 +8,11 @@ import ir.ayantech.networking.v2.api.AyanAPIResult
 import ir.ayantech.networking.v2.model.ApiCallStatus
 import ir.ayantech.ocr_sdk.data.GetCardOcrResult
 import ir.ayantech.ocr_sdk.domain.usecase.impl.GetCardOcrResultUseCaseImpl
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.advanceTimeBy
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -52,7 +56,8 @@ class GetCardOcrResultUseCaseImplTest {
     fun `invoke should call getCardOcrResult on repository and return failure`() = runTest {
         // Arrange
         val requestBody = GetCardOcrResult.GetCardOcrResultRequestBody(fileId = "invalid")
-        val expectedResult = AyanAPIResult.error<GetCardOcrResult.GetCardOcrResultResponseModel>(Exception("Not found"))
+        val expectedResult =
+            AyanAPIResult.error<GetCardOcrResult.GetCardOcrResultResponseModel>(Exception("Not found"))
         coEvery { ocrRepository.getCardOcrResult(requestBody) } returns flowOf(expectedResult)
 
         // Act
@@ -93,7 +98,8 @@ class GetCardOcrResultUseCaseImplTest {
         )
 
         // Act
-        val results = mutableListOf<AyanAPIResult<GetCardOcrResult.GetCardOcrResultResponseModel, ApiCallStatus, Exception>>()
+        val results =
+            mutableListOf<AyanAPIResult<GetCardOcrResult.GetCardOcrResultResponseModel, ApiCallStatus, Exception>>()
         getCardOcrResultUseCase(requestBody).collect { results.add(it) }
 
         // Assert: pending result is never emitted to the UI layer, only the final one
@@ -131,13 +137,42 @@ class GetCardOcrResultUseCaseImplTest {
         )
 
         // Act
-        val results = mutableListOf<AyanAPIResult<GetCardOcrResult.GetCardOcrResultResponseModel, ApiCallStatus, Exception>>()
+        val results =
+            mutableListOf<AyanAPIResult<GetCardOcrResult.GetCardOcrResultResponseModel, ApiCallStatus, Exception>>()
         getCardOcrResultUseCase(requestBody).collect { results.add(it) }
 
         // Assert
         assertEquals(1, results.size)
         assertEquals(successResult, results[0])
         coVerify(exactly = 2) { ocrRepository.getCardOcrResult(requestBody) }
+    }
+
+    @Test
+    fun `cancelling a pending lookup prevents another request`() = runTest {
+        val requestBody = GetCardOcrResult.GetCardOcrResultRequestBody(fileId = "file123")
+        val pending = GetCardOcrResult.GetCardOcrResultResponseModel(
+            result = null,
+            cardId = "card123",
+            status = "Pending",
+            nextCallInterval = 500,
+            retryable = false
+        )
+        coEvery { ocrRepository.getCardOcrResult(requestBody) } returns flowOf(
+            AyanAPIResult.success(
+                pending
+            )
+        )
+
+        val job = backgroundScope.launch {
+            getCardOcrResultUseCase(requestBody).collect { }
+        }
+        runCurrent()
+        coVerify(exactly = 1) { ocrRepository.getCardOcrResult(requestBody) }
+        job.cancelAndJoin()
+        advanceTimeBy(1_000)
+        runCurrent()
+
+        coVerify(exactly = 1) { ocrRepository.getCardOcrResult(requestBody) }
     }
 
     @Test
@@ -156,7 +191,8 @@ class GetCardOcrResultUseCaseImplTest {
         )
 
         // Act
-        val results = mutableListOf<AyanAPIResult<GetCardOcrResult.GetCardOcrResultResponseModel, ApiCallStatus, Exception>>()
+        val results =
+            mutableListOf<AyanAPIResult<GetCardOcrResult.GetCardOcrResultResponseModel, ApiCallStatus, Exception>>()
         getCardOcrResultUseCase(requestBody).collect { results.add(it) }
 
         // Assert
@@ -197,7 +233,8 @@ class GetCardOcrResultUseCaseImplTest {
         )
 
         // Act
-        val results = mutableListOf<AyanAPIResult<GetCardOcrResult.GetCardOcrResultResponseModel, ApiCallStatus, Exception>>()
+        val results =
+            mutableListOf<AyanAPIResult<GetCardOcrResult.GetCardOcrResultResponseModel, ApiCallStatus, Exception>>()
         getCardOcrResultUseCase(requestBody).collect { results.add(it) }
 
         // Assert

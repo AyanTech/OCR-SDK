@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/ocr_fragment_background">
+    android:background="@color/ocr_fragment_background"
+    tools:ignore="Overdraw">
 
     <TextView
         android:id="@+id/tvVin"
         style="@style/txt_bold_14px_white"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
+        android:layout_below="@+id/headerRl"
         android:layout_margin="@dimen/margin_16"
-        android:layout_below="@+id/headerRl" />
+        android:visibility="gone" />
 
     <include
         android:id="@+id/headerRl"
@@ -19,8 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-       />
+        android:layout_centerHorizontal="true" />
 
     <include
         android:id="@+id/captureA"
@@ -28,6 +29,7 @@
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_below="@id/tvVin"
+        android:layout_alignParentStart="true"
         android:layout_marginStart="20dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
@@ -43,7 +45,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
-        android:layout_toLeftOf="@id/captureA" />
+        android:layout_toEndOf="@id/captureA" />
 
     <TextView
         android:id="@+id/tvDescB"

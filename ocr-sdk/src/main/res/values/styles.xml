@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="OcrSdkDialogTheme" parent="Theme.MaterialComponents.Light.Dialog.Alert">
         <item name="shapeAppearanceOverlay">@style/OcrDialogRoundedShape</item>
         <item name="android:windowBackground">@android:color/transparent</item>
@@ -9,6 +10,7 @@
     <style name="OcrDialogRoundedShape" parent="">
         <item name="cornerSize">16dp</item>
     </style>
+
     <style name="DefaultInput">
         <item name="android:background">@drawable/ocr_back_input</item>
         <item name="android:textSize">14sp</item>
@@ -104,9 +106,9 @@
         <item name="fontFamily">@font/regular</item>
     </style>
 
-    <style name="ocr_image_view"  parent="">
-            <item name="cornerFamily">rounded</item>
-            <item name="cornerSize">20%</item>
+    <style name="ocr_image_view" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">20%</item>
     </style>
 
 

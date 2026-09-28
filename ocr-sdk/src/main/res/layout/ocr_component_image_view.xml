@@ -8,20 +8,23 @@
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/circularImg"
-        app:shapeAppearanceOverlay="@style/ocr_image_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-          android:background="@drawable/ocr_ic_camera"
-        android:layout_margin="10dp"
         android:layout_centerInParent="true"
-        android:scaleType="centerCrop" />
+        android:layout_margin="10dp"
+        android:background="@drawable/ocr_ic_camera"
+        android:contentDescription="@string/ocr_camera_description_front"
+        android:scaleType="centerCrop"
+        app:shapeAppearanceOverlay="@style/ocr_image_view" />
+
     <ImageView
         android:id="@+id/icCheck"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ocr_ic_check"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:visibility="invisible"/>
+        android:contentDescription="@null"
+        android:src="@drawable/ocr_ic_check"
+        android:visibility="invisible" />
 
 </RelativeLayout>

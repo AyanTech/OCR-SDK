@@ -11,7 +11,6 @@ import ir.ayantech.ocr_sdk.data.model.OcrSdkUriDataResult
 import ir.ayantech.ocr_sdk.ui.activity.OcrActivity
 import kotlinx.serialization.json.Json
 
-// URI result
 class CaptureContract :
     ActivityResultContract<OcrSdkCaptureConfig, OcrSdkUriDataResult?>() {
 
@@ -26,7 +25,7 @@ class CaptureContract :
         else null
 }
 
-class OCRContract() :
+class OCRContract :
     ActivityResultContract<OcrSdkOcrConfig, OcrSdkOcrDataResult?>() {
 
     override fun createIntent(context: Context, input: OcrSdkOcrConfig) =
@@ -40,6 +39,7 @@ class OCRContract() :
                 try {
                     Json.decodeFromString<OcrSdkOcrDataResult>(it)
                 } catch (e: Exception) {
+                    e.printStackTrace()
                     null
                 }
             }

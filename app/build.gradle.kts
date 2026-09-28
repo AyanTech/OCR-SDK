@@ -16,6 +16,12 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    bundle {
+        language {
+            enableSplit = false
+        }
+    }
+
     buildFeatures {
         viewBinding = true
     }
@@ -62,7 +68,6 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
     implementation(libs.glide)
-    implementation(libs.ayantech.versioncontrol)
     implementation(libs.okhttp)
     implementation(libs.okhttp.logging.interceptor)
 

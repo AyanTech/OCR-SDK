@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import ir.ayantech.ocr_sdk.data.model.OcrSdkOcrConfig
+import ir.ayantech.ocr_sdk.data.model.OcrSdkLanguage
 import ir.ayantech.ocr_sdk.data.model.OcrSdkTextBlock
 import ir.ayantech.ocr_sdk.enums.OcrSdkOcrCardTypesEnum
 import ir.ayantech.ocr_sdk.tools.OCRConfig
@@ -39,11 +40,12 @@ class MainActivity : AppCompatActivity() {
             cardType = OcrSdkOcrCardTypesEnum.VehicleCard.value,
             singlePhoto = false,
             extraInfo = "Product name",
+            language = OcrSdkLanguage.PERSIAN,
             textBlock = OcrSdkTextBlock(
-                secondTitle = "از کارت بانکی خود عکس بگیرید.",
-                firstImageHolderText = "روی کارت",
-                secondImageHolderText = "پشت کارت",
-                buttonText = "تایید"
+                secondTitle = R.string.ocr_sample_second_title,
+                firstImageHolderText = R.string.ocr_sample_front,
+                secondImageHolderText = R.string.ocr_sample_back,
+                buttonText = R.string.ocr_sample_confirm
             )
         )
         urlContract.launch(ocrConfig)

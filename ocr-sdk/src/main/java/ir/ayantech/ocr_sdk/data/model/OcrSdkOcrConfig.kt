@@ -13,7 +13,8 @@ data class OcrSdkOcrConfig(
     val singlePhoto: Boolean? = null,
     val extraInfo: String? = null,
     var textBlock: OcrSdkTextBlock? = null,
-    val testApp:Boolean? = null,
+    val testApp: Boolean? = null,
     @param:AppCompatDelegate.NightMode
-    val nightMode: Int? = null
+    val nightMode: Int? = null,
+    val language: OcrSdkLanguage = OcrSdkLanguage.PERSIAN
 ) : Parcelable

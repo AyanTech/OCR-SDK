@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Ocr Service Test App</string>
     <string name="open_ocr">Open OCR</string>
+    <string name="ocr_sample_second_title">Take a photo of your bank card.</string>
+    <string name="ocr_sample_front">Front of card</string>
+    <string name="ocr_sample_back">Back of card</string>
+    <string name="ocr_sample_confirm">Confirm</string>
 </resources>

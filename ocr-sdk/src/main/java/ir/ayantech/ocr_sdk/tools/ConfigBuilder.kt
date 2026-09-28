@@ -18,13 +18,12 @@ class ConfigBuilder private constructor() {
         OCRConstant.Application_ID = applicationID
         this.applicationID = applicationID
     }
-    @JvmOverloads
+
     fun setToken(token: String) = apply {
         OCRConstant.Token = token
         this.token = token
     }
 
-    @JvmOverloads
     fun setBaseUrl(baseUrl: String) = apply {
         OCRConstant.Base_URL = baseUrl
         this.baseUrl = baseUrl
@@ -36,8 +35,6 @@ class ConfigBuilder private constructor() {
         requireNotNull(baseUrl) { missingValue + "baseUrl" }
         requireNotNull(ocrContext) { missingValue + "ocrContext" }
 
-        // Consider additional validations or logic as needed
-
         OcrSdk.init(ocrContext!!)
         return OCRConfig(this)
     }
@@ -47,12 +44,8 @@ class ConfigBuilder private constructor() {
         fun create() = ConfigBuilder()
     }
 }
+
 data class OCRConfig(private val builder: ConfigBuilder) {
-
-    val token: String = builder.token!!
-    val baseUrl: String = builder.baseUrl!!
-    val ocrContext: Context = builder.ocrContext!!
-
     companion object {
         @JvmStatic
         fun builder() = ConfigBuilder.create()

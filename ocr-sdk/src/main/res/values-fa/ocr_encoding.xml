@@ -1,0 +1,20 @@
+<resources>
+    <string name="ocr_encode_no_image">هیچ تصویری در دسترس نیست.</string>
+    <string name="ocr_encode_starting">شروع پردازش تصویر</string>
+    <string name="ocr_encode_file_too_large">این تصویر بیش از %1$.2f مگابایت است. لطفاً تصویر کوچک‌تری انتخاب/ثبت کنید.</string>
+    <string name="ocr_encode_reading_dimensions">دریافت ابعاد تصویر</string>
+    <string name="ocr_encode_resolution_too_high">رزولوشن این تصویر بسیار بالاست. لطفاً تصویر کوچک‌تری ثبت/انتخاب کنید.</string>
+    <string name="ocr_encode_sampling">نمونه‌گیری سریع</string>
+    <string name="ocr_encode_selecting_scale">انتخاب مقیاس بهینه</string>
+    <string name="ocr_encode_loading">بارگذاری نهایی تصویر</string>
+    <string name="ocr_encode_adjusting_quality">تنظیم کیفیت خروجی</string>
+    <string name="ocr_encode_resizing">کاهش جزئی ابعاد برای رسیدن به سقف</string>
+    <string name="ocr_encode_output_too_large">این تصویر حتی پس از کاهش کیفیت/اندازه هم از سقف مجاز بزرگ‌تر است. لطفاً تصویر کوچک‌تری ثبت/انتخاب کنید.</string>
+    <string name="ocr_encode_creating_output">ساخت خروجی</string>
+    <string name="ocr_encode_out_of_memory">حافظهٔ دستگاه برای پردازش این تصویر کافی نیست. لطفاً تصویر با کیفیت پایین‌تری ثبت/انتخاب کنید.</string>
+    <string name="ocr_encode_failed">در پردازش تصویر مشکلی رخ داد. لطفاً دوباره تلاش کنید.</string>
+    <string name="ocr_encode_complete">آماده شد • زمان کل: %1$d میلی‌ثانیه</string>
+    <string name="ocr_encode_unreadable">امکان خواندن این تصویر وجود ندارد.</string>
+    <string name="ocr_encode_loading_failed">امکان بارگذاری تصویر وجود ندارد.</string>
+    <string name="ocr_encode_compression_failed">امکان آماده‌سازی خروجی وجود ندارد. لطفاً دوباره تلاش کنید.</string>
+</resources>

@@ -7,12 +7,10 @@ import android.net.Uri
 import android.provider.Settings
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -21,19 +19,28 @@ import com.bumptech.glide.Priority
 import ir.ayantech.ocr_sdk.R
 import ir.ayantech.ocr_sdk.data.GetCardOcrResult
 import ir.ayantech.ocr_sdk.data.model.OcrSdkHookApiCallStatusEnum
-import ir.ayantech.ocr_sdk.data.model.*
 import ir.ayantech.ocr_sdk.dialog.OcrSdkOneOptionDialog
-import ir.ayantech.ocr_sdk.tools.*
-import ir.ayantech.ocr_sdk.tools.OcrHelper.encodeImageToBase64
+import ir.ayantech.ocr_sdk.tools.EncodeImageListener
+import ir.ayantech.ocr_sdk.tools.ImageBase64Engine
+import ir.ayantech.ocr_sdk.tools.OCRConstant
+import ir.ayantech.ocr_sdk.tools.OcrHelper
+import ir.ayantech.ocr_sdk.tools.delayed
+import ir.ayantech.ocr_sdk.tools.fragmentArgument
+import ir.ayantech.ocr_sdk.tools.isNotNull
+import ir.ayantech.ocr_sdk.tools.isNull
+import ir.ayantech.ocr_sdk.tools.nullableFragmentArgument
 import ir.ayantech.ocr_sdk.ui.viewmodel.OcrUiState
 import ir.ayantech.ocr_sdk.ui.viewmodel.OcrViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import java.io.File
 
 class OcrSdkOcrFragment : OcrSdkBaseFragment() {
 
-    private val viewModel: OcrViewModel by viewModel()
+    private val viewModel: OcrViewModel by viewModel { parametersOf(ocrActivity.language) }
 
     companion object {
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
@@ -55,6 +62,7 @@ class OcrSdkOcrFragment : OcrSdkBaseFragment() {
     var extraInfo: String by fragmentArgument("")
 
     private var progressShowing = false
+    private var finalizingResult = false
     private var lastProgress = -1
     private var lastProgressAt = 0L
 
@@ -184,7 +192,7 @@ class OcrSdkOcrFragment : OcrSdkBaseFragment() {
             showProgress(getString(R.string.ocr_compressing))
 
             lifecycleScope.launch {
-                encodeImageToBase64(
+                ImageBase64Engine.encode(
                     context = ocrActivity,
                     imageUri = picked,
                     maxBase64Mb = ocrActivity.ocrConfig.maxBase64Mb ?: 3.0,
@@ -223,6 +231,9 @@ class OcrSdkOcrFragment : OcrSdkBaseFragment() {
             }
 
             btnSendImages.setOnClickListener {
+                if (progressShowing) return@setOnClickListener
+                showProgress(getString(R.string.ocr_loading_description))
+                binding.btnSendImages.isEnabled = false
                 checkIfCallingAPI()
             }
 
@@ -238,7 +249,11 @@ class OcrSdkOcrFragment : OcrSdkBaseFragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
                     when (state) {
-                        is OcrUiState.Loading -> showProgress(getString(R.string.ocr_loading_description))
+                        is OcrUiState.Loading -> {
+                            binding.btnSendImages.isEnabled = false
+                            if (!progressShowing) showProgress(getString(R.string.ocr_loading_description))
+                        }
+
                         is OcrUiState.UploadSuccess -> {
                             fileID = state.fileId
                             uploading = true
@@ -248,10 +263,14 @@ class OcrSdkOcrFragment : OcrSdkBaseFragment() {
                         is OcrUiState.ResultSuccess -> handleApiResult(state.response)
                         is OcrUiState.Error -> {
                             hideProgress()
-                            showToast(state.message)
+                            updateButtonStatus()
+                            showToast(getString(state.messageRes))
                         }
 
-                        is OcrUiState.Idle -> hideProgress()
+                        is OcrUiState.Idle -> {
+                            hideProgress()
+                            updateButtonStatus()
+                        }
                     }
                 }
             }
@@ -259,23 +278,38 @@ class OcrSdkOcrFragment : OcrSdkBaseFragment() {
     }
 
     private fun handleApiResult(response: GetCardOcrResult.GetCardOcrResultResponseModel) {
-        when (response.status) {
-            OcrSdkHookApiCallStatusEnum.Successful.name -> {
-                hideProgress()
-                val data = ArrayList<GetCardOcrResult.OcrResult>()
-                response.result?.forEach { data.add(GetCardOcrResult.OcrResult(it.key, it.value)) }
-                OcrHelper.deleteCachedFileFromUri(requireActivity(), frontImageUri ?: "".toUri())
-                OcrHelper.deleteCachedFileFromUri(requireActivity(), backImageUri ?: "".toUri())
-                ocrActivity.sendData(data)
+        when (OcrSdkHookApiCallStatusEnum.entries.firstOrNull {
+            it.name.equals(response.status, ignoreCase = true)
+        }) {
+            OcrSdkHookApiCallStatusEnum.Successful -> {
+                if (finalizingResult) return
+                finalizingResult = true
+                val data =
+                    response.result.orEmpty().map { GetCardOcrResult.OcrResult(it.key, it.value) }
+                val front = frontImageUri
+                val back = backImageUri
+                val activity = ocrActivity
+                viewLifecycleOwner.lifecycleScope.launch {
+                    try {
+                        withContext(Dispatchers.IO) {
+                            front?.let { OcrHelper.deleteCachedFileFromUri(activity, it) }
+                            back?.let { OcrHelper.deleteCachedFileFromUri(activity, it) }
+                        }
+                        hideProgress()
+                        activity.sendData(data)
+                    } finally {
+                        finalizingResult = false
+                    }
+                }
             }
 
-            OcrSdkHookApiCallStatusEnum.Pending.name -> {
+            OcrSdkHookApiCallStatusEnum.Pending -> {
                 delayed(response.nextCallInterval) {
                     viewModel.getCardOcrResult(fileID ?: "")
                 }
             }
 
-            OcrSdkHookApiCallStatusEnum.Failed.name -> {
+            OcrSdkHookApiCallStatusEnum.Failed -> {
                 hideProgress()
                 if (response.retryable) {
                     binding.btnSendImages.text = getString(R.string.retry_send)
@@ -286,8 +320,20 @@ class OcrSdkOcrFragment : OcrSdkBaseFragment() {
                     showToast(getString(R.string.ocr_retry_again))
                     uploading = false
                 }
+                updateButtonStatus()
+            }
+
+            null -> {
+                hideProgress()
+                updateButtonStatus()
+                showToast(getString(R.string.ocr_retry_again))
             }
         }
+    }
+
+    override fun onDestroyView() {
+        hideProgress()
+        super.onDestroyView()
     }
 
     private fun statusCheck() {
@@ -305,9 +351,8 @@ class OcrSdkOcrFragment : OcrSdkBaseFragment() {
     }
 
     private fun updateButtonStatus() {
-        if (frontImageUri.isNotNull() && (backImageUri.isNotNull() || ocrActivity.ocrConfig.singlePhoto == true)) {
-            binding.btnSendImages.isEnabled = true
-        }
+        binding.btnSendImages.isEnabled = !progressShowing && frontImageUri.isNotNull() &&
+                (backImageUri.isNotNull() || ocrActivity.ocrConfig.singlePhoto == true)
     }
 
     private fun effectiveCardType(): String {

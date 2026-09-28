@@ -9,15 +9,15 @@ class OcrSdkUploadNewCardOcrImageTestApplication {
     @Parcelize
     data class Input(
         val cardType: String,
-        val cardFrontImage : String,
-        val cardBackImage : String,
-        val traceNumber : String,
-        val token : String,
+        val cardFrontImage: String,
+        val cardBackImage: String,
+        val traceNumber: String,
+        val token: String,
 
-    ): Parcelable
+        ) : Parcelable
 
     @Parcelize
     data class Output(
         val FileID: String,
-    ): Parcelable
+    ) : Parcelable
 }

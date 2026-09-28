@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import ir.ayantech.ocr_sdk.R
 import ir.ayantech.ocr_sdk.component.init
+import ir.ayantech.ocr_sdk.data.model.OcrSdkLanguage
 import ir.ayantech.ocr_sdk.databinding.OcrFragmentCameraxBinding
 import ir.ayantech.ocr_sdk.ui.activity.OcrActivity
 
@@ -38,7 +39,14 @@ open class OcrSdkBaseFragment : Fragment() {
     }
 
     open fun onFragmentCreated() {
-        ocrActivity.window.decorView.layoutDirection = View.LAYOUT_DIRECTION_RTL
+        val direction = if (ocrActivity.language == OcrSdkLanguage.PERSIAN)
+            View.LAYOUT_DIRECTION_RTL else View.LAYOUT_DIRECTION_LTR
+        ocrActivity.window.decorView.layoutDirection = direction
+        binding.root.layoutDirection = direction
+        binding.captureA.circularImg.contentDescription =
+            getString(R.string.ocr_camera_description_front)
+        binding.captureB.circularImg.contentDescription =
+            getString(R.string.ocr_camera_description_back)
         init()
         viewListeners()
     }
@@ -79,6 +87,10 @@ open class OcrSdkBaseFragment : Fragment() {
     open fun init() {
         val txtBlock = ocrActivity.ocrConfig.textBlock
         accessViews {
+            tvDescA.text = ocrActivity.getString(R.string.card_front)
+            tvDescB.text = ocrActivity.getString(R.string.back_card)
+            btnSendImages.text = ocrActivity.getString(R.string.ocr_send)
+            headerRl.backIv.contentDescription = ocrActivity.getString(R.string.ocr_back)
             headerRl.init(
                 title = ocrActivity.getString(R.string.ocr_camera_desc)
 
@@ -86,21 +98,13 @@ open class OcrSdkBaseFragment : Fragment() {
                 ocrActivity.mFinishActivity()
             }
             txtBlock?.let { tBlock ->
-                tBlock.title?.let { title ->
-                    headerRl.tvTitle.text = title
-                }
-                tBlock.firstImageHolderText?.let { tv1 ->
-                    tvDescA.text = tv1
-                }
-                tBlock.secondImageHolderText?.let { tv2 ->
-                    tvDescB.text = tv2
-                }
-                tBlock.buttonText?.let { btnText ->
-                    btnSendImages.text = btnText
-                }
+                tBlock.title?.let { headerRl.tvTitle.text = ocrActivity.getString(it) }
+                tBlock.firstImageHolderText?.let { tvDescA.text = ocrActivity.getString(it) }
+                tBlock.secondImageHolderText?.let { tvDescB.text = ocrActivity.getString(it) }
+                tBlock.buttonText?.let { btnSendImages.text = ocrActivity.getString(it) }
                 tBlock.secondTitle?.let {
                     tvVin.visibility = View.VISIBLE
-                    tvVin.text = it
+                    tvVin.text = ocrActivity.getString(it)
                 }
             }
         }

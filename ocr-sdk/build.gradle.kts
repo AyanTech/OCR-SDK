@@ -1,5 +1,3 @@
-import org.gradle.api.publish.maven.MavenPublication
-
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.ksp)
@@ -15,7 +13,6 @@ android {
     defaultConfig {
         minSdk = 23
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("proguard-rules.pro")
 
         val uploadPath = project.findProperty("OCR_UPLOAD_PATH")
         val getResultPath = project.findProperty("OCR_GET_RESULT_PATH")
@@ -34,10 +31,6 @@ android {
         }
         release {
             isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
         }
     }
 
@@ -79,6 +72,10 @@ dependencies {
     testImplementation(libs.koin.test)
     androidTestImplementation(libs.androidx.junit)
 
+}
+
+tasks.withType<Test>().configureEach {
+    jvmArgs("-Xshare:off")
 }
 
 afterEvaluate {

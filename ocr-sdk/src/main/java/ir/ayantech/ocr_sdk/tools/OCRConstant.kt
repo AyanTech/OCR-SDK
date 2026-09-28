@@ -7,7 +7,12 @@ import androidx.core.content.edit
 @SuppressLint("StaticFieldLeak")
 object OCRConstant {
     lateinit var context: Context
-    private val prefs by lazy { context.getSharedPreferences("ocr_sdk_prefs", Context.MODE_PRIVATE) }
+    private val prefs by lazy {
+        context.getSharedPreferences(
+            "ocr_sdk_prefs",
+            Context.MODE_PRIVATE
+        )
+    }
 
     const val REQUEST_CODE_OCR_RESULT = 1
 

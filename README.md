@@ -86,23 +86,15 @@ private val ocrContract = registerForActivityResult(OCRContract()) { result ->
 
 ---
 
-### 2. Encode Image to Base64
+### 2. Select the SDK language
+
+Pass your application's selected language to each launch config. The SDK does not select a language from the phone. Both OCR and capture default to Persian for existing callers. If you distribute an Android App Bundle, set `android { bundle { language { enableSplit = false } } }` in the consuming app so both SDK locales are packaged. For application-specific `OcrSdkTextBlock` labels, pass your app's string resource IDs through the `OcrSdkTextBlock` fields and supply `values`/`values-fa` translations. The SDK resolves those IDs in its selected language. The fields accept only `@StringRes` IDs.
 
 ```kotlin
-val base64 = OcrHelper.encodeImageToBase64(
-    context = this,
-    imageUri = uri,
-    maxBase64Mb = 4.0,        // Max Base64 size (MB)
-    minBase64Mb = null,       // Optional min size
-    listener = object : EncodeImageListener {
-        override fun onSuccess(base64: String) {}
-        override fun onFailed(reason: String, throwable: Throwable?) {}
-        override fun onProgress(percent: Int, message: String) {}
-    }
-)
+val sdkLanguage = if (appLanguageIsPersian) OcrSdkLanguage.PERSIAN else OcrSdkLanguage.ENGLISH
+ocrContract.launch(OcrSdkOcrConfig(language = sdkLanguage))
+uriContract.launch(OcrSdkCaptureConfig(language = sdkLanguage))
 ```
-
----
 
 ### 3. Launch OCR
 
@@ -110,45 +102,25 @@ val base64 = OcrHelper.encodeImageToBase64(
 ocrContract.launch(
     OcrSdkOcrConfig(
         maxBase64Mb = 2.5,
-        minBase64Mb = 3.5,
-        className = packageName,
+        minBase64Mb = 0.5,
         cardType = OcrSdkOcrCardTypesEnum.NationalCard.value,
         singlePhoto = true,
-        extraInfo = "test",
+        language = sdkLanguage,
         textBlock = OcrSdkTextBlock(
-            title = "تیتر بالا",
-            firstImageHolderText = "عکس اول",
-            secondImageHolderText = "عکس دوم",
-            buttonText = "کلید پایین"
+            secondTitle = R.string.card_photo_instruction,
+            firstImageHolderText = R.string.card_front,
+            secondImageHolderText = R.string.card_back,
+            buttonText = R.string.confirm
         )
     )
 )
 ```
-
----
 
 ### 4. Launch with URI
 
 ```kotlin
-uriContract.launch(
-    OcrSdkOcrConfig(
-        maxBase64Mb = 2.5,
-        minBase64Mb = 3.5,
-        className = packageName,
-        cardType = OcrSdkOcrCardTypesEnum.VehicleCard.value,
-        singlePhoto = false,
-        extraInfo = "test",
-        textBlock = OcrSdkTextBlock(
-            title = "نوشته بالا",
-            firstImageHolderText = "عکس اول",
-            secondImageHolderText = "عکس دوم",
-            buttonText = "باتن پایین"
-        )
-    )
-)
+uriContract.launch(OcrSdkCaptureConfig(language = sdkLanguage))
 ```
-
----
 
 ## 📥 Getting Results
 

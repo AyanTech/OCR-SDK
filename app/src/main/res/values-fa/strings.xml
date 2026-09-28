@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">برنامهٔ آزمایشی OCR</string>
+    <string name="open_ocr">باز کردن OCR</string>
+    <string name="ocr_sample_second_title">از کارت بانکی خود عکس بگیرید.</string>
+    <string name="ocr_sample_front">روی کارت</string>
+    <string name="ocr_sample_back">پشت کارت</string>
+    <string name="ocr_sample_confirm">تایید</string>
+</resources>

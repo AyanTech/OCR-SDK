@@ -26,7 +26,7 @@ abstract class OcrSdkAyanDialog<T : ViewBinding>(context: Context) :
         super.onCreate(savedInstanceState)
 
         requestWindowFeature(Window.FEATURE_NO_TITLE)
-         setContentView(binding.root)
+        setContentView(binding.root)
         window?.setBackgroundDrawable(
             ContextCompat.getDrawable(
                 this.context,

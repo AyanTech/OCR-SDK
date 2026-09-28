@@ -7,5 +7,6 @@ import kotlinx.parcelize.Parcelize
 data class OcrSdkCaptureConfig(
     val className: String? = null,
     val extraInfo: String? = null,
-    val textBlock: OcrSdkTextBlock? = null
+    val textBlock: OcrSdkTextBlock? = null,
+    val language: OcrSdkLanguage = OcrSdkLanguage.PERSIAN
 ) : Parcelable

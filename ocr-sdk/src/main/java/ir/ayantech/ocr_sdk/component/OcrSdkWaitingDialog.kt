@@ -3,6 +3,7 @@ package ir.ayantech.ocr_sdk.component
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
+import ir.ayantech.ocr_sdk.R
 import ir.ayantech.ocr_sdk.databinding.OcrDialogWaitingBinding
 
 class OcrSdkWaitingDialog(
@@ -10,6 +11,7 @@ class OcrSdkWaitingDialog(
     private var title: String
 ) : OcrSdkAyanDialog<OcrDialogWaitingBinding>(context) {
 
+    private val textContext = context
     private var lastPercent: Int = -1
 
     init {
@@ -58,7 +60,7 @@ class OcrSdkWaitingDialog(
         }
         if (percent != lastPercent) {
             lastPercent = percent.coerceIn(0, 100)
-            changeText("$message  $lastPercent%")
+            changeText(textContext.getString(R.string.ocr_progress_percent, message, lastPercent))
         }
     }
 }

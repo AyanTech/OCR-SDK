@@ -50,7 +50,8 @@ class UploadCardOcrUseCaseImplTest {
             imageArray = listOf("invalid"),
             type = "bank_card"
         )
-        val expectedResult = AyanAPIResult.error<UploadCardOcr.UploadCardOcrResponseModel>(Exception("Upload failed"))
+        val expectedResult =
+            AyanAPIResult.error<UploadCardOcr.UploadCardOcrResponseModel>(Exception("Upload failed"))
         coEvery { ocrRepository.uploadCardOcr(requestBody) } returns flowOf(expectedResult)
 
         // Act
