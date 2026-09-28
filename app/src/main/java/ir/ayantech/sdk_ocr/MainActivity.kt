@@ -1,309 +1,180 @@
 package ir.ayantech.sdk_ocr
 
-import android.Manifest
-import android.content.Intent
-import android.content.res.ColorStateList
-import android.graphics.Color
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.util.Base64
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.ImageView
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.view.isVisible
-import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.CenterCrop
-import com.chuckerteam.chucker.api.ChuckerCollector
-import ir.ayantech.ocr_sdk.component.OcrSdkWaitingDialog
-import ir.ayantech.ocr_sdk.model.EncodeImageListenerWithMetrics
-import ir.ayantech.ocr_sdk.model.EncodeMetrics
-import ir.ayantech.ocr_sdk.model.OcrSdkCaptureConfig
-import ir.ayantech.ocr_sdk.model.OcrSdkTextBlock
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.edit
+import androidx.core.os.LocaleListCompat
+import ir.ayantech.ocr_sdk.data.model.OcrSdkCaptureConfig
+import ir.ayantech.ocr_sdk.data.model.OcrSdkLanguage
+import ir.ayantech.ocr_sdk.data.model.OcrSdkOcrConfig
+import ir.ayantech.ocr_sdk.data.model.OcrSdkOcrDataResult
+import ir.ayantech.ocr_sdk.data.model.OcrSdkTextBlock
+import ir.ayantech.ocr_sdk.data.model.OcrSdkUriDataResult
+import ir.ayantech.ocr_sdk.enums.OcrSdkOcrCardTypesEnum
 import ir.ayantech.ocr_sdk.tools.CaptureContract
 import ir.ayantech.ocr_sdk.tools.OCRConfig
-import ir.ayantech.ocr_sdk.tools.OCRConstant
-import ir.ayantech.ocr_sdk.tools.OcrHelper
+import ir.ayantech.ocr_sdk.tools.OCRContract
 import ir.ayantech.sdk_ocr.databinding.ActivityMainBinding
-import ir.ayantech.whygoogle.activity.WhyGoogleActivity
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import okhttp3.Call
 
-class MainActivity : WhyGoogleActivity<ActivityMainBinding>() {
+class MainActivity : AppCompatActivity() {
 
-    override val binder: (LayoutInflater) -> ActivityMainBinding get() = ActivityMainBinding::inflate
-    override val containerId: Int = R.id.fragmentContainerFl
+    private lateinit var binding: ActivityMainBinding
 
-    private var cardFrontBase64: String? = null
-    private var cardBackBase64: String? = null
-    private var isProcessingFront: String = "0"
-    private var currentCall: Call? = null
-    private var isRequesting = false
-
-    // تعریف منیجر به صورت یکپارچه برای جلوگیری از نشت حافظه
-    private lateinit var ocrManager: OcrNetworkManager
-
-    private val urlContract = registerForActivityResult(CaptureContract()) { res ->
-        compressImage(res?.uri, res?.extraInfo.toString())
-    }
-
-    private val mOpenGalleryContract = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
-        uri?.let {
-            contentResolver.takePersistableUriPermission(it, Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            compressImage(it, isProcessingFront)
-        }
-    }
-
-    private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
+    private val ocrContract = registerForActivityResult(OCRContract(), ::showOcrResult)
+    private val captureContract = registerForActivityResult(CaptureContract(), ::showCaptureResult)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        OCRConstant.context = this
-        initOCR()
-
-        // مقداردهی اولیه منیجر با لیستنر بج چاکر
-        ocrManager = OcrNetworkManager(this) {
-            runOnUiThread { showChuckerBadge() }
-        }
-
-        setSpinner()
-        setAdapter()
-        setClickListeners()
-      //  checkPermissions()
-    }
-
-    private fun initOCR() {
-        OCRConfig.builder()
-            .setContext(this)
-            .setApplicationID("ir.ayantech.sdk_ocr")
-            .setBaseUrl("https://core.pishkhan24.ayantech.ir/webservices/Proxy.svc/")
-            .setToken("0C42307F3F4E44FD8FEE1ABAD7141A9A")
-            .setUploadImageEndPoint("UploadNewCardOcrImage")
-            .setGetResultEndPoint("GetCardOcrResult")
-            .build()
-    }
-
-    private fun setClickListeners() {
-        binding.layoutFrontPhoto.setOnClickListener { hideKeyboard(); openSelectionDialog("0") }
-        binding.layoutBackPhoto.setOnClickListener { hideKeyboard(); openSelectionDialog("1") }
-        binding.btnSend.setOnClickListener {
-            hideKeyboard()
-            if (isRequesting) cancelRequest() else sendRequest()
-        }
-        binding.btnOpenChucker.setOnClickListener {
-            hideChuckerBadge()
-            try {
-                startActivity(com.chuckerteam.chucker.api.Chucker.getLaunchIntent(this))
-            } catch (e: Exception) {
-                Toast.makeText(this, "Chucker is not available", Toast.LENGTH_SHORT).show()
-            }
-        }
-        binding.btnResetData.setOnClickListener {
-            resetData()
-            Toast.makeText(this, "All data and logs cleared 🧹", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun hideChuckerBadge() {
-        binding.chuckerBadge.animate()
-            .scaleX(0f).scaleY(0f)
-            .setDuration(200)
-            .withEndAction { binding.chuckerBadge.visibility = View.GONE }
-            .start()
-    }
-
-    private fun sendRequest() {
-        if (cardFrontBase64 == null) {
-            Toast.makeText(this, "Please select front image", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-
-        binding.tvStatusCode.text = "---"
-        binding.tvDescription.text = "Processing..."
-        (binding.rvOcrResults.adapter as? OcrResultAdapter)?.updateData(mutableListOf())
-
-        toggleLoading(true)
-
-        lifecycleScope.launch(Dispatchers.Default) {
-            currentCall = ocrManager.sendOcrRequest(
-                cardType = binding.spinner.selectedItem.toString(),
-                cardFrontBase64 = cardFrontBase64 ?: "",
-                cardBackBase64 = cardBackBase64 ?: "",
-                traceNumber = "OCR_TEST_${System.currentTimeMillis()}",
-                token = "TEST_TOKEN",
-                callback = object : OcrNetworkManager.OcrCallback {
-                    override fun onSuccess(data: OcrResponseModel) {
-                        runOnUiThread {
-                            toggleLoading(false)
-                            binding.tvStatusCode.text = data.statusCode
-                            binding.tvDescription.text = data.description
-                            binding.tvTimeSpent.text = "${data.timeSpent} ms"
-                            (binding.rvOcrResults.adapter as? OcrResultAdapter)?.updateData(data.ocrRowModelList ?: mutableListOf())
-                        }
-                    }
-                    override fun onError(message: String) {
-                        runOnUiThread {
-                            toggleLoading(false)
-                            Toast.makeText(this@MainActivity, message, Toast.LENGTH_LONG).show()
-                        }
-                    }
-                }
+        val language = selectedLanguage()
+        if (AppCompatDelegate.getApplicationLocales().toLanguageTags() != language.languageTag) {
+            AppCompatDelegate.setApplicationLocales(
+                LocaleListCompat.forLanguageTags(language.languageTag)
             )
         }
+
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        configureControls(language)
     }
 
-    private fun cancelRequest() {
-        currentCall?.cancel()
-        currentCall = null
-        toggleLoading(false)
-        Toast.makeText(this, "Request Canceled", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun toggleLoading(showLoading: Boolean) {
-        isRequesting = showLoading
-        with(binding) {
-            if (showLoading) {
-                btnSend.text = "Cancel Request"
-                btnSend.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#E57373"))
-                loadingProgress.visibility = View.VISIBLE
+    private fun configureControls(language: OcrSdkLanguage) = with(binding) {
+        languageGroup.check(
+            if (language == OcrSdkLanguage.PERSIAN) R.id.language_persian else R.id.language_english
+        )
+        languageGroup.setOnCheckedChangeListener { _, checkedId ->
+            val selected = if (checkedId == R.id.language_english) {
+                OcrSdkLanguage.ENGLISH
             } else {
-                btnSend.text = "Analyze Card"
-                btnSend.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#00ACC1"))
-                loadingProgress.visibility = View.GONE
+                OcrSdkLanguage.PERSIAN
             }
+            getPreferences(MODE_PRIVATE).edit { putString(LANGUAGE_KEY, selected.languageTag) }
+            AppCompatDelegate.setApplicationLocales(
+                LocaleListCompat.forLanguageTags(selected.languageTag)
+            )
+        }
+
+        cardTypeGroup.check(R.id.card_vehicle)
+        switchTwoPhotos.isChecked = true
+        switchDarkMode.isChecked = AppCompatDelegate.getDefaultNightMode() ==
+            AppCompatDelegate.MODE_NIGHT_YES
+        btnOpenOcr.setOnClickListener {
+            if (initializeSdk(requireCredentials = true)) ocrContract.launch(ocrConfig())
+        }
+        btnCapture.setOnClickListener {
+            if (initializeSdk(requireCredentials = false)) captureContract.launch(captureConfig())
         }
     }
 
-    private fun getRandomFunnyMessage(): String {
-        return listOf("Putting the image on a diet... 🥗", "Shrinking pixels... 🤏", "Making it slim... ✨", "Feeding the engine... 🍕").random()
+    private fun selectedLanguage(): OcrSdkLanguage =
+        when (getPreferences(MODE_PRIVATE).getString(LANGUAGE_KEY, null)) {
+            OcrSdkLanguage.ENGLISH.languageTag -> OcrSdkLanguage.ENGLISH
+            else -> OcrSdkLanguage.PERSIAN
+        }
+
+    private fun selectedCardType(): OcrSdkOcrCardTypesEnum =
+        when (binding.cardTypeGroup.checkedRadioButtonId) {
+            R.id.card_bank -> OcrSdkOcrCardTypesEnum.BankCard
+            R.id.card_national -> OcrSdkOcrCardTypesEnum.NationalCard
+            else -> OcrSdkOcrCardTypesEnum.VehicleCard
+        }
+
+    private fun ocrConfig(): OcrSdkOcrConfig {
+        val cardType = selectedCardType()
+        val instruction = when (cardType) {
+            OcrSdkOcrCardTypesEnum.VehicleCard -> R.string.ocr_sample_vehicle_instruction
+            OcrSdkOcrCardTypesEnum.NationalCard -> R.string.ocr_sample_national_instruction
+            OcrSdkOcrCardTypesEnum.BankCard -> R.string.ocr_sample_second_title
+        }
+        return OcrSdkOcrConfig(
+            maxBase64Mb = 1.0,
+            minBase64Mb = 0.2,
+            className = MainActivity::class.java.name,
+            cardType = cardType.value,
+            singlePhoto = !binding.switchTwoPhotos.isChecked,
+            extraInfo = binding.inputExtraInfo.text.toString(),
+            language = selectedLanguage(),
+            nightMode = if (binding.switchDarkMode.isChecked) {
+                AppCompatDelegate.MODE_NIGHT_YES
+            } else {
+                AppCompatDelegate.MODE_NIGHT_NO
+            },
+            textBlock = OcrSdkTextBlock(
+                title = R.string.ocr_sample_title,
+                secondTitle = instruction,
+                firstImageHolderText = R.string.ocr_sample_front,
+                secondImageHolderText = R.string.ocr_sample_back,
+                buttonText = R.string.ocr_sample_confirm
+            )
+        )
     }
 
-    private fun compressImage(uri: Uri?, isFront: String) {
-        if (uri == null) return
-        val dialog = OcrSdkWaitingDialog(this, getRandomFunnyMessage())
-        dialog.showDialog()
+    private fun captureConfig() = OcrSdkCaptureConfig(
+        className = MainActivity::class.java.name,
+        extraInfo = binding.inputExtraInfo.text.toString(),
+        language = selectedLanguage(),
+        textBlock = OcrSdkTextBlock(
+            title = R.string.ocr_sample_capture_title,
+            firstImageHolderText = R.string.ocr_sample_front,
+            buttonText = R.string.ocr_sample_confirm
+        )
+    )
 
-        lifecycleScope.launch {
-            val maxS = binding.edMax.text.toString().toDoubleOrNull() ?: 1.0
-            val minS = binding.edMin.text.toString().toDoubleOrNull() ?: 0.7
-            OcrHelper.encodeImageToBase64(this@MainActivity, uri, maxS, minS,
-                listener = object : EncodeImageListenerWithMetrics {
-                    override fun onSuccess(base64Str: String, metrics: EncodeMetrics) {
-                        dialog.hideDialog()
-                        if (isFront == "0") cardFrontBase64 = base64Str else cardBackBase64 = base64Str
-                        val targetImg = if (isFront == "0") binding.frontImage else binding.backImage
-                        Glide.with(this@MainActivity).asBitmap().load(Base64.decode(base64Str, Base64.DEFAULT)).transform(CenterCrop()).into(targetImg)
-                        targetImg.imageTintList = null
-                        targetImg.alpha = 1.0f
-                        targetImg.layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
-                        targetImg.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
-                        targetImg.scaleType = ImageView.ScaleType.CENTER_CROP
-                        OcrHelper.deleteCachedFileFromUri(this@MainActivity, uri)
+    private fun showOcrResult(result: OcrSdkOcrDataResult?) {
+        binding.imagePreview.visibility = View.GONE
+        binding.txtResult.text = if (result == null) {
+            getString(R.string.ocr_sample_cancelled)
+        } else {
+            buildString {
+                appendLine(getString(R.string.ocr_sample_result_card_type, result.cardType.orEmpty()))
+                appendLine(getString(R.string.ocr_sample_result_extra_info, result.extraInfo.orEmpty()))
+                if (result.items.isEmpty()) {
+                    append(getString(R.string.ocr_sample_no_fields))
+                } else {
+                    result.items.forEach { item ->
+                        appendLine(
+                            getString(
+                                R.string.ocr_sample_result_item,
+                                item.key.orEmpty(),
+                                item.value.orEmpty()
+                            )
+                        )
                     }
-                    override fun onFailed(reason: String, t: Throwable?) { dialog.hideDialog() }
-                    override fun onProgress(p: Int, m: String) {}
-                    override fun onSuccess(base64: String) {}
-                })
+                }
+            }.trimEnd()
         }
     }
 
-    private fun resetData() {
-        cardFrontBase64 = null
-        cardBackBase64 = null
-        binding.tvStatusCode.text = "---"
-        binding.tvDescription.text = "No request sent yet"
-        binding.tvTimeSpent.text = "0 ms"
-        (binding.rvOcrResults.adapter as? OcrResultAdapter)?.updateData(mutableListOf())
-
-        // پاک کردن لاگ‌های چاکر هنگام ریست
-        ocrManager.clearChuckerLogs()
-        hideChuckerBadge()
-
-        with(binding) {
-            val resetImg = { img: ImageView ->
-                img.setImageResource(ir.ayantech.ocr_sdk.R.drawable.ocr_ic_camera)
-                img.imageTintList = ColorStateList.valueOf(Color.parseColor("#00ACC1"))
-                img.alpha = 0.6f
-                img.scaleType = ImageView.ScaleType.CENTER_CROP
-                val size = (56 * resources.displayMetrics.density).toInt()
-                img.layoutParams.width = size
-                img.layoutParams.height = size
-            }
-            resetImg(frontImage)
-            resetImg(backImage)
+    private fun showCaptureResult(result: OcrSdkUriDataResult?) {
+        binding.txtResult.text = if (result == null) {
+            getString(R.string.ocr_sample_cancelled)
+        } else {
+            getString(R.string.ocr_sample_result_uri, result.uri?.toString().orEmpty()) + "\n" +
+                getString(R.string.ocr_sample_result_extra_info, result.extraInfo.orEmpty())
         }
+        binding.imagePreview.visibility = if (result?.uri == null) View.GONE else View.VISIBLE
+        binding.imagePreview.setImageURI(result?.uri)
     }
 
-    private fun openSelectionDialog(isFront: String) {
-        isProcessingFront = isFront
-        com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
-            .setTitle("Select Photo Source")
-            .setItems(arrayOf("Camera", "Gallery")) { _, which ->
-                if (which == 0) {
-                    urlContract.launch(OcrSdkCaptureConfig(
-                        className = "ir.ayantech.sdk_ocr.MainActivity",
-                        extraInfo = isFront,
-                        textBlock = OcrSdkTextBlock(title= "OCR", firstImageHolderText = "Camera", secondImageHolderText = "Camera", buttonText = "Confirm")))
-                } else { mOpenGalleryContract.launch(arrayOf("image/*")) }
-            }.show()
-    }
-
-    private fun setSpinner() {
-        val types = arrayOf("car_card", "bank_card", "national_card", "car_green_sheet","legal_driving_records_inquiry","gas_bill_khorasan_razavi_ocr","car_green_sheet_finder")
-        binding.spinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, types).apply {
-            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+    private fun initializeSdk(requireCredentials: Boolean): Boolean {
+        val baseUrlInput = binding.inputBaseUrl.text.toString().trim()
+        val baseUrl = if (baseUrlInput.isEmpty()) "" else baseUrlInput.trimEnd('/') + "/"
+        val token = binding.inputToken.text.toString().trim()
+        if (requireCredentials && (baseUrl.isEmpty() || token.isEmpty())) {
+            binding.txtResult.setText(R.string.ocr_sample_configuration_required)
+            return false
         }
+        OCRConfig.builder()
+            .setContext(applicationContext)
+            .setApplicationID(packageName)
+            .setBaseUrl(baseUrl)
+            .setToken(token)
+            .build()
+        return true
     }
 
-    private fun setAdapter() {
-        binding.rvOcrResults.layoutManager = LinearLayoutManager(this)
-        binding.rvOcrResults.adapter = OcrResultAdapter(mutableListOf())
-    }
-
-    private fun checkPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-        }
-    }
-
-    private fun hideKeyboard() {
-        val view = this.currentFocus
-        if (view != null) {
-            val imm = getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
-            imm.hideSoftInputFromWindow(view.windowToken, 0)
-            view.clearFocus()
-        }
-    }
-
-    override fun dispatchTouchEvent(ev: android.view.MotionEvent?): Boolean {
-        if (currentFocus != null && ev?.action == android.view.MotionEvent.ACTION_DOWN) {
-            val v = currentFocus
-            if (v is android.widget.EditText) {
-                val outRect = android.graphics.Rect()
-                v.getGlobalVisibleRect(outRect)
-                if (!outRect.contains(ev.rawX.toInt(), ev.rawY.toInt())) hideKeyboard()
-            }
-        }
-        return super.dispatchTouchEvent(ev)
-    }
-
-    private fun showChuckerBadge() {
-        if (binding.chuckerBadge.isVisible) return
-        binding.chuckerBadge.visibility = View.VISIBLE
-        binding.chuckerBadge.scaleX = 0f
-        binding.chuckerBadge.scaleY = 0f
-        binding.chuckerBadge.animate()
-            .scaleX(1f).scaleY(1f)
-            .setDuration(300)
-            .setInterpolator(android.view.animation.OvershootInterpolator())
-            .start()
+    private companion object {
+        const val LANGUAGE_KEY = "sample_language"
     }
 }

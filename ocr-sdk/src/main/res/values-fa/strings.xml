@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">OCR-SDK</string>
+    <string name="ocr_camera_description_front">از قسمت جلوی کارت عکس بگیرید</string>
+    <string name="ocr_camera_description_back">از قسمت پشت کارت عکس بگیرید</string>
+    <string name="ocr_loading_description">لطفا کمی صبر کنید</string>
+    <string name="ocr_confirm_image">تایید تصویر</string>
+    <string name="ocr_retry">تلاش مجدد</string>
+    <string name="ocr_retry_again">لطفا مجددا تلاش کنید</string>
+    <string name="ocr_downloading_data">در حال دریافت اطلاعات…</string>
+    <string name="ocr_compressing">در حال فشرده سازی…</string>
+    <string name="ocr_sending">در حال ارسال تصاویر…</string>
+    <string name="retry_send">ارسال مجدد</string>
+    <string name="ocr_send">ارسال</string>
+    <string name="ocr_camera_desc">از کارت خود عکس بگیرید</string>
+    <string name="ocr_taking_image">عکس بگیرید</string>
+    <string name="ocr_permission_using_setting_msg">برای فعال‌سازی دوربین، باید از طریق تنظیمات برنامه دسترسی را فعال کنید.</string>
+    <string name="ocr_permission_request_msg">برای گرفتن عکس یا فیلم، لطفاً دسترسی دوربین را فعال کنید.</string>
+    <string name="ocr_permission_open_setting_msg">باز کردن تنظیمات</string>
+    <string name="card_front">روی کارت</string>
+    <string name="back_card">پشت کارت</string>
+    <string name="ocr_permissions_not_granted_by_the_user">دسترسی دوربین داده نشد.</string>
+    <string name="ocr_sdk_not_initialized">تنظیمات SDK کامل نیست. آدرس سرور و توکن را بررسی کنید.</string>
+    <string name="ocr_upload_failed">ارسال تصاویر انجام نشد. لطفاً دوباره تلاش کنید.</string>
+    <string name="ocr_result_failed">دریافت نتیجه انجام نشد. لطفاً دوباره تلاش کنید.</string>
+    <string name="ocr_result_empty">نتیجهٔ خواندن کارت خالی است. لطفاً دوباره تلاش کنید.</string>
+    <string name="ocr_back">بازگشت</string>
+    <string name="ocr_progress_percent">%1$s  %2$d٪</string>
+</resources>

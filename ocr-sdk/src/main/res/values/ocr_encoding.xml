@@ -1,0 +1,20 @@
+<resources>
+    <string name="ocr_encode_no_image">No image is available.</string>
+    <string name="ocr_encode_starting">Starting image processing</string>
+    <string name="ocr_encode_file_too_large">This image exceeds %1$.2f MB. Please select or capture a smaller image.</string>
+    <string name="ocr_encode_reading_dimensions">Reading image dimensions</string>
+    <string name="ocr_encode_resolution_too_high">The image resolution is too high. Please capture or select a smaller image.</string>
+    <string name="ocr_encode_sampling">Sampling image</string>
+    <string name="ocr_encode_selecting_scale">Selecting image scale</string>
+    <string name="ocr_encode_loading">Loading image</string>
+    <string name="ocr_encode_adjusting_quality">Adjusting output quality</string>
+    <string name="ocr_encode_resizing">Reducing dimensions to meet the size limit</string>
+    <string name="ocr_encode_output_too_large">The image still exceeds the size limit after reducing quality and dimensions. Please capture or select a smaller image.</string>
+    <string name="ocr_encode_creating_output">Creating output</string>
+    <string name="ocr_encode_out_of_memory">There is not enough memory to process this image. Please capture or select a lower-quality image.</string>
+    <string name="ocr_encode_failed">Could not process the image. Please try again.</string>
+    <string name="ocr_encode_complete">Ready • Total time: %1$d ms</string>
+    <string name="ocr_encode_unreadable">Could not read this image.</string>
+    <string name="ocr_encode_loading_failed">Could not load the image.</string>
+    <string name="ocr_encode_compression_failed">Could not prepare the output. Please try again.</string>
+</resources>

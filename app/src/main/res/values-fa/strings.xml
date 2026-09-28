@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">نمونهٔ SDK تشخیص متن</string>
+    <string name="ocr_sample_heading">نمونه‌های SDK تشخیص متن</string>
+    <string name="ocr_sample_language">زبان برنامه</string>
+    <string name="ocr_sample_persian">فارسی</string>
+    <string name="ocr_sample_english">انگلیسی</string>
+    <string name="ocr_sample_backend">تنظیمات سرور</string>
+    <string name="ocr_sample_base_url_hint">نشانی پایه با / در انتها</string>
+    <string name="ocr_sample_token_hint">توکن احراز هویت برای OCR</string>
+    <string name="ocr_sample_card_type">نوع کارت</string>
+    <string name="ocr_sample_vehicle">کارت خودرو</string>
+    <string name="ocr_sample_bank">کارت بانکی</string>
+    <string name="ocr_sample_national">کارت ملی</string>
+    <string name="ocr_sample_two_photos">عکس از رو و پشت کارت</string>
+    <string name="ocr_sample_dark_mode">صفحهٔ OCR با حالت تیره</string>
+    <string name="ocr_sample_extra_info_hint">اطلاعات اضافی اختیاری در نتیجه</string>
+    <string name="open_ocr">باز کردن OCR</string>
+    <string name="ocr_sample_capture">فقط دریافت نشانی عکس</string>
+    <string name="ocr_sample_result_heading">نتیجه</string>
+    <string name="ocr_sample_no_result">برای دیدن نتیجه، یکی از حالت‌ها را اجرا کنید.</string>
+    <string name="ocr_sample_configuration_required">برای اجرای OCR نشانی پایه و توکن را وارد کنید.</string>
+    <string name="ocr_sample_cancelled">نتیجه‌ای دریافت نشد.</string>
+    <string name="ocr_sample_result_card_type">نوع کارت: %1$s</string>
+    <string name="ocr_sample_result_extra_info">اطلاعات اضافی: %1$s</string>
+    <string name="ocr_sample_result_uri">نشانی عکس: %1$s</string>
+    <string name="ocr_sample_result_item">%1$s: %2$s</string>
+    <string name="ocr_sample_no_fields">داده‌ای از OCR دریافت نشد.</string>
+    <string name="ocr_sample_preview_description">پیش‌نمایش عکس گرفته‌شده</string>
+    <string name="ocr_sample_title">از کارت خود عکس بگیرید</string>
+    <string name="ocr_sample_capture_title">عکس بگیرید</string>
+    <string name="ocr_sample_vehicle_instruction">از کارت خودروی خود عکس بگیرید.</string>
+    <string name="ocr_sample_national_instruction">از کارت ملی خود عکس بگیرید.</string>
+    <string name="ocr_sample_second_title">از کارت بانکی خود عکس بگیرید.</string>
+    <string name="ocr_sample_front">روی کارت</string>
+    <string name="ocr_sample_back">پشت کارت</string>
+    <string name="ocr_sample_confirm">تایید</string>
+</resources>

@@ -21,4 +21,3 @@ dependencyResolutionManagement {
 rootProject.name = "SDK-OCR"
 include(":app")
 include(":ocr-sdk")
-

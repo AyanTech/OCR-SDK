@@ -10,7 +10,7 @@ import android.view.WindowManager
 import androidx.core.content.ContextCompat
 import androidx.viewbinding.ViewBinding
 import ir.ayantech.ocr_sdk.R
-import ir.ayantech.whygoogle.helper.viewBinding
+import ir.ayantech.ocr_sdk.tools.viewBinding
 
 
 abstract class OcrSdkAyanDialog<T : ViewBinding>(context: Context) :
@@ -26,7 +26,7 @@ abstract class OcrSdkAyanDialog<T : ViewBinding>(context: Context) :
         super.onCreate(savedInstanceState)
 
         requestWindowFeature(Window.FEATURE_NO_TITLE)
-         setContentView(binding.root)
+        setContentView(binding.root)
         window?.setBackgroundDrawable(
             ContextCompat.getDrawable(
                 this.context,

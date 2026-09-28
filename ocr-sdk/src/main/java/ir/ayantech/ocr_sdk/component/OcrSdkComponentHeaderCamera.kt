@@ -4,12 +4,11 @@ import android.graphics.Typeface
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.StyleSpan
-import ir.ayantech.ayannetworking.api.SimpleCallback
 import ir.ayantech.ocr_sdk.databinding.OcrComponentHeaderCameraBinding
 
 fun OcrComponentHeaderCameraBinding.init(
     title: String,
-    onBackButtonClicked: SimpleCallback
+    onBackButtonClicked: () -> Unit
 ) {
     val str = SpannableStringBuilder(title)
     str.setSpan(
