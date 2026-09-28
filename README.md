@@ -1,3 +1,6 @@
+
+[![](https://jitpack.io/v/AyanTech/OCR-SDK.svg)](https://jitpack.io/#AyanTech/OCR-SDK)
+
 # Android OCR SDK
 **Extract structured data from VehicleCards, BankCards, and National IDs with ease.**
 
