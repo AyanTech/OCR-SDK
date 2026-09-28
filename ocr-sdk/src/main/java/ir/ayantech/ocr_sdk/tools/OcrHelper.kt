@@ -17,7 +17,7 @@ object OcrHelper {
         const val RESULT = "ir.ayantech.ocr_sdk.extra.RESULT"
     }
 
-    val TAG = "OcrHelperLogs"
+    const val TAG = "OcrHelperLogs"
 
     fun deleteCachedFileFromUri(context: Context, uri: Uri): Boolean {
 

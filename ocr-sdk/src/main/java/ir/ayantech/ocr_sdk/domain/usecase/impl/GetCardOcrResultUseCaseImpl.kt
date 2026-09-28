@@ -9,6 +9,7 @@ import ir.ayantech.ocr_sdk.domain.usecase.GetCardOcrResultUseCase
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlin.time.Duration.Companion.milliseconds
 
 class GetCardOcrResultUseCaseImpl(private val ocrRepository: OcrRepository) :
     GetCardOcrResultUseCase {
@@ -53,7 +54,7 @@ class GetCardOcrResultUseCaseImpl(private val ocrRepository: OcrRepository) :
                     }
                 }
                 val delayMillis = nextPollDelay ?: break
-                delay(delayMillis)
+                delay(delayMillis.milliseconds)
             }
         }
 }

@@ -12,7 +12,6 @@ class FragmentArgumentDelegate<T : Any> @PublishedApi internal constructor(
     private val valueClass: Class<*>?,
     private val defaultValue: T? = null,
 ) : ReadWriteProperty<Fragment, T> {
-    constructor(defaultValue: T? = null) : this(null, defaultValue)
 
     @Suppress("UNCHECKED_CAST")
     override fun getValue(thisRef: Fragment, property: KProperty<*>): T =
@@ -28,11 +27,10 @@ class FragmentArgumentDelegate<T : Any> @PublishedApi internal constructor(
     }
 }
 
-class FragmentNullableArgumentDelegate<T : Any?> @PublishedApi internal constructor(
+class FragmentNullableArgumentDelegate<T> @PublishedApi internal constructor(
     private val valueClass: Class<*>?,
     private val defaultValue: T? = null,
 ) : ReadWriteProperty<Fragment, T?> {
-    constructor(defaultValue: T? = null) : this(null, defaultValue)
 
     @Suppress("UNCHECKED_CAST")
     override fun getValue(thisRef: Fragment, property: KProperty<*>): T? =

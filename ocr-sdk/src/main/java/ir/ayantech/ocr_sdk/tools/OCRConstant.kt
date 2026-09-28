@@ -14,8 +14,6 @@ object OCRConstant {
         )
     }
 
-    const val REQUEST_CODE_OCR_RESULT = 1
-
     var Application_ID: String
         get() = prefs.getString("Application_ID", "") ?: ""
         set(value) = prefs.edit { putString("Application_ID", value) }
