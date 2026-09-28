@@ -21,8 +21,8 @@ import kotlin.time.Duration.Companion.seconds
 
 val ocrModule = module {
     factory<AyanApi> { (language: OcrSdkLanguage) ->
-        AyanApi.Builder(context = get(), baseUrl = OCRConstant.Base_URL)
-            .setInvokeUserToken { OCRConstant.Token }
+        AyanApi.Builder(context = get(), baseUrl = OCRConstant.baseURL)
+            .setInvokeUserToken { OCRConstant.token }
             .setTimeOutDuration(120.seconds)
             .setLogLevel(LogLevel.DO_NOT_LOG)
             .setAcceptLanguage(if (language == OcrSdkLanguage.PERSIAN) Language.PERSIAN else Language.ENGLISH)

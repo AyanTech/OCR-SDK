@@ -31,8 +31,8 @@ class OcrLanguageInstrumentedTest {
         val instrumentation = InstrumentationRegistry.getInstrumentation()
         val context = instrumentation.targetContext
         OCRConstant.context = context
-        OCRConstant.Base_URL = "https://example.invalid/"
-        OCRConstant.Token = "test-token"
+        OCRConstant.baseURL = "https://example.invalid/"
+        OCRConstant.token = "test-token"
         OcrSdk.init(context)
 
         val customText = OcrSdkTextBlock(
@@ -112,8 +112,8 @@ class OcrLanguageInstrumentedTest {
         val instrumentation = InstrumentationRegistry.getInstrumentation()
         val context = instrumentation.targetContext
         OCRConstant.context = context
-        OCRConstant.Base_URL = "https://example.invalid/"
-        OCRConstant.Token = "test-token"
+        OCRConstant.baseURL = "https://example.invalid/"
+        OCRConstant.token = "test-token"
         OcrSdk.init(context)
         val intent = Intent(context, OcrActivity::class.java)
             .setAction(OcrHelper.Actions.CAPTURE_URI)

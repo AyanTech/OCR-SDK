@@ -73,7 +73,7 @@ class OcrSdkSinglePhotoUriFragment : OcrSdkBaseFragment() {
         return image?.let {
             FileProvider.getUriForFile(
                 ocrActivity,
-                "${OCRConstant.Application_ID}.library.file.provider",
+                "${OCRConstant.application_ID}.library.file.provider",
                 it
             )
         }

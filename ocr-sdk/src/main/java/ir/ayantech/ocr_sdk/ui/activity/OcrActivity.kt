@@ -25,8 +25,8 @@ import ir.ayantech.ocr_sdk.data.model.OcrSdkOcrConfig
 import ir.ayantech.ocr_sdk.data.model.OcrSdkOcrDataResult
 import ir.ayantech.ocr_sdk.data.model.OcrSdkUriDataResult
 import ir.ayantech.ocr_sdk.databinding.OcrActivityBinding
-import ir.ayantech.ocr_sdk.tools.OCRConstant.Base_URL
-import ir.ayantech.ocr_sdk.tools.OCRConstant.Token
+import ir.ayantech.ocr_sdk.tools.OCRConstant.baseURL
+import ir.ayantech.ocr_sdk.tools.OCRConstant.token
 import ir.ayantech.ocr_sdk.tools.OcrEdgeToEdgeHelper
 import ir.ayantech.ocr_sdk.tools.OcrHelper
 import ir.ayantech.ocr_sdk.tools.isNull
@@ -54,7 +54,7 @@ open class OcrActivity : AppCompatActivity() {
     val language: OcrSdkLanguage
         get() = if (action == OcrHelper.Actions.CAPTURE_URI) captureConfig.language else ocrConfig.language
 
-    val ayanAPI by lazy { createAyanAPiCall(baseUrl = Base_URL) { Token } }
+    val ayanAPI by lazy { createAyanAPiCall(baseUrl = baseURL) { token } }
     private var dialog: OcrSdkWaitingDialog? = null
 
     private val backCallback = object : OnBackPressedCallback(true) {
@@ -232,7 +232,7 @@ open class OcrActivity : AppCompatActivity() {
     }
 
     private fun validateSdkInitialization() {
-        if (Token.isNull() || Base_URL.isNull()) {
+        if (token.isNull() || baseURL.isNull()) {
             showToast(getString(R.string.ocr_sdk_not_initialized))
         }
     }

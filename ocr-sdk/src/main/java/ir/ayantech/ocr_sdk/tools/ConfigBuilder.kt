@@ -15,17 +15,17 @@ class ConfigBuilder private constructor() {
     }
 
     fun setApplicationID(applicationID: String) = apply {
-        OCRConstant.Application_ID = applicationID
+        OCRConstant.application_ID = applicationID
         this.applicationID = applicationID
     }
 
     fun setToken(token: String) = apply {
-        OCRConstant.Token = token
+        OCRConstant.token = token
         this.token = token
     }
 
     fun setBaseUrl(baseUrl: String) = apply {
-        OCRConstant.Base_URL = baseUrl
+        OCRConstant.baseURL = baseUrl
         this.baseUrl = baseUrl
     }
 
