@@ -72,7 +72,7 @@
 
     <color name="red">#ED254E</color>
 
-    <style name="AyanDialog" parent="Theme.AppCompat.Dialog">
+    <style name="AyanDialog" parent="Theme.AppCompat.DayNight.Dialog">
         <item name="android:windowMinWidthMajor">90%</item>
         <item name="android:windowMinWidthMinor">90%</item>
     </style>
