@@ -70,9 +70,9 @@ open class OcrActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         readInputIntent(intent)
-        applyLanguage()
         ocrConfig.nightMode?.let { AppCompatDelegate.setDefaultNightMode(it) }
         super.onCreate(savedInstanceState)
+        applyLanguage()
         _binding = OcrActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
         val edgeToEdgeHelper = OcrEdgeToEdgeHelper(this).also { it.enable() }
@@ -113,7 +113,8 @@ open class OcrActivity : AppCompatActivity() {
     @SuppressLint("AppBundleLocaleChanges")
     private fun applyLanguage() {
         val locale = Locale.forLanguageTag(language.languageTag)
-        val configuration = Configuration(baseContext.resources.configuration).apply {
+        // Preserve the night mode applied by AppCompat before adding the SDK locale.
+        val configuration = Configuration(super.getResources().configuration).apply {
             setLocale(locale)
             setLayoutDirection(locale)
         }

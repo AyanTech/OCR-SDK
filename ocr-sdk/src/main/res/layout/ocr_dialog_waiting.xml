@@ -17,7 +17,8 @@
         android:layout_marginBottom="@dimen/margin_21"
         android:padding="@dimen/padding_item_click"
         android:src="@drawable/ocr_ic_close"
-        android:visibility="gone" />
+        android:visibility="gone"
+        app:tint="@color/ocr_dialog_color_foreground" />
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/loadingIv"
@@ -32,6 +33,7 @@
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_title"
         style="@style/ocr_txt_regular_14px_gray2"
+        android:textColor="@color/ocr_dialog_color_foreground"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/loadingIv"

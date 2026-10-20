@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:clipToPadding="false"
@@ -13,7 +14,8 @@
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="@dimen/margin_6"
         android:padding="@dimen/padding_item_click"
-        android:src="@drawable/ocr_ic_close" />
+        android:src="@drawable/ocr_ic_close"
+        app:tint="@color/ocr_dialog_color_foreground" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/centerIconIv"
@@ -26,6 +28,7 @@
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_title"
         style="@style/ocr_txt_regular_14px_gray2"
+        android:textColor="@color/ocr_dialog_color_foreground"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/centerIconIv"
