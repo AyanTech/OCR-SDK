@@ -87,7 +87,7 @@ afterEvaluate {
 
                 groupId = "com.github.ayantech"
                 artifactId = "ocr-sdk"
-                version = "2.0.3"
+                version = "2.0.4"
             }
         }
     }
