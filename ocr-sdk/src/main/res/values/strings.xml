@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">OCR-SDK</string>
     <string name="ocr_camera_description_front">Take a photo of the front of the card</string>
     <string name="ocr_camera_description_back">Take a photo of the back of the card</string>
     <string name="ocr_loading_description">Please wait</string>
