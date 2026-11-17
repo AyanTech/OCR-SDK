@@ -202,6 +202,21 @@ val cardType = result?.cardType
 ### Buttons (`styles.xml`)
 
 ```xml
+
+<style name="Theme.SDKOCR" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+
+  <item name="colorPrimary">@color/color_primary</item>
+  <item name="colorPrimaryVariant">@color/color_primary_dark</item>
+  <item name="colorOnPrimary">@color/white</item>
+
+  <item name="colorSecondary">@color/color_accent</item>
+  <item name="colorSecondaryVariant">@color/color_accent_dark</item>
+  <item name="colorOnSecondary">@color/black</item>
+
+  <item name="android:statusBarColor">@color/status_bar_color</item>
+
+</style>
+
 <style name="ocr_button" parent="@android:style/Widget.Button">
     <item name="android:gravity">center</item> 
     <item name="android:background">@drawable/ocr_back_blue_button</item>
