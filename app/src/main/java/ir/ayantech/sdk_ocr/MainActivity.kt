@@ -169,6 +169,8 @@ class MainActivity : AppCompatActivity() {
             .setContext(applicationContext)
             .setApplicationID(packageName)
             .setBaseUrl(baseUrl)
+            .setUploadPath(BuildConfig.OCR_UPLOAD_PATH)
+            .setGetResultPath(BuildConfig.OCR_GET_RESULT_PATH)
             .setToken(token)
             .build()
         return true

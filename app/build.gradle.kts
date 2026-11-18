@@ -13,6 +13,13 @@ android {
         versionCode = 1
         versionName = "1.0"
 
+        // These belong to the consuming app and are passed to the SDK at runtime.
+        for (name in listOf("OCR_UPLOAD_PATH", "OCR_GET_RESULT_PATH")) {
+            val value = providers.gradleProperty(name).get()
+                .replace("\\", "\\\\").replace("\"", "\\\"")
+            buildConfigField("String", name, "\"$value\"")
+        }
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -24,6 +31,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 
     buildTypes {

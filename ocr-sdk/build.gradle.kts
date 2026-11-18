@@ -1,6 +1,5 @@
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
     id("kotlin-parcelize")
     id("maven-publish")
@@ -17,11 +16,6 @@ android {
     defaultConfig {
         minSdk = 21
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        val uploadPath = project.findProperty("OCR_UPLOAD_PATH")
-        val getResultPath = project.findProperty("OCR_GET_RESULT_PATH")
-        buildConfigField("String", "UPLOAD_PATH", "\"$uploadPath\"")
-        buildConfigField("String", "GET_RESULT_PATH", "\"$getResultPath\"")
     }
 
     buildFeatures {
@@ -58,8 +52,6 @@ dependencies {
     implementation(libs.glide)
 
     implementation(libs.ayantech.networking)
-    implementation(libs.ayantech.generator)
-    ksp(libs.ayantech.generator)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.bundles.camerax)
     implementation(libs.kotlinx.coroutines.core)

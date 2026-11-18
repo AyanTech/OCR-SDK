@@ -48,12 +48,15 @@ dependencies {
 
 ## ⚙️ Configuration
 
-To use the SDK, you need to define the API endpoints in your `gradle.properties` file:
+Endpoint paths must be configured at runtime through `ConfigBuilder`. Both
+`setUploadPath(...)` and `setGetResultPath(...)` are required on every new builder;
+there are no default paths. Omitting either causes `build()` to throw an
+`IllegalArgumentException`. Paths must not be blank; surrounding whitespace is trimmed.
 
-```properties
-OCR_UPLOAD_PATH="CardOcrUploadImage"
-OCR_GET_RESULT_PATH="CardOcrGetResult"
-```
+Setting `OCR_UPLOAD_PATH` or `OCR_GET_RESULT_PATH` in a consuming app's
+`gradle.properties` alone does **not** configure a published SDK: its AAR is already
+compiled. Pass the values explicitly as shown below. These two requests are
+implemented directly using `AyanApi`, without generated endpoint annotations.
 
 ## ⚙️ Initialization
 
@@ -64,9 +67,57 @@ val config = OCRConfig.builder()
     .setContext(this)
     .setApplicationID("ir.ayantech.sdk_ocr")
     .setBaseUrl("YOUR_BASE_URL")
+    .setUploadPath("CardOcrUploadImage")
+    .setGetResultPath("CardOcrGetResult")
     .setToken("YOUR_TOKEN")
     .build()
 ```
+
+---
+
+### Optional: keep paths in the consuming app's Gradle properties
+
+The sample app demonstrates this approach. Define unquoted values:
+
+```properties
+OCR_UPLOAD_PATH=CardOcrUploadImage
+OCR_GET_RESULT_PATH=CardOcrGetResult
+```
+
+In the **consuming app's** `build.gradle.kts`:
+
+```kotlin
+android {
+    buildFeatures {
+        buildConfig = true
+    }
+    defaultConfig {
+        for (name in listOf("OCR_UPLOAD_PATH", "OCR_GET_RESULT_PATH")) {
+            val value = providers.gradleProperty(name).get()
+                .replace("\\", "\\\\").replace("\"", "\\\"")
+            buildConfigField("String", name, "\"$value\"")
+        }
+    }
+}
+```
+
+Then pass the app's own `BuildConfig` values during initialization:
+
+```kotlin
+OCRConfig.builder()
+    .setContext(applicationContext)
+    .setBaseUrl("YOUR_BASE_URL")
+    .setToken("YOUR_TOKEN")
+    .setUploadPath(BuildConfig.OCR_UPLOAD_PATH)
+    .setGetResultPath(BuildConfig.OCR_GET_RESULT_PATH)
+    .build()
+```
+
+Paths are saved when `build()` succeeds and read for each request. Configure the SDK
+before starting an OCR flow. Configuration is shared across SDK flows. Every new builder requires both paths,
+even if an earlier configuration was saved. Gradle properties require
+rebuilding the app, while values supplied directly to the setters can be chosen
+at runtime.
 
 ---
 

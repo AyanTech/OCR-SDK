@@ -4,6 +4,21 @@ import android.content.Context
 
 class ConfigBuilder private constructor() {
 
+    var uploadPath: String? = null
+        private set
+    var getResultPath: String? = null
+        private set
+
+    fun setUploadPath(uploadPath: String) = apply {
+        require(uploadPath.isNotBlank()) { "uploadPath must not be blank" }
+        this.uploadPath = uploadPath.trim()
+    }
+
+    fun setGetResultPath(getResultPath: String) = apply {
+        require(getResultPath.isNotBlank()) { "getResultPath must not be blank" }
+        this.getResultPath = getResultPath.trim()
+    }
+
     var token: String? = null
     var baseUrl: String? = null
     var applicationID: String? = null
@@ -35,6 +50,11 @@ class ConfigBuilder private constructor() {
         requireNotNull(baseUrl) { missingValue + "baseUrl" }
         requireNotNull(ocrContext) { missingValue + "ocrContext" }
 
+        val configuredUploadPath = requireNotNull(uploadPath) { missingValue + "uploadPath" }
+        val configuredGetResultPath = requireNotNull(getResultPath) { missingValue + "getResultPath" }
+
+        OCRConstant.uploadPath = configuredUploadPath
+        OCRConstant.getResultPath = configuredGetResultPath
         OcrSdk.init(ocrContext!!)
         return OCRConfig(this)
     }
