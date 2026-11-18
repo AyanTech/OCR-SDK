@@ -22,11 +22,11 @@ internal class OcrEdgeToEdgeHelper(
 ) {
     @ColorInt
     private val statusBarColor =
-        ContextCompat.getColor(activity, R.color.ocr_header_background)
+        resolveColor(android.R.attr.statusBarColor, R.color.ocr_header_background)
 
     @ColorInt
     private val navigationBarColor =
-        ContextCompat.getColor(activity, R.color.ocr_fragment_background)
+        resolveColor(android.R.attr.navigationBarColor, R.color.ocr_fragment_background)
 
     private val useDarkStatusBarIcons = ColorUtils.calculateLuminance(statusBarColor) > 0.5
     private val useDarkNavigationBarIcons =
@@ -37,6 +37,18 @@ internal class OcrEdgeToEdgeHelper(
         ColorUtils.blendARGB(navigationBarColor, Color.BLACK, 0.7f)
     } else {
         navigationBarColor
+    }
+
+    // Read before enableEdgeToEdge makes the window bars transparent. Paint the
+    // resolved theme colors behind the bars, including on Android 15 and later.
+    @ColorInt
+    private fun resolveColor(attribute: Int, fallback: Int): Int {
+        val attributes = activity.obtainStyledAttributes(intArrayOf(attribute))
+        return try {
+            attributes.getColor(0, ContextCompat.getColor(activity, fallback))
+        } finally {
+            attributes.recycle()
+        }
     }
 
     fun enable() {

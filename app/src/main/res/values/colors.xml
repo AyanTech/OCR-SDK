@@ -1,7 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="black">#FF000000</color>
+
+    <!-- Edit these values to customize the OCR screen. No extra file is needed. -->
+    <!-- System bars: used by Theme.SDKOCR in themes.xml. -->
+    <color name="sample_ocr_status_bar">#331133</color>
+    <color name="sample_ocr_navigation_bar">@color/ocr_fragment_background</color>
+    <color name="sample_app_status_bar">#CDDC39</color>
+
+    <!-- Screen and camera header backgrounds. -->
+    <color name="ocr_fragment_background">#555555</color>
+    <color name="ocr_header_background">@color/ocr_fragment_background</color>
     <color name="ocr_ic_close_tint">#FFFFFFFF</color>
 
+    <!-- Buttons, camera frame, and instructions. -->
+    <color name="ocr_button_blue">#3869D4</color>
+    <color name="ocr_stroke_button_blue">#2B48EC</color>
+    <color name="ocr_text_button">#FFFFFF</color>
+    <color name="ocr_camera_fill_color">#2B48EC</color>
+    <color name="ocr_dash_color">#167B91</color>
+    <color name="ocr_text_hint">#FFFFFF</color>
 
+    <!-- Dialog surface and text. -->
+    <color name="ocr_dialog_color_background">#F2F2F2</color>
+    <color name="ocr_dialog_color_foreground">#424242</color>
+    <color name="sample_dialog_accent">#00ACC1</color>
 </resources>

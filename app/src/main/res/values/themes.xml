@@ -1,9 +1,17 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+<resources>
+    <!-- Theme for the sample launcher screen. -->
     <style name="Base.Theme.SDKOCR" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
-    <style name="Theme.SDKOCR" parent="Base.Theme.SDKOCR" />
+    <style name="Theme.OcrSample" parent="Base.Theme.SDKOCR" />
+
+    <!-- The SDK manifest selects this theme for OcrActivity.
+         Edit colors.xml to change colors; edit styles.xml for button shapes/text.
+         Icon brightness is selected automatically by the SDK. -->
+    <style name="Theme.SDKOCR" parent="Theme.BaseSDKOCR">
+        <item name="colorPrimary">@color/ocr_button_blue</item>
+        <item name="colorSecondary">@color/ocr_stroke_button_blue</item>
+        <item name="android:statusBarColor">@color/sample_ocr_status_bar</item>
+        <item name="android:navigationBarColor">@color/sample_ocr_navigation_bar</item>
+    </style>
 </resources>

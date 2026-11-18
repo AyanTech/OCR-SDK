@@ -3,7 +3,7 @@
     <style name="OcrSdkDialogTheme" parent="Theme.MaterialComponents.Light.Dialog.Alert">
         <item name="shapeAppearanceOverlay">@style/OcrDialogRoundedShape</item>
         <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="colorPrimary">#00ACC1</item>
+        <item name="colorPrimary">@color/sample_dialog_accent</item>
     </style>
 
     <style name="OcrDialogRoundedShape" parent="">
@@ -30,7 +30,7 @@
         <item name="fontFamily">@font/regular</item>
         <item name="android:fontFamily">@font/regular</item>
         <item name="android:textSize">@dimen/txt_regular</item>
-        <item name="android:textColor">@color/ocr_white</item>
+        <item name="android:textColor">@color/ocr_text_button</item>
     </style>
 
     <style name="ocr_stroked_button" parent="@android:style/Widget.Button">

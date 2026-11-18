@@ -75,34 +75,6 @@ val config = OCRConfig.builder()
 
 ---
 
-### Optional: keep paths in the consuming app's Gradle properties
-
-The sample app demonstrates this approach. Define unquoted values:
-
-```properties
-OCR_UPLOAD_PATH=CardOcrUploadImage
-OCR_GET_RESULT_PATH=CardOcrGetResult
-```
-
-In the **consuming app's** `build.gradle.kts`:
-
-```kotlin
-android {
-    buildFeatures {
-        buildConfig = true
-    }
-    defaultConfig {
-        for (name in listOf("OCR_UPLOAD_PATH", "OCR_GET_RESULT_PATH")) {
-            val value = providers.gradleProperty(name).get()
-                .replace("\\", "\\\\").replace("\"", "\\\"")
-            buildConfigField("String", name, "\"$value\"")
-        }
-    }
-}
-```
-
-Then pass the app's own `BuildConfig` values during initialization:
-
 ```kotlin
 OCRConfig.builder()
     .setContext(applicationContext)
@@ -250,11 +222,23 @@ val cardType = result?.cardType
 
 ---
 
-### Buttons (`styles.xml`)
+The SDK activity uses `Theme.SDKOCR`. Setting colors only on your application's
+theme does not change the SDK activity. Override `Theme.SDKOCR` as below, inheriting
+`Theme.BaseSDKOCR` to keep SDK defaults. Use `values-night/colors.xml` for dark
+variants of your colors (or supply a matching night theme override).
+
+The SDK reads `android:statusBarColor` and `android:navigationBarColor` and paints
+them behind the system bars, including with Android 15+ edge-to-edge. Icon
+brightness is chosen automatically from the colors. Prefer opaque colors.
+By default the bars follow `ocr_header_background` and
+`ocr_fragment_background`. Android versions below API 26 darken bright navigation
+bar colors to keep their white icons readable.
+
+### Activity theme and system bars (`themes.xml`)
 
 ```xml
 
-<style name="Theme.SDKOCR" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+<style name="Theme.SDKOCR" parent="Theme.BaseSDKOCR">
 
   <item name="colorPrimary">@color/color_primary</item>
   <item name="colorPrimaryVariant">@color/color_primary_dark</item>
@@ -265,6 +249,7 @@ val cardType = result?.cardType
   <item name="colorOnSecondary">@color/black</item>
 
   <item name="android:statusBarColor">@color/status_bar_color</item>
+  <item name="android:navigationBarColor">@color/ocr_fragment_background</item>
 
 </style>
 
