@@ -4,12 +4,11 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import ir.ayantech.networking.repository.OcrRepository
-import ir.ayantech.networking.v2.api.AyanAPIResult
-import ir.ayantech.networking.v2.model.ApiCallStatus
 import ir.ayantech.ocr_sdk.data.GetCardOcrResult
 import ir.ayantech.ocr_sdk.domain.usecase.impl.GetCardOcrResultUseCaseImpl
+import ir.ayantech.ocr_sdk.domain.usecase.impl.OcrResultFailedException
+import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelAndJoin
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runCurrent
@@ -18,10 +17,39 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
+@OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
 class GetCardOcrResultUseCaseImplTest {
 
     private lateinit var ocrRepository: OcrRepository
     private lateinit var getCardOcrResultUseCase: GetCardOcrResultUseCase
+
+    @Test
+    fun pendingUsesMinimumAndServerDelaysThenStopsOnFailedStatus() = runTest {
+        val input = GetCardOcrResult.GetCardOcrResultRequestBody("fixture")
+        fun response(status: String, interval: Long): Result<GetCardOcrResult.GetCardOcrResultResponseModel> {
+            return Result.success(GetCardOcrResult.GetCardOcrResultResponseModel(status = status, nextCallInterval = interval))
+        }
+        coEvery { ocrRepository.getCardOcrResult(input) } returnsMany listOf(
+            response("pending", -1),
+            response("Pending", 900),
+            response("Failed", 0)
+        )
+
+        val work = async { getCardOcrResultUseCase(input) }
+        runCurrent()
+        advanceTimeBy(499)
+        runCurrent()
+        coVerify(exactly = 1) { ocrRepository.getCardOcrResult(input) }
+        advanceTimeBy(1)
+        runCurrent()
+        advanceTimeBy(899)
+        runCurrent()
+        coVerify(exactly = 2) { ocrRepository.getCardOcrResult(input) }
+        advanceTimeBy(1)
+        runCurrent()
+        assertEquals(OcrResultFailedException::class.java, work.await().exceptionOrNull()?.javaClass)
+        coVerify(exactly = 3) { ocrRepository.getCardOcrResult(input) }
+    }
 
     @Before
     fun setup() {
@@ -40,16 +68,14 @@ class GetCardOcrResultUseCaseImplTest {
             nextCallInterval = 0,
             retryable = false
         )
-        val expectedResult = AyanAPIResult.success(expectedResponse)
-        coEvery { ocrRepository.getCardOcrResult(requestBody) } returns flowOf(expectedResult)
+        val expectedResult = Result.success(expectedResponse)
+        coEvery { ocrRepository.getCardOcrResult(requestBody) } returns expectedResult
 
         // Act
-        val resultFlow = getCardOcrResultUseCase(requestBody)
+        val result = getCardOcrResultUseCase(requestBody)
 
         // Assert
-        resultFlow.collect { result ->
-            assertEquals(expectedResult, result)
-        }
+        assertEquals(expectedResult, result)
     }
 
     @Test
@@ -57,16 +83,14 @@ class GetCardOcrResultUseCaseImplTest {
         // Arrange
         val requestBody = GetCardOcrResult.GetCardOcrResultRequestBody(fileId = "invalid")
         val expectedResult =
-            AyanAPIResult.error<GetCardOcrResult.GetCardOcrResultResponseModel>(Exception("Not found"))
-        coEvery { ocrRepository.getCardOcrResult(requestBody) } returns flowOf(expectedResult)
+            Result.failure<GetCardOcrResult.GetCardOcrResultResponseModel>(Exception("Not found"))
+        coEvery { ocrRepository.getCardOcrResult(requestBody) } returns expectedResult
 
         // Act
-        val resultFlow = getCardOcrResultUseCase(requestBody)
+        val result = getCardOcrResultUseCase(requestBody)
 
         // Assert
-        resultFlow.collect { result ->
-            assertEquals(expectedResult, result)
-        }
+        assertEquals(expectedResult, result)
     }
 
     @Test
@@ -89,22 +113,19 @@ class GetCardOcrResultUseCaseImplTest {
             retryable = false
         )
 
-        val pendingResult = AyanAPIResult.success(pendingResponse)
-        val successResult = AyanAPIResult.success(successResponse)
+        val pendingResult = Result.success(pendingResponse)
+        val successResult = Result.success(successResponse)
 
         coEvery { ocrRepository.getCardOcrResult(requestBody) } returnsMany listOf(
-            flowOf(pendingResult),
-            flowOf(successResult)
+            pendingResult,
+            successResult
         )
 
         // Act
-        val results =
-            mutableListOf<AyanAPIResult<GetCardOcrResult.GetCardOcrResultResponseModel, ApiCallStatus, Exception>>()
-        getCardOcrResultUseCase(requestBody).collect { results.add(it) }
+        val result = getCardOcrResultUseCase(requestBody)
 
         // Assert: pending result is never emitted to the UI layer, only the final one
-        assertEquals(1, results.size)
-        assertEquals(successResult, results[0])
+        assertEquals(successResult, result)
         coVerify(exactly = 2) { ocrRepository.getCardOcrResult(requestBody) }
     }
 
@@ -128,22 +149,19 @@ class GetCardOcrResultUseCaseImplTest {
             retryable = false
         )
 
-        val pendingResult = AyanAPIResult.success(pendingResponse)
-        val successResult = AyanAPIResult.success(successResponse)
+        val pendingResult = Result.success(pendingResponse)
+        val successResult = Result.success(successResponse)
 
         coEvery { ocrRepository.getCardOcrResult(requestBody) } returnsMany listOf(
-            flowOf(pendingResult),
-            flowOf(successResult)
+            pendingResult,
+            successResult
         )
 
         // Act
-        val results =
-            mutableListOf<AyanAPIResult<GetCardOcrResult.GetCardOcrResultResponseModel, ApiCallStatus, Exception>>()
-        getCardOcrResultUseCase(requestBody).collect { results.add(it) }
+        val result = getCardOcrResultUseCase(requestBody)
 
         // Assert
-        assertEquals(1, results.size)
-        assertEquals(successResult, results[0])
+        assertEquals(successResult, result)
         coVerify(exactly = 2) { ocrRepository.getCardOcrResult(requestBody) }
     }
 
@@ -157,14 +175,10 @@ class GetCardOcrResultUseCaseImplTest {
             nextCallInterval = 500,
             retryable = false
         )
-        coEvery { ocrRepository.getCardOcrResult(requestBody) } returns flowOf(
-            AyanAPIResult.success(
-                pending
-            )
-        )
+        coEvery { ocrRepository.getCardOcrResult(requestBody) } returns Result.success(pending)
 
         val job = backgroundScope.launch {
-            getCardOcrResultUseCase(requestBody).collect { }
+            getCardOcrResultUseCase(requestBody)
         }
         runCurrent()
         coVerify(exactly = 1) { ocrRepository.getCardOcrResult(requestBody) }
@@ -186,18 +200,13 @@ class GetCardOcrResultUseCaseImplTest {
             nextCallInterval = 0,
             retryable = false
         )
-        coEvery { ocrRepository.getCardOcrResult(requestBody) } returns flowOf(
-            AyanAPIResult.success(emptySuccessResponse)
-        )
+        coEvery { ocrRepository.getCardOcrResult(requestBody) } returns Result.success(emptySuccessResponse)
 
         // Act
-        val results =
-            mutableListOf<AyanAPIResult<GetCardOcrResult.GetCardOcrResultResponseModel, ApiCallStatus, Exception>>()
-        getCardOcrResultUseCase(requestBody).collect { results.add(it) }
+        val result = getCardOcrResultUseCase(requestBody)
 
         // Assert
-        assertEquals(1, results.size)
-        assertEquals(true, results[0].isError)
+        assertEquals(true, result.isFailure)
     }
 
     @Test
@@ -220,26 +229,23 @@ class GetCardOcrResultUseCaseImplTest {
             retryable = false
         )
 
-        val pendingResult = AyanAPIResult.success(pendingResponse)
-        val successResult = AyanAPIResult.success(successResponse)
+        val pendingResult = Result.success(pendingResponse)
+        val successResult = Result.success(successResponse)
 
         coEvery { ocrRepository.getCardOcrResult(requestBody) } returnsMany listOf(
-            flowOf(pendingResult),
-            flowOf(pendingResult),
-            flowOf(pendingResult),
-            flowOf(pendingResult),
-            flowOf(pendingResult),
-            flowOf(successResult)
+            pendingResult,
+            pendingResult,
+            pendingResult,
+            pendingResult,
+            pendingResult,
+            successResult
         )
 
         // Act
-        val results =
-            mutableListOf<AyanAPIResult<GetCardOcrResult.GetCardOcrResultResponseModel, ApiCallStatus, Exception>>()
-        getCardOcrResultUseCase(requestBody).collect { results.add(it) }
+        val result = getCardOcrResultUseCase(requestBody)
 
         // Assert
-        assertEquals(1, results.size)
-        assertEquals(successResult, results[0])
+        assertEquals(successResult, result)
         coVerify(exactly = 6) { ocrRepository.getCardOcrResult(requestBody) }
     }
 }

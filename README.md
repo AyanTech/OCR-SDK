@@ -283,3 +283,15 @@ The `app` module demonstrates OCR for vehicle, bank, and national cards with one
 ## 📄 License
 Authored by **@Pedram.Fahimi**  
 📧 Pedram.Fahimi@gmail.com  
+
+## Networking 2.0.7 local integration
+
+The upload and poll requests use Networking 2.0.7's suspending Kotlin `Result` contract. Both endpoints come from `ConfigBuilder`. Polling preserves the original file ID, applies the server interval with a 500ms minimum, and stops on a terminal response or cancellation. The contract continues to return the SDK's existing card fields to its Activity caller.
+
+Run the controlled scanner tests and build the release AAR locally using cached dependencies.
+
+```sh
+./gradlew :ocr-sdk:testDebugUnitTest :ocr-sdk:assembleRelease --offline
+```
+
+The Pishkhan rewrite can include this SDK as a local Gradle build. Its vehicle and bank fixtures exercise upload, pending and successful reads, backend rejection, timing, duplicate actions and cancellation.

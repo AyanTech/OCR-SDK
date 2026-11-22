@@ -1,4 +1,5 @@
 [versions]
+robolectric = "4.16.1"
 agp = "9.3.0"
 kotlin = "2.4.10"
 coreKtx = "1.16.0"
@@ -12,7 +13,7 @@ documentfile = "1.1.0"
 glide = "4.16.0"
 okhttp = "4.12.0"
 camerax = "1.4.2"
-networking = "2.0.5"
+networking = "2.0.7"
 generator = "2.0.4"
 ksp = "2.3.4"
 kotlinxSerialization = "1.7.3"
@@ -25,6 +26,7 @@ mockk = "1.13.12"
 turbine = "1.0.0"
 
 [libraries]
+robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 ksp-gradle-plugin = { group = "com.google.devtools.ksp", name = "symbol-processing-gradle-plugin", version.ref = "ksp" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }

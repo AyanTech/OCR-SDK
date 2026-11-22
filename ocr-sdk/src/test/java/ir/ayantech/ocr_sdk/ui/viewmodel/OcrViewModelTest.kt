@@ -3,7 +3,6 @@ package ir.ayantech.ocr_sdk.ui.viewmodel
 import app.cash.turbine.test
 import io.mockk.coEvery
 import io.mockk.mockk
-import ir.ayantech.networking.v2.api.AyanAPIResult
 import ir.ayantech.ocr_sdk.MainDispatcherRule
 import ir.ayantech.ocr_sdk.R
 import ir.ayantech.ocr_sdk.data.GetCardOcrResult
@@ -13,8 +12,6 @@ import ir.ayantech.ocr_sdk.domain.usecase.UploadCardOcrUseCase
 import ir.ayantech.ocr_sdk.domain.usecase.impl.EmptyOcrResultException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
@@ -49,7 +46,7 @@ class OcrViewModelTest {
         val images = listOf("image1")
         val cardType = "bank_card"
         val response = UploadCardOcr.UploadCardOcrResponseModel(fileId = "file123")
-        coEvery { uploadCardOcrUseCase(any()) } returns flowOf(AyanAPIResult.success(response))
+        coEvery { uploadCardOcrUseCase(any()) } returns Result.success(response)
 
         // Act & Assert
         viewModel.uiState.test {
@@ -70,8 +67,8 @@ class OcrViewModelTest {
         val cardType = "bank_card"
         val errorMessage = "Network Error"
         val failureResult =
-            AyanAPIResult.error<UploadCardOcr.UploadCardOcrResponseModel>(Exception(errorMessage))
-        coEvery { uploadCardOcrUseCase(any()) } returns flowOf(failureResult)
+            Result.failure<UploadCardOcr.UploadCardOcrResponseModel>(Exception(errorMessage))
+        coEvery { uploadCardOcrUseCase(any()) } returns failureResult
 
         // Act & Assert
         viewModel.uiState.test {
@@ -96,7 +93,7 @@ class OcrViewModelTest {
             nextCallInterval = 0,
             retryable = false
         )
-        coEvery { getCardOcrResultUseCase(any()) } returns flowOf(AyanAPIResult.success(response))
+        coEvery { getCardOcrResultUseCase(any()) } returns Result.success(response)
 
         // Act & Assert
         viewModel.uiState.test {
@@ -115,10 +112,10 @@ class OcrViewModelTest {
         // Arrange
         val fileId = "file123"
         val errorMessage = "Result not ready"
-        val failureResult = AyanAPIResult.error<GetCardOcrResult.GetCardOcrResultResponseModel>(
+        val failureResult = Result.failure<GetCardOcrResult.GetCardOcrResultResponseModel>(
             Exception(errorMessage)
         )
-        coEvery { getCardOcrResultUseCase(any()) } returns flowOf(failureResult)
+        coEvery { getCardOcrResultUseCase(any()) } returns failureResult
 
         // Act & Assert
         viewModel.uiState.test {
@@ -134,10 +131,10 @@ class OcrViewModelTest {
 
     @Test
     fun `empty OCR result uses the localized empty-result message`() = runTest {
-        val failure = AyanAPIResult.error<GetCardOcrResult.GetCardOcrResultResponseModel>(
+        val failure = Result.failure<GetCardOcrResult.GetCardOcrResultResponseModel>(
             EmptyOcrResultException()
         )
-        coEvery { getCardOcrResultUseCase(any()) } returns flowOf(failure)
+        coEvery { getCardOcrResultUseCase(any()) } returns failure
 
         viewModel.getCardOcrResult("file123")
         runCurrent()
@@ -154,10 +151,8 @@ class OcrViewModelTest {
         var calls = 0
         coEvery { uploadCardOcrUseCase(any()) } coAnswers {
             calls++
-            flow {
-                gate.await()
-                emit(AyanAPIResult.success(response))
-            }
+            gate.await()
+            Result.success(response)
         }
 
         model.uploadCardOcr(listOf("image1"), "bank_card")
@@ -177,9 +172,9 @@ class OcrViewModelTest {
         val gate = CompletableDeferred<Unit>()
         val dispatcher = StandardTestDispatcher(testScheduler)
         val model = OcrViewModel(uploadCardOcrUseCase, getCardOcrResultUseCase, dispatcher)
-        coEvery { uploadCardOcrUseCase(any()) } returns flow {
+        coEvery { uploadCardOcrUseCase(any()) } coAnswers {
             gate.await()
-            emit(AyanAPIResult.success(UploadCardOcr.UploadCardOcrResponseModel(fileId = "file123")))
+            Result.success(UploadCardOcr.UploadCardOcrResponseModel(fileId = "file123"))
         }
 
         model.uploadCardOcr(listOf("image1"), "bank_card")
@@ -202,10 +197,8 @@ class OcrViewModelTest {
         var calls = 0
         coEvery { getCardOcrResultUseCase(any()) } coAnswers {
             calls++
-            flow {
-                gate.await()
-                emit(AyanAPIResult.success(response))
-            }
+            gate.await()
+            Result.success(response)
         }
 
         model.getCardOcrResult("file123")

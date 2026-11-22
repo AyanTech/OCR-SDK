@@ -3,10 +3,8 @@ package ir.ayantech.ocr_sdk.domain.usecase
 import io.mockk.coEvery
 import io.mockk.mockk
 import ir.ayantech.networking.repository.OcrRepository
-import ir.ayantech.networking.v2.api.AyanAPIResult
 import ir.ayantech.ocr_sdk.data.UploadCardOcr
 import ir.ayantech.ocr_sdk.domain.usecase.impl.UploadCardOcrUseCaseImpl
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -31,16 +29,14 @@ class UploadCardOcrUseCaseImplTest {
             type = "bank_card"
         )
         val expectedResponse = UploadCardOcr.UploadCardOcrResponseModel(fileId = "file123")
-        val expectedResult = AyanAPIResult.success(expectedResponse)
-        coEvery { ocrRepository.uploadCardOcr(requestBody) } returns flowOf(expectedResult)
+        val expectedResult = Result.success(expectedResponse)
+        coEvery { ocrRepository.uploadCardOcr(requestBody) } returns expectedResult
 
         // Act
-        val resultFlow = uploadCardOcrUseCase(requestBody)
+        val result = uploadCardOcrUseCase(requestBody)
 
         // Assert
-        resultFlow.collect { result ->
-            assertEquals(expectedResult, result)
-        }
+        assertEquals(expectedResult, result)
     }
 
     @Test
@@ -51,15 +47,13 @@ class UploadCardOcrUseCaseImplTest {
             type = "bank_card"
         )
         val expectedResult =
-            AyanAPIResult.error<UploadCardOcr.UploadCardOcrResponseModel>(Exception("Upload failed"))
-        coEvery { ocrRepository.uploadCardOcr(requestBody) } returns flowOf(expectedResult)
+            Result.failure<UploadCardOcr.UploadCardOcrResponseModel>(Exception("Upload failed"))
+        coEvery { ocrRepository.uploadCardOcr(requestBody) } returns expectedResult
 
         // Act
-        val resultFlow = uploadCardOcrUseCase(requestBody)
+        val result = uploadCardOcrUseCase(requestBody)
 
         // Assert
-        resultFlow.collect { result ->
-            assertEquals(expectedResult, result)
-        }
+        assertEquals(expectedResult, result)
     }
 }
